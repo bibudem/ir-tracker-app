@@ -39,7 +39,7 @@ Le frontend sera accessible à l'adresse suivante : `http://localhost:4200`.
 
 ### Backend
 
-Configurez le fichier `backend/config/config.js` avec les informations appropriées, notamment la base de données et le port sur lequel le serveur doit écouter.
+Configurez le fichier `backend/config/config.js` avec les informations appropriées.
 
 1. Accédez au répertoire backend.
 
