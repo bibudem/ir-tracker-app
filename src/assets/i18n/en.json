@@ -1,0 +1,17 @@
+{
+  "title": "IRTracker",
+  "description": "Description",
+  "logout": "Logout",
+  "sectionTME": "TME Section",
+  "help": "Help",
+  "bibWebsite": "Library Website",
+  "typeHereToSearch": "Type here to search",
+  "userName": "Jabinschi Natalia",
+  "english": "English",
+  "french": "Français",
+  "home": "Home",
+  "viewDetail": "View Details",
+  "community": {
+    "listTitle": "Community List"
+  }
+}

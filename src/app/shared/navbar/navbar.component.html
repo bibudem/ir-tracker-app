@@ -1,0 +1,96 @@
+<!-- Début du header -->
+<header class="top-header">
+  <nav class="navbar navbar-expand">
+    <div (click)="toggleSidebar()" class="mobile-toggle-icon d-xl-none">
+      <i class="bi bi-list"></i>
+    </div>
+    <div class="top-navbar d-none d-xl-block">
+      <ul class="navbar-nav align-items-center">
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/home">{{ 'description' | translate }}</a>
+        </li>
+      </ul>
+    </div>
+    <div class="search-toggle-icon d-xl-none ms-auto">
+      <i class="bi bi-search"></i>
+    </div>
+    <form class="searchbar d-none d-xl-flex ms-auto">
+      <div class="position-absolute top-50 translate-middle-y search-icon ms-3"><i class="bi bi-search"></i></div>
+      <input class="form-control" type="text" placeholder="{{ 'typeHereToSearch' | translate }}">
+      <div class="position-absolute top-50 translate-middle-y d-block d-xl-none search-close-icon"><i class="bi bi-x-lg"></i></div>
+    </form>
+    <div class="top-navbar-right ms-3 ms-auto">
+      <ul class="navbar-nav align-items-center">
+        <li class="nav-item dropdown dropdown-large">
+          <a class="nav-link dropdown-toggle dropdown-toggle-nocaret" href="#" data-bs-toggle="dropdown">
+            <div class="user-setting d-flex align-items-center gap-1">
+              <i class="bi bi-person-circle m-lg-2 font-20"></i>
+              <div class="user-name d-none d-sm-block">
+                {{ 'userName' | translate }}
+              </div>
+            </div>
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end">
+            <li>
+              <a class="dropdown-item" routerLink="/auth/sign-up">
+                <div class="d-flex align-items-center">
+                  <div class="setting-icon"><i class="bi bi-lock-fill"></i></div>
+                  <div class="setting-text ms-3"><span>{{ 'logout' | translate }}</span></div>
+                </div>
+              </a>
+            </li>
+          </ul>
+        </li>
+        <li class="nav-item dropdown dropdown-large">
+          <a class="nav-link dropdown-toggle dropdown-toggle-nocaret" href="#" data-bs-toggle="dropdown">
+            <div class="projects">
+              <i class="bi bi-grid-3x3-gap-fill"></i>
+            </div>
+          </a>
+          <div class="dropdown-menu dropdown-menu-end">
+            <div class="row row-cols-3 gx-2">
+              <div class="col">
+                <a href="https://bib.umontreal.ca/gerer-diffuser/deposer-these-memoire" target="_blank" rel="noopener noreferrer">
+                  <div class="apps p-2 radius-10 text-center">
+                    <div class="apps-icon-box mb-1 text-white bg-primary bg-gradient">
+                      <i class="bx bx-detail"></i>
+                    </div>
+                    <p class="mb-0 apps-name">{{ 'sectionTME' | translate }}</p>
+                  </div>
+                </a>
+              </div>
+              <div class="col">
+                <a href="https://bib.umontreal.ca/gerer-diffuser/deposer-these-memoire/procedure-depot/soutien-tgde" target="_blank" rel="noopener noreferrer">
+                  <div class="apps p-2 radius-10 text-center">
+                    <div class="apps-icon-box mb-1 text-white bg-warning bg-gradient">
+                      <i class="bi bi-info-circle"></i>
+                    </div>
+                    <p class="mb-0 apps-name">{{ 'help' | translate }}</p>
+                  </div>
+                </a>
+              </div>
+              <div class="col">
+                <a href="https://bib.umontreal.ca/" target="_blank" rel="noopener noreferrer">
+                  <div class="apps p-2 radius-10 text-center">
+                    <div class="apps-icon-box mb-1 text-white bg-success bg-gradient">
+                      <i class="bx bx-world"></i>
+                    </div>
+                    <p class="mb-0 apps-name">{{ 'bibWebsite' | translate }}</p>
+                  </div>
+                </a>
+              </div>
+            </div>
+          </div>
+        </li>
+        <!-- Ajout du switch de langue -->
+        <li class="nav-item">
+          <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" id="languageSwitch" (change)="changeLanguage($event.target.checked ? 'en' : 'fr')">
+            <label class="form-check-label" for="languageSwitch">{{ translate.currentLang === 'fr' ? 'english' : 'french' | translate }}</label>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </nav>
+</header>
+<!-- Fin du header -->

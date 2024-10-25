@@ -1,0 +1,26 @@
+body {
+	font-size: 14px;
+	color: #4c5258;
+	letter-spacing: .5px;
+	overflow-x: hidden;
+  }
+  
+  .wrapper {
+	width: 100%;
+	position: relative;
+  }
+
+
+::placeholder {
+  opacity: 0.4 !important;
+}
+
+
+/* Page Content */
+
+.page-content {
+  margin-left: 250px;
+  margin-top: 60px;
+  padding: 1.5rem;
+  transition: all .2s;
+}

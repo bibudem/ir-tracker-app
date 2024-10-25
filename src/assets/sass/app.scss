@@ -1,0 +1,21 @@
+
+// any default variable overrides here (though functions won't be available)
+@import "./scss/variables";
+
+// all of Bootstrap
+@import "../../../node_modules/bootstrap/scss/functions"; // Importer les fonctions de Bootstrap
+@import "../../../node_modules/bootstrap/scss/variables"; // Importer les variables de Bootstrap
+@import "../../../node_modules/bootstrap/scss/bootstrap"; // Importer tout Bootstrap
+
+// Importer les styles personnalisés
+@import "./scss/custom-bootstrap"; // Surcharges des classes Bootstrap
+@import "./scss/core";             // Classes personnalisées
+
+// plugins css , scss here
+@import "./scss/plugins";
+
+// themeing
+@import "./scss/dark-theme";
+@import "./scss/light-theme";
+@import "./scss/semi-dark";
+@import "./scss/header-colors";

@@ -1,0 +1,17 @@
+{
+  "title": "IRTracker",
+  "description": "OUTIL DE SUIVI DES SOUMISSIONS DANS PAPYRUS",
+  "logout": "Déconnexion",
+  "sectionTME": "Section TME",
+  "help": "Aide",
+  "bibWebsite": "Site web bib",
+  "typeHereToSearch": "Tapez ici pour rechercher",
+  "userName": "Jabinschi Natalia",
+  "english": "English",
+  "french": "Français",
+  "viewDetail": "Voir les détails",
+  "home": "Accueil",
+  "community": {
+    "listTitle": "Liste des communautés"
+  }
+}
