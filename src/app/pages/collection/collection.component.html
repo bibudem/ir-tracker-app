@@ -1,0 +1,50 @@
+<!-- Début de la section de fil d'Ariane -->
+<div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
+  <div class="ps-3">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb mb-0 p-0">
+        <li class="breadcrumb-item">
+          <a href="#"><i class="bi bi-house"></i></a>
+        </li>
+        <li aria-current="page" class="breadcrumb-item active">
+          {{ 'collection' | translate }}
+        </li>
+      </ol>
+    </nav>
+  </div>
+</div>
+<!-- Fin de la section de fil d'Ariane -->
+
+<div class="row">
+  <!-- Carte contenant la liste des communautés -->
+  <div class="card">
+    <div class="card-title">
+      <h2 class="p-3">{{ 'community.listTitle' | translate }}</h2>
+    </div>
+    <div class="card-body">
+      <!-- Tableau des collections -->
+      <div class="table-responsive">
+        <table class="table align-middle table-striped" *ngIf="collections.length > 0">
+          <tbody>
+          <tr *ngFor="let collection of collections">
+            <td class="productlist">
+              <a class="d-flex align-items-center gap-2" href="#">
+                <div>
+                  <h6 class="mb-0 product-title">{{ collection.name }}</h6>
+                </div>
+              </a>
+            </td>
+            <td>
+              <div class="d-flex align-items-center gap-3 fs-6">
+                <a href="javascript:;" class="text-primary" data-bs-toggle="tooltip" data-bs-placement="bottom" title="{{ 'viewDetail' | translate }}" aria-label="Views">
+                  <i class="bi bi-eye-fill"></i>
+                </a>
+              </div>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

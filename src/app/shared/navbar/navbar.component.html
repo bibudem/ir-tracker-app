@@ -21,7 +21,7 @@
     </form>
     <div class="top-navbar-right ms-3 ms-auto">
       <ul class="navbar-nav align-items-center">
-        <li class="nav-item dropdown dropdown-large">
+        <li class="nav-item dropdown dropdown-medium">
           <a class="nav-link dropdown-toggle dropdown-toggle-nocaret" href="#" data-bs-toggle="dropdown">
             <div class="user-setting d-flex align-items-center gap-1">
               <i class="bi bi-person-circle m-lg-2 font-20"></i>
@@ -41,6 +41,35 @@
             </li>
           </ul>
         </li>
+        <!-- Ajout du switch de langue avec un style similaire à la section profil -->
+        <li class="nav-item dropdown dropdown-medium">
+          <a class="nav-link dropdown-toggle dropdown-toggle-nocaret" href="#" data-bs-toggle="dropdown">
+            <div class="user-setting d-flex align-items-center gap-1">
+              <i class="bi bi-translate m-lg-2 font-20"></i>
+              <div class="user-name d-none d-sm-block">
+                {{ translate.currentLang === 'fr' ? 'Français' : 'English' | translate }}
+              </div>
+            </div>
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end">
+            <li>
+              <a class="dropdown-item" (click)="changeLanguage('en')">
+                <div class="d-flex align-items-center">
+                  <div class="setting-icon"><i class="bi bi-flag"></i></div>
+                  <div class="setting-text ms-3"><span>{{ 'english' | translate }}</span></div>
+                </div>
+              </a>
+            </li>
+            <li>
+              <a class="dropdown-item" (click)="changeLanguage('fr')">
+                <div class="d-flex align-items-center">
+                  <div class="setting-icon"><i class="bi bi-flag-fill"></i></div>
+                  <div class="setting-text ms-3"><span>{{ 'french' | translate }}</span></div>
+                </div>
+              </a>
+            </li>
+          </ul>
+        </li>
         <li class="nav-item dropdown dropdown-large">
           <a class="nav-link dropdown-toggle dropdown-toggle-nocaret" href="#" data-bs-toggle="dropdown">
             <div class="projects">
@@ -53,7 +82,7 @@
                 <a href="https://bib.umontreal.ca/gerer-diffuser/deposer-these-memoire" target="_blank" rel="noopener noreferrer">
                   <div class="apps p-2 radius-10 text-center">
                     <div class="apps-icon-box mb-1 text-white bg-primary bg-gradient">
-                      <i class="bx bx-detail"></i>
+                      <i class="bi bi-folder-symlink"></i>
                     </div>
                     <p class="mb-0 apps-name">{{ 'sectionTME' | translate }}</p>
                   </div>
@@ -63,7 +92,7 @@
                 <a href="https://bib.umontreal.ca/gerer-diffuser/deposer-these-memoire/procedure-depot/soutien-tgde" target="_blank" rel="noopener noreferrer">
                   <div class="apps p-2 radius-10 text-center">
                     <div class="apps-icon-box mb-1 text-white bg-warning bg-gradient">
-                      <i class="bi bi-info-circle"></i>
+                      <i class="bi bi-exclamation-octagon"></i>
                     </div>
                     <p class="mb-0 apps-name">{{ 'help' | translate }}</p>
                   </div>
@@ -73,20 +102,13 @@
                 <a href="https://bib.umontreal.ca/" target="_blank" rel="noopener noreferrer">
                   <div class="apps p-2 radius-10 text-center">
                     <div class="apps-icon-box mb-1 text-white bg-success bg-gradient">
-                      <i class="bx bx-world"></i>
+                      <i class="bi bi-columns-gap"></i>
                     </div>
                     <p class="mb-0 apps-name">{{ 'bibWebsite' | translate }}</p>
                   </div>
                 </a>
               </div>
             </div>
-          </div>
-        </li>
-        <!-- Ajout du switch de langue -->
-        <li class="nav-item">
-          <div class="form-check form-switch">
-            <input class="form-check-input" type="checkbox" id="languageSwitch" (change)="changeLanguage($event.target.checked ? 'en' : 'fr')">
-            <label class="form-check-label" for="languageSwitch">{{ translate.currentLang === 'fr' ? 'english' : 'french' | translate }}</label>
           </div>
         </li>
       </ul>

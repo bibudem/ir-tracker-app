@@ -4,7 +4,7 @@ const logger = require('../utils/logger');
 
 const getCollections = async (req, res) => {
   try {
-    const response = await axios.get(`${config.DSPACE_API_URL}/collections`);
+    const response = await axios.get(`${config.DSPACE_API_URL}/core/collections`);
     res.json(response.data);
   } catch (error) {
     logger.error('Erreur lors de la récupération des collections: ' + error.message);
