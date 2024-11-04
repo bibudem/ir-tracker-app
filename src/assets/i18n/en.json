@@ -1,6 +1,10 @@
 {
   "title": "IRTracker",
   "description": "Description",
+  "home": "Home",
+  "depositor": "Depositor",
+  "collection": "Collection",
+  "faq": "FAQ",
   "logout": "Logout",
   "sectionTME": "TME Section",
   "help": "Help",
@@ -9,7 +13,6 @@
   "userName": "Jabinschi Natalia",
   "english": "English",
   "french": "Français",
-  "home": "Home",
   "viewDetail": "View Details",
   "documentProgress": "Progress of document validation/dissemination in Papyrus",
   "email": "Email",
@@ -24,7 +27,6 @@
   "institutionalAddressPlaceholder": "Institutional Address",
   "search": "Search",
   "reset": "Reset",
-  "depositor": "Depositor",
   "id": "Id",
   "item": "Item",
   "author": "Author",
@@ -33,6 +35,7 @@
   "depositorCollection": "Depositor Collection",
   "currentStep": "Current Step",
   "searchNoResults": "No results found for: {{ query }}",
+  "discover": "Depositor",
   "community": {
     "listTitle": "Community List"
   }

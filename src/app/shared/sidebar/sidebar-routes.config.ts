@@ -1,4 +1,5 @@
 import { RouteInfo } from './sidebar.metadata';
+import { TranslateService } from '@ngx-translate/core';
 
 //Sidebar menu Routes and data
 export const ROUTES: RouteInfo[] = [

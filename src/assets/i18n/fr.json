@@ -1,6 +1,10 @@
 {
   "title": "IRTracker",
   "description": "OUTIL DE SUIVI DES SOUMISSIONS DANS PAPYRUS",
+  "home": "Accueil",
+  "depositor": "Déposant",
+  "collection": "Collection",
+  "faq": "FAQ",
   "logout": "Déconnexion",
   "sectionTME": "Section TME",
   "help": "Aide",
@@ -10,7 +14,6 @@
   "english": "English",
   "french": "Français",
   "viewDetail": "Voir les détails",
-  "home": "Accueil",
   "documentProgress": "Avancement de la validation/diffusion d'un document dans Papyrus",
   "email": "Courriel",
   "emailPlaceholder": "Courriel",
@@ -24,7 +27,6 @@
   "institutionalAddressPlaceholder": "Adresse institutionnelle",
   "search": "Rechercher",
   "reset": "Réinitialiser",
-  "depositor": "Déposant",
   "id": "Id",
   "item": "Item",
   "author": "Auteur",
@@ -33,6 +35,7 @@
   "depositorCollection": "Collection du déposant",
   "currentStep": "Étape atteinte",
   "searchNoResults": "Aucun résultat trouvé pour : {{ query }}",
+  "discover": "Déposant",
   "community": {
     "listTitle": "Liste des communautés"
   }

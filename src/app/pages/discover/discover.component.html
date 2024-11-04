@@ -5,7 +5,7 @@
       <nav aria-label="breadcrumb">
         <ol class="breadcrumb mb-0 p-0">
           <li class="breadcrumb-item">
-            <a href="#"><i class="bi bi-user"></i></a>
+            <a href="#"><i class="bi bi-person-check"></i></a>
           </li>
           <li aria-current="page" class="breadcrumb-item active">
             {{ 'discover' | translate }}
@@ -71,7 +71,7 @@
                   </button>
                 </td>
                 <td><strong>{{ 'author' | translate }}:</strong> {{ rep.metadata['dc.contributor.author']?.[0]?.value || 'Non disponible' }}</td>
-                <td>{{ rep.id }}</td>
+                <td><a href="https://umontreal-dev.scholaris.ca/items/{{ rep.id }}" target="_blank" class="highcharts-link">{{ rep.id }}</a></td>
                 <td>{{ rep.name }}</td>
               </tr>
 
