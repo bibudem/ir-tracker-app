@@ -9,7 +9,7 @@ import {map} from "rxjs/operators";
 export class DSpaceService {
 
   // Remplacez l'URL par l'URL de votre backend Node.js
-  private apiUrl = 'http://localhost:3000';
+  private apiUrl = 'http://localhost:3100';
 
   constructor(private http: HttpClient) { }
 

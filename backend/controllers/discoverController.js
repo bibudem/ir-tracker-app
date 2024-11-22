@@ -12,10 +12,10 @@ const getDiscover = async (req, res) => {
 
   try {
     const response = await axios.get(`${config.DSPACE_API_URL}/discover/search/objects?query=${query}`, {
-      /*headers: {
-        Authorization: req.dspaceAuthToken,
-        Cookie: req.dspaceCookies.join('; '),
-      },*/
+      headers: {
+        'Authorization': req.dspaceAuthToken,
+        'Cookie': req.dspaceCookies,
+      }
     });
     res.json(response.data);
   } catch (error) {
