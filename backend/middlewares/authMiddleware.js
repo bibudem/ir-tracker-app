@@ -8,7 +8,7 @@ const attemptLogin = async (req, res, next) => {
     const csrfStatusResponse = await axios.get(`${config.DSPACE_API_URL}/authn/status`, {
       withCredentials: true,
       headers: {
-        'Origin': 'http://localhost:3100',
+        'Origin': config.API_IR_TRACKER,
         'Content-Type': 'application/json',
         'Authorization': req.headers['authorization'],
       },
@@ -18,15 +18,15 @@ const attemptLogin = async (req, res, next) => {
 
     if (csrfStatusResponse.data.authenticated) {
       req.dspaceAuthToken = csrfStatusResponse.headers['authorization'];
-      req.dspaceCookies = csrfStatusResponse.headers['set-cookie']?.join('; ');
+      req.dspaceCookies = csrfStatusResponse.headers['set-cookie'];
       return next();
     }
 
     // Sinon, récupérer le token CSRF et les cookies
-    const csrfTokenResponse = await axios.get(`${config.DSPACE_API_URL}/security/csrf`, {
+   const csrfTokenResponse = await axios.get(`${config.DSPACE_API_URL}/security/csrf`, {
       withCredentials: true,
       headers: {
-        'Origin': 'http://localhost:3100',
+        'Origin': config.API_IR_TRACKER,
         'Content-Type': 'application/json',
       },
     });
@@ -56,17 +56,17 @@ const attemptLogin = async (req, res, next) => {
           ...formData.getHeaders(),
           'Origin': config.API_IR_TRACKER,
           'X-XSRF-Token': csrfToken,
-          'Cookie': cookies?.join('; '),
+          'Cookie': cookies,
         },
         withCredentials: true,
       }
     );
 
     req.dspaceAuthToken = loginResponse.headers['authorization'];
-    req.dspaceCookies = loginResponse.headers['set-cookie']?.join('; ');
+    req.dspaceCookies = loginResponse.headers['set-cookie'];
 
     if (req.dspaceAuthToken) {
-      console.log('Connexion réussie, token reçu:', req.dspaceAuthToken);
+      //console.log('Connexion réussie, token reçu:', req.dspaceAuthToken);
       return next();
     } else {
       console.error("Erreur: Token d'authentification non reçu après connexion.");
