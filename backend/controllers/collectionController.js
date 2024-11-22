@@ -5,15 +5,17 @@ const logger = require('../utils/logger');
 const getCollections = async (req, res) => {
   try {
     const response = await axios.get(`${config.DSPACE_API_URL}/core/collections`, {
-      // En-tête d'autorisation désactivé pour éviter l'utilisation d'informations de connexion en local.
-      /*headers: {
-        'Authorization': `Bearer ${req.dspaceAuthToken}` // Incluez le token dans les en-têtes
-      }*/
+      headers: {
+        'Authorization': req.dspaceAuthToken,
+        'Cookie': req.dspaceCookies,
+      }
     });
-
     res.json(response.data);
   } catch (error) {
     logger.error('Erreur lors de la récupération des collections: ' + error.message);
+    if (error.response) {
+      logger.error('Détails de l\'erreur: ', error.response.data);
+    }
     res.status(500).send('Erreur lors de la récupération des collections');
   }
 };

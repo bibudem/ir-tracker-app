@@ -10,9 +10,10 @@ const getMappedCollections = async (req, res) => {
 
   try {
     const response = await axios.get(`${config.DSPACE_API_URL}/core/items/${query}/mappedCollections`, {
-      /*headers: {
-        'Authorization': `Bearer ${req.dspaceAuthToken}` // Incluez le token dans les en-têtes
-      }*/
+      headers: {
+        'Authorization': req.dspaceAuthToken,
+        'Cookie': req.dspaceCookies,
+      }
     });
     res.json(response.data);
   } catch (error) {

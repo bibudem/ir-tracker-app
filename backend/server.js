@@ -11,10 +11,10 @@ const app = express();
 
 // Middleware
 app.use(cors());
-app.use(express.json()); // Si vous avez besoin de traiter les JSON
+app.use(express.json());
 
 // Utiliser le middleware d'authentification pour toutes les requêtes vers DSpace
-//app.use(dspaceAuthMiddleware);
+app.use(dspaceAuthMiddleware);
 
 // Routes
 app.use('/collections', collectionRoutes);
