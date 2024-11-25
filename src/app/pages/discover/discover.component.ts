@@ -12,13 +12,12 @@ export class DiscoverComponent implements OnInit {
   collectionNames: string[] = [];
   showAlert: boolean = false;
   alertMessage: string = '';
+  isLoading: boolean = false;
 
-  query: { courriel: string, nom: string, prenom: string, matricule: string, adresseInstitutionnelle: string } = {
+  query: { courriel: string, nom: string, prenom: string } = {
     courriel: '',
     nom: '',
-    prenom: '',
-    matricule: '',
-    adresseInstitutionnelle: ''
+    prenom: ''
   };
 
   // Nouvel état pour suivre les lignes ouvertes/fermées
@@ -29,20 +28,25 @@ export class DiscoverComponent implements OnInit {
   ngOnInit(): void { }
 
   rechercher(): void {
-    const queryStr = `${this.query.courriel} ${this.query.nom} ${this.query.prenom} ${this.query.matricule} ${this.query.adresseInstitutionnelle}`.trim();
+    const queryStr = `${this.query.courriel} ${this.query.nom} ${this.query.prenom}`.trim();
+
+    if (!queryStr) {
+      return; // Ne pas exécuter de requête si les champs sont vides
+    }
+
+    this.isLoading = true; // Début du chargement
 
     this.dspaceService.getAuthor(queryStr).subscribe(
       (data) => {
+        this.isLoading = false; // Fin du chargement
         const embeddedObjects = data._embedded?.searchResult?._embedded?.objects || [];
         this.result = embeddedObjects.map((object: any) => {
           const indexableObject = object?._embedded?.indexableObject;
           return indexableObject ? indexableObject : null;
         }).filter(item => item !== null);
 
-        // Contrôle de l'affichage de l'alerte
-        if (!this.result.length && queryStr) {
+        if (!this.result.length) {
           this.showAlert = true;
-          // Récupère le message traduit et remplace {{ query }} par la chaîne de requête
           this.translate.get('searchNoResults', { query: queryStr }).subscribe((res: string) => {
             this.alertMessage = res;
           });
@@ -51,6 +55,7 @@ export class DiscoverComponent implements OnInit {
         }
       },
       (error) => {
+        this.isLoading = false; // Fin du chargement même en cas d'erreur
         console.error('Erreur lors de la récupération des données:', error);
       }
     );
@@ -72,16 +77,19 @@ export class DiscoverComponent implements OnInit {
     });
   }
 
+  getFormattedProvenance(provenance: any[]): string[] {
+    return provenance?.map(entry => entry.value) || [];
+  }
+
   // Fonction pour réinitialiser le formulaire et les résultats
   resetForm() {
     this.query = {
       courriel: '',
       nom: '',
-      prenom: '',
-      matricule: '',
-      adresseInstitutionnelle: ''
+      prenom: ''
     };
     this.result = [];
     this.showAlert = false;
+    this.isLoading = false;
   }
 }

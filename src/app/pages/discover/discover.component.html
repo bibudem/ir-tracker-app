@@ -22,32 +22,31 @@
     </div>
     <div class="card-body">
       <form class="row g-3" (ngSubmit)="rechercher()">
-        <div class="col-12 col-md-4 col-lg-4">
+        <div class="col-12 col-md-3 col-lg-3">
           <label class="form-label">{{ 'email' | translate }}</label>
           <input type="email" class="form-control" placeholder="{{ 'emailPlaceholder' | translate }}" [(ngModel)]="query.courriel" name="courriel">
         </div>
-        <div class="col-12 col-md-2 col-lg-2">
+        <div class="col-12 col-md-3 col-lg-3">
           <label class="form-label">{{ 'lastName' | translate }}</label>
           <input type="text" class="form-control" placeholder="{{ 'lastNamePlaceholder' | translate }}" [(ngModel)]="query.nom" name="nom">
         </div>
-        <div class="col-12 col-md-2 col-lg-2">
+        <div class="col-12 col-md-3 col-lg-3">
           <label class="form-label">{{ 'firstName' | translate }}</label>
           <input type="text" class="form-control" placeholder="{{ 'firstNamePlaceholder' | translate }}" [(ngModel)]="query.prenom" name="prenom">
         </div>
-        <div class="col-12 col-md-2 col-lg-2">
-          <label class="form-label">{{ 'registrationNumber' | translate }}</label>
-          <input type="text" class="form-control" placeholder="{{ 'registrationNumberPlaceholder' | translate }}" [(ngModel)]="query.matricule" name="matricule">
-        </div>
-        <div class="col-12 col-md-2 col-lg-2">
-          <label class="form-label">{{ 'institutionalAddress' | translate }}</label>
-          <input type="text" class="form-control" placeholder="{{ 'institutionalAddressPlaceholder' | translate }}" [(ngModel)]="query.adresseInstitutionnelle" name="adresseInstitutionnelle">
-        </div>
 
-        <div class=" col-12 mt-5 text-end">
-            <button  type="button" class="btn btn-primary mr-1 radius-30 mr-1 px-3" type="submit">{{ 'search' | translate }}</button>
-            <button  type="button" class="btn btn-secondary mr-1 radius-30 px-3" (click)="resetForm()">{{ 'reset' | translate }}</button>
+        <div class=" col-12 col-md-3 col-lg-3 mt-5">
+            <button  type="button" class="btn btn-primary  radius-30 mx-2 px-3" type="submit">{{ 'search' | translate }}</button>
+            <button  type="button" class="btn btn-danger radius-30 px-3" (click)="resetForm()">{{ 'reset' | translate }}</button>
         </div>
       </form>
+      <!-- Animation de chargement -->
+      <div *ngIf="isLoading" class="text-center my-3">
+        <div class="spinner-border text-warning" role="status">
+          <span class="visually-hidden">{{ 'loading' | translate }}</span>
+        </div>
+        <p class="text-warning">{{ 'loadingMessage' | translate }}</p>
+      </div>
 
       <div class="table-responsive mt-3" *ngIf="result.length">
         <table class="table align-middle">
@@ -85,6 +84,15 @@
                       <span *ngFor="let name of collectionNames[rep.id]">{{ name }} </span>
                     </p>
                     <p><strong>{{ 'currentStep' | translate }}:</strong> {{ rep.metadata['dc.date.accessioned'][0]?.value }}</p>
+                    <!-- Section pour afficher dc.description.provenance -->
+                    <div *ngIf="rep.metadata['dc.description.provenance']?.length">
+                      <p><strong>{{ 'provenanceDetails' | translate }}:</strong></p>
+                      <ul class="list-group">
+                        <li *ngFor="let provenance of getFormattedProvenance(rep.metadata['dc.description.provenance'])" class="list-group-item">
+                          {{ provenance }}
+                        </li>
+                      </ul>
+                    </div>
                   </div>
                 </td>
               </tr>
