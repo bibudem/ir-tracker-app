@@ -27,7 +27,7 @@
     "@popperjs/core": "^2.10.2",
     "@tinymce/tinymce-angular": "^4.2.4",
     "angular-calendar": "^0.28.28",
-    "apexcharts": "^3.19.0",
+    "apexcharts": "^3.54.1",
     "bootstrap": "^5.3.3",
     "chart.js": "^2.9.4",
     "date-fns": "^2.25.0",

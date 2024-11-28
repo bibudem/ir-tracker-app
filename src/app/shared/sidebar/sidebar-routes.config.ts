@@ -1,12 +1,11 @@
 import { RouteInfo } from './sidebar.metadata';
-import { TranslateService } from '@ngx-translate/core';
 
 //Sidebar menu Routes and data
 export const ROUTES: RouteInfo[] = [
    {
         path: '/home', title: 'Accueil', icon: 'bi bi-house-door', class: '', badge: '', badgeClass: '', isExternalLink: false, submenu: []
     },
-  {     path: '/discover', title: 'Déposant', icon: 'bi bi-person-check', class: '', badge: '', badgeClass: '', isExternalLink: false, submenu: []
+  {     path: '/eperson', title: 'Déposant', icon: 'bi bi-person-check', class: '', badge: '', badgeClass: '', isExternalLink: false, submenu: []
   },
   {     path: '/collection', title: 'Collection', icon: 'bi bi-collection', class: '', badge: '', badgeClass: '', isExternalLink: false, submenu: []
   },

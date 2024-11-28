@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import {HomeComponent} from "./home/home.component";
 import {CollectionComponent} from "./collection/collection.component";
-import {DiscoverComponent} from "./discover/discover.component";
+import {EpersonsComponent} from "./epersons/epersons.component";
 
 
 
@@ -25,8 +25,8 @@ const routes: Routes = [
         }
       },
       {
-        path: 'discover',
-        component: DiscoverComponent,
+        path: 'eperson',
+        component: EpersonsComponent,
         data: {
           title: 'Déposant'
         }
