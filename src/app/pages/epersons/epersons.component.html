@@ -1,0 +1,207 @@
+<div class="row">
+  <div class="card">
+    <div class="card-header py-3 mt-2">
+      <h4 class="mb-0 text-uppercase">{{ 'documentProgress' | translate }}</h4>
+    </div>
+    <div class="card-body">
+      <form class="row g-3 mt-2 mb-2" (ngSubmit)="rechercher()">
+        <!-- Formulaire -->
+        <div class="col-12 col-md-3">
+          <label>{{ 'email' | translate }}</label>
+          <input type="email" class="form-control" [(ngModel)]="query.email" name="email" />
+        </div>
+        <div class="col-12 col-md-3">
+          <label>{{ 'lastName' | translate }}</label>
+          <input type="text" class="form-control" [(ngModel)]="query.nom" name="nom" />
+        </div>
+        <div class="col-12 col-md-3">
+          <label>{{ 'firstName' | translate }}</label>
+          <input type="text" class="form-control" [(ngModel)]="query.prenom" name="prenom" />
+        </div>
+        <div class="col-12 col-md-3 d-flex align-items-end">
+          <button type="submit" class="btn btn-primary mx-2">{{ 'search' | translate }}</button>
+          <button type="button" class="btn btn-danger" (click)="resetForm()">{{ 'reset' | translate }}</button>
+        </div>
+      </form>
+      <!-- Résultats -->
+      <div *ngIf="result.length" class="mt-5">
+        <h5>{{ 'results' | translate }} : {{this.searchQueryString}}</h5>
+        <div *ngFor="let user of result" class="card-body col-md-4 col-xl-4 col-sm-6">
+          <div class="row  row-cols-xl-12 row-cols-xxl-12">
+            <div class="col">
+              <div
+                class="card border shadow-none radius-10"
+                [ngClass]="{'border-primary': selectedUserId === user.id, 'border-3': selectedUserId === user.id}">
+                <div class="card-body">
+                  <div class="d-flex align-items-center gap-3">
+                    <div class="icon-box bg-light-primary border-0">
+                      <i class="bi bi-person text-primary"></i>
+                    </div>
+                    <div class="info">
+                      <p class="mb-1">#{{ user.id }}</p>
+                      <p class="mb-1">{{ user.fullName }}</p>
+                      <p class="mb-1">{{ user.email }}</p>
+                      <button class="btn btn-primary btn-sm shadow-sm p-2" (click)="afficherItems(user.id)">
+                        <i class="bi bi-files-alt"></i> {{ 'list-items' | translate }}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Items -->
+      <div *ngIf="resultItems.length && selectedUserId" class="mt-3">
+        <hr>
+        <h5>{{ 'userItems' | translate }} : {{ selectedUserId }}</h5>
+        <div class="mt-3">
+          <table class="table align-middle">
+            <thead class="table-light">
+            <tr>
+              <th></th>
+              <th>{{ 'id' | translate }}</th>
+              <th>{{ 'item' | translate }}</th>
+              <th>{{ 'date' | translate }}</th>
+            </tr>
+            </thead>
+            <tbody>
+            <ng-container *ngFor="let item of resultItems">
+              <tr>
+                <td>
+                  <button class="btn btn-sm btn-outline-secondary" (click)="afficherDetailsItem(item.id); toggleRow(item.id); getNameCollection(item.id)">
+                    {{ expandedRows[item.id] ? '-' : '+' }}
+                  </button>
+                </td>
+                <td><a href="{{ urlDSpace + item.id }}" target="_blank" class="highcharts-link">{{ item.id }}</a></td>
+                <td>{{ item.title }}</td>
+                <td>{{ item.date }}</td>
+              </tr>
+              <tr *ngIf="expandedRows[item.id]">
+                <td colspan="4">
+                  <div *ngIf="loadingDetails" class="spinner-border text-primary" role="status"></div>
+                  <div *ngIf="!loadingDetails" class="item-details">
+                <!-- Nouvelle ligne pour afficher les détails -->
+                    <div class="row">
+                      <div class="card">
+                        <div class="card-body">
+                          <ul class="nav nav-tabs nav-success" role="tablist">
+                            <li class="nav-item" role="presentation">
+                              <a class="nav-link active" data-bs-toggle="tab" href="#generique" role="tab" aria-selected="true">
+                                <div class="d-flex align-items-center">
+                                  <div class="tab-icon"><i class='bx bx-home font-18 me-1'></i>
+                                  </div>
+                                  <div class="tab-title">{{ 'details-generique' | translate }}</div>
+                                </div>
+                              </a>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                              <a class="nav-link" data-bs-toggle="tab" href="#provenence" role="tab" aria-selected="false">
+                                <div class="d-flex align-items-center">
+                                  <div class="tab-icon"><i class='bx bx-user-pin font-18 me-1'></i>
+                                  </div>
+                                  <div class="tab-title">{{ 'details-provenence' | translate }}</div>
+                                </div>
+                              </a>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                              <a class="nav-link" data-bs-toggle="tab" href="#note" role="tab" aria-selected="false">
+                                <div class="d-flex align-items-center">
+                                  <div class="tab-icon"><i class='bx bx-microphone font-18 me-1'></i>
+                                  </div>
+                                  <div class="tab-title">{{ 'details-note' | translate }}</div>
+                                </div>
+                              </a>
+                            </li>
+                          </ul>
+                          <div class="tab-content py-3">
+                            <div class="tab-pane fade show active" id="generique" role="tabpanel">
+                              <ul class="list-unstyled">
+                                <li *ngIf="selectedItemDetails.id" class="p-2">
+                                  <strong>{{ 'id' | translate }}:</strong> {{ selectedItemDetails.id }}
+                                </li>
+                                <li *ngIf="selectedItemDetails.name" class="p-2">
+                                  <strong>{{ 'titre' | translate }}:</strong> {{ selectedItemDetails.name }}
+                                </li>
+                                <li *ngIf="selectedItemDetails.author?.length" class="p-2">
+                                  <strong>{{ 'authors' | translate }}:</strong>
+                                  <span *ngFor="let author of selectedItemDetails.author; let last = last">
+                                    {{ author.value }}<span *ngIf="!last">, </span>
+                                  </span>
+                                </li>
+                                <li class="p-2">
+                                  <strong>{{ 'collection' | translate }}:</strong> {{ this.collectionNames[item.id] }}
+                                </li>
+                                <li *ngIf="selectedItemDetails.dateAccessioned" class="p-2">
+                                  <strong>{{ 'date_accessioned' | translate }}:</strong> {{ selectedItemDetails.dateAccessioned }}
+                                </li>
+                                <li *ngIf="selectedItemDetails.dateIssued" class="p-2">
+                                  <strong>{{ 'date_issued' | translate }}:</strong> {{ selectedItemDetails.dateIssued }}
+                                </li>
+                                <li *ngIf="selectedItemDetails.description" class="p-2">
+                                  <strong>{{ 'item-description' | translate }}:</strong> {{ selectedItemDetails.description }}
+                                </li>
+
+                                <li *ngIf="selectedItemDetails.type" class="p-2">
+                                  <strong>{{ 'type' | translate }}:</strong> {{ selectedItemDetails.type }}
+                                </li>
+                                <li class="p-2">
+                                  <strong>{{ 'in_archive' | translate }}:</strong>
+                                  {{ selectedItemDetails.inArchive ? ('yes' | translate) : ('no' | translate) }}
+                                </li>
+                                <li class="p-2">
+                                  <strong>{{ 'discoverable' | translate }}:</strong>
+                                  {{ selectedItemDetails.discoverable ? ('yes' | translate) : ('no' | translate) }}
+                                </li>
+                                <li *ngIf="selectedItemDetails.itemType" class="p-2">
+                                  <strong>{{ 'item_type' | translate }}:</strong> {{ selectedItemDetails.itemType }}
+                                </li>
+                              </ul>
+                            </div>
+                            <div class="tab-pane fade" id="provenence" role="tabpanel">
+
+                              <div class="card radius-10 p-2">
+                                <div class="card-header">
+                                  <strong class="mt-2">{{ 'provenance' | translate }}:</strong>
+                                </div>
+                                <div class="card-body">
+                                  <ul class="list-unstyled">
+                                    <li *ngFor="let provenance of selectedItemDetails.provenance" class="d-flex align-items-center my-4 border-bottom pb-2">
+                                      {{ provenance.value }}
+                                    </li>
+                                  </ul>
+                                </div>
+                              </div>
+                            </div>
+                            <div class="tab-pane fade" id="note" role="tabpanel">
+                              {{ selectedItemDetails.noteUdem?.length ? selectedItemDetails.noteUdem : ('non-comment' | translate) }}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    </div>
+                  </td>
+              </tr>
+            </ng-container>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <!-- Loader -->
+      <div *ngIf="isLoading" class="text-center my-3">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">{{ 'loading' | translate }}</span>
+        </div>
+        <p class="text-primary">{{ 'loadingMessage' | translate }}</p>
+      </div>
+      <ng-container *ngIf="showAlert">
+        <div class="alert border-0 border-danger border-start border-4 bg-light-danger alert-dismissible fade show mt-5">
+          <div class="text-danger">{{ alertMessage }}</div>
+          <button type="button" class="btn-close" (click)="showAlert = false" aria-label="Close"></button>
+        </div>
+      </ng-container>
+    </div>
+  </div>
+</div>

@@ -9,7 +9,7 @@ const getMappedCollections = async (req, res) => {
   }
 
   try {
-    const response = await axios.get(`${config.DSPACE_API_URL}/core/items/${query}/mappedCollections`, {
+    const response = await axios.get(`${config.DSPACE_API_URL}/core/items/${query}/owningCollection`, {
       headers: {
         'Authorization': req.dspaceAuthToken,
         'Cookie': req.dspaceCookies,
@@ -17,12 +17,33 @@ const getMappedCollections = async (req, res) => {
     });
     res.json(response.data);
   } catch (error) {
-    logger.error('Url: ' + `${config.DSPACE_API_URL}/core/items/${query}/mappedCollections`);
-    logger.error('Erreur lors de la récupération de mappedCollections: ' + error.message);
-    res.status(500).send('Erreur lors de la récupération de mappedCollections');
+    logger.error('Url: ' + `${config.DSPACE_API_URL}/core/items/${query}/owningCollection`);
+    logger.error('Erreur lors de la récupération de owningCollection: ' + error.message);
+    res.status(500).send('Erreur lors de la récupération de owningCollection');
+  }
+};
+
+const getSubmitter = async (req, res) => {
+  try {
+    console.log(req.params.uuid);
+    const uuid = req.params.uuid;
+    const response = await axios.get(`${config.DSPACE_API_URL}/core/items/${uuid}/submitter`, {
+      headers: {
+        'Authorization': req.dspaceAuthToken,
+        'Cookie': req.dspaceCookies,
+      }
+    });
+    res.json(response.data);
+  } catch (error) {
+    logger.error('Erreur lors de la récupération des infos de submitter: ' + error.message);
+    if (error.response) {
+      logger.error('Détails de l\'erreur: ', error.response.data);
+    }
+    res.status(500).send('Erreur lors de la récupération des infos de submitter');
   }
 };
 
 module.exports = {
   getMappedCollections,
+  getSubmitter
 };
