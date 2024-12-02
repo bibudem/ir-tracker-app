@@ -45,18 +45,33 @@ const getUserItems = async (req, res) => {
   }
 
   try {
-    const response = await axios.get(`${config.DSPACE_API_URL}/core/items?submitter=${userId}`, {
+    const response = await axios.get(`${config.DSPACE_API_URL}/discover/search/objects?query=${userId}`, {
       headers: {
         'Authorization': req.dspaceAuthToken,
         'Cookie': req.dspaceCookies,
       },
     });
-    console.log(response.data._embedded.items);
-    const items = response.data._embedded.items.map(item => ({
-      id: item.uuid,
-      title: item.metadata['dc.title']?.[0]?.value || 'Titre non disponible',
-      date: item.metadata['dc.date.issued']?.[0]?.value || 'Date non disponible',
-    }));
+
+    // Récupération du nombre total d'éléments
+    const totalElements = response.data._embedded?.searchResult?.page?.totalElements || 0;
+
+    // Si aucun élément trouvé, retourner 0
+    if (totalElements === 0) {
+      return res.json({ items: 0 });
+    }
+
+    // Extraire les objets si disponibles
+    const objects = response.data._embedded?.searchResult?._embedded?.objects || [];
+
+    const items = objects.map(obj => {
+      const item = obj._embedded?.indexableObject;
+      return {
+        id: item.id || null,
+        title: item.metadata['dc.title']?.[0]?.value || 'Titre non disponible',
+        lastModified: item.lastModified || 'Date de modification non disponible',
+        submissionDate: item.metadata['dc.date.accessioned']?.[0]?.value || 'Date de soumission non disponible',
+      };
+    });
 
     res.json({ items });
   } catch (error) {

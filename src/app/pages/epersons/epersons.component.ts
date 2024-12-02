@@ -85,8 +85,17 @@ export class EpersonsComponent implements OnInit {
 
     this.dspaceService.getUserItems(userId).subscribe(
       (data) => {
-        this.resultItems = data.items || [];
-        this.isLoading = false;
+        if(data.items==0){
+          this.alertMessage = 'Aucun élément n\'est associé à ce compte.';
+          this.showAlert=true;
+          this.isLoading = false;
+        } else{
+          this.showAlert=false;
+          this.alertMessage = '';
+          this.resultItems = data.items || [];
+          this.isLoading = false;
+        }
+
       },
       (error) => {
         this.isLoading = false;

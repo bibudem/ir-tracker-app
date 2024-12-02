@@ -38,6 +38,7 @@
   "item": "Item",
   "titre": "Titre",
   "date": "Date",
+  "submissionDate": "Date de soumission",
   "author": "Auteur",
   "lastModified": "Dernière modification",
   "disseminatedOnPapyrus": "Diffusé sur Papyrus",
