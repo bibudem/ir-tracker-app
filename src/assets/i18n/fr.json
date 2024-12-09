@@ -67,5 +67,8 @@
   "details-note": "Notes",
   "non-comment": "Aucun commentaire",
   "list-items": "Items associés",
-  "community-listTitle": "Liste des communautés"
+  "community-listTitle": "Liste des communautés",
+  "userItemsWorkflow": "Éléments en Workflow",
+  "userItemsTout": "Tous les éléments de déposant",
+  "workflowStep": "Étape de validation"
 }

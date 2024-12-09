@@ -9,25 +9,20 @@ import { environment } from '../../../environments/environment';
   styleUrls: ['./epersons.component.scss'],
 })
 export class EpersonsComponent implements OnInit {
-  // Recherche utilisateur
   query = { email: '', nom: '', prenom: '' };
-
-  // Résultats de la recherche
   result: any[] = [];
+  resultItemsWorkflow: any[] = [];
   resultItems: any[] = [];
+  resultItemsCombined: any[] = [];
   selectedItemDetails: any = null;
-
-  // Données complémentaires
   collectionNames: { [key: string]: string } = {};
   expandedRows: { [key: string]: boolean } = {};
 
-  // États de chargement et messages
   showAlert = false;
   alertMessage = '';
   isLoading = false;
   loadingDetails = false;
 
-  // Données spécifiques
   urlDSpace = environment.urlDSpace + '/items/';
   selectedUserId: string | null = null;
   searchQueryString: string = '';
@@ -45,7 +40,7 @@ export class EpersonsComponent implements OnInit {
    */
   rechercher(): void {
     const queryStr = [this.query.email, this.query.nom, this.query.prenom]
-      .filter((value) => value?.trim())
+      .filter((value) => value?.trim())  // On filtre les champs vides
       .join('&');
 
     this.searchQueryString = queryStr;
@@ -79,23 +74,29 @@ export class EpersonsComponent implements OnInit {
    */
   afficherItems(userId: string): void {
     this.selectedUserId = userId;
-    this.resultItems = [];
+    this.resultItemsCombined = []; // Réinitialisation des items combinés
     this.selectedItemDetails = null;
     this.isLoading = true;
 
     this.dspaceService.getUserItems(userId).subscribe(
       (data) => {
-        if(data.items==0){
+        if (data.workflowItems.length === 0 && data.userItems.length === 0) {
           this.alertMessage = 'Aucun élément n\'est associé à ce compte.';
-          this.showAlert=true;
+          this.showAlert = true;
           this.isLoading = false;
-        } else{
-          this.showAlert=false;
+        } else {
+          this.showAlert = false;
           this.alertMessage = '';
-          this.resultItems = data.items || [];
+          this.resultItemsWorkflow = data.workflowItems || [];
+          this.resultItems = data.userItems || [];
+
+          // Combine les deux listes d'items
+          this.resultItemsCombined = [
+            ...this.resultItemsWorkflow,
+            ...this.resultItems
+          ];
           this.isLoading = false;
         }
-
       },
       (error) => {
         this.isLoading = false;
@@ -110,13 +111,17 @@ export class EpersonsComponent implements OnInit {
    * @param itemId - L'identifiant de l'item.
    */
   afficherDetailsItem(itemId: string): void {
+    // Protection contre l'appel multiple pour le même item
+    if (this.loadingDetails || this.selectedItemDetails?.id === itemId) {
+      return;
+    }
+
     this.selectedItemDetails = null;
     this.loadingDetails = true;
 
     this.dspaceService.getItemDetails(itemId).subscribe(
       (data) => {
         this.selectedItemDetails = data;
-        console.log(data);
         this.loadingDetails = false;
       },
       (error) => {
@@ -127,14 +132,33 @@ export class EpersonsComponent implements OnInit {
   }
 
   /**
+   * Calculer la progression d'une étape de workflow.
+   * @param stepId - L'identifiant de l'étape.
+   * @returns Un objet avec l'étiquette de l'étape et la progression en pourcentage.
+   */
+  getStepProgress(stepId: string): { label: string, progress: string } {
+    const steps = ['reviewstep', 'editstep', 'finaleditstep'];
+    const stepIndex = steps.indexOf(stepId);
+
+    if (stepIndex === -1) {
+      return { label: 'Unknown', progress: '0.00' };
+    }
+
+    const progress = ((stepIndex + 1) / steps.length) * 100;
+    return { label: steps[stepIndex], progress: progress.toFixed(2) };
+  }
+
+  /**
    * Obtenir le nom de la collection associée à un item.
-   * Stocke le nom de la collection pour un usage ultérieur.
    * @param itemId - L'identifiant de l'item.
    */
   getNameCollection(itemId: string): void {
+    // On vérifie si la propriété 'name' existe dans la réponse avant de l'utiliser
     this.dspaceService.getMappedCollection(itemId).subscribe({
       next: (names) => {
-        this.collectionNames[itemId] = names;
+        if (names && names[itemId]) {
+          this.collectionNames[itemId] = names[itemId];
+        }
       },
       error: (error) => {
         console.error('Erreur lors de la récupération des collections', error);
@@ -159,6 +183,15 @@ export class EpersonsComponent implements OnInit {
    * @param id - L'identifiant de l'item ou de l'utilisateur.
    */
   toggleRow(id: string): void {
-    this.expandedRows[id] = !this.expandedRows[id];
+    // Si l'élément est déjà ouvert, on le ferme
+    if (this.expandedRows[id]) {
+      this.expandedRows[id] = false;
+    } else {
+      // Réinitialiser tous les éléments (fermer tous les détails)
+      this.expandedRows = {};
+
+      // Ouvrir uniquement l'élément sélectionné
+      this.expandedRows[id] = true;
+    }
   }
 }

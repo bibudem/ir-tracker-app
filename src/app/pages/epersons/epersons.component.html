@@ -39,7 +39,7 @@
                           <p class="mb-1">#{{ user.id }}</p>
                           <p class="mb-1">{{ user.fullName }}</p>
                           <p class="mb-1">{{ user.email }}</p>
-                          <button class="btn btn-primary btn-sm shadow-sm p-2" (click)="afficherItems(user.id)">
+                          <button class="btn btn-dark btn-sm shadow-sm p-2" (click)="afficherItems(user.id)">
                             <i class="bi bi-files-alt"></i> {{ 'list-items' | translate }}
                           </button>
                         </div>
@@ -50,10 +50,9 @@
         </div>
       </div>
       <!-- Items -->
-      <div *ngIf="resultItems.length && selectedUserId" class="mt-3">
-        <hr>
-        <h5>{{ 'userItems' | translate }} : {{ selectedUserId }}</h5>
-        <div class="mt-3">
+      <div *ngIf="resultItemsCombined.length && selectedUserId" class="mt-3">
+        <h4>{{ 'userItems' | translate }} : {{ selectedUserId }}</h4>
+        <div class="mt-2">
           <table class="table align-middle">
             <thead class="table-light">
             <tr>
@@ -65,10 +64,11 @@
             </tr>
             </thead>
             <tbody>
-            <ng-container *ngFor="let item of resultItems">
+            <ng-container *ngFor="let item of resultItemsCombined">
               <tr>
                 <td>
-                  <button class="btn btn-sm btn-outline-secondary" (click)="afficherDetailsItem(item.id); toggleRow(item.id); getNameCollection(item.id)">
+                  <button class="btn btn-sm btn-outline-secondary"
+                          (click)="toggleRow(item.id); afficherDetailsItem(item.id); getNameCollection(item.id)">
                     {{ expandedRows[item.id] ? '-' : '+' }}
                   </button>
                 </td>
@@ -81,84 +81,96 @@
                 <td colspan="4">
                   <div *ngIf="loadingDetails" class="spinner-border text-primary" role="status"></div>
                   <div *ngIf="!loadingDetails" class="item-details">
-                <!-- Nouvelle ligne pour afficher les détails -->
-                          <div class="row g-3 p-4">
-                            <div class="col-12 col-lg-4 col-xl-4 d-flex">
-                              <div class="card mb-0 radius-10 shadow-none w-100">
-                                <div class="card-body">
-                                  <h5 class="card-title text-primary">{{ 'details-generique' | translate }}</h5>
-                                  <ul class="list-group mt-3">
-                                    <li *ngIf="selectedItemDetails?.id" class="list-group-item p-2">
-                                      <strong>{{ 'id' | translate }}:</strong> {{ selectedItemDetails.id }}
-                                    </li>
-                                    <li *ngIf="selectedItemDetails.name" class="list-group-item p-2">
-                                      <strong>{{ 'titre' | translate }}:</strong> {{ selectedItemDetails.name }}
-                                    </li>
-                                    <li *ngIf="selectedItemDetails.author?.length" class="list-group-item p-2">
-                                      <strong>{{ 'authors' | translate }}:</strong>
-                                      <span *ngFor="let author of selectedItemDetails.author; let last = last">
+                    <!-- Nouvelle ligne pour afficher les détails -->
+                    <div class="row g-3 p-4">
+                      <div class="col-12 col-lg-4 col-xl-4 d-flex">
+                        <div class="card mb-0 radius-10 shadow-none w-100">
+                          <div class="card-body">
+                            <h5 class="card-title text-primary">{{ 'details-generique' | translate }}</h5>
+                            <ul class="list-group mt-3">
+                              <li *ngIf="selectedItemDetails?.id" class="list-group-item p-2">
+                                <strong>{{ 'id' | translate }}:</strong> {{ selectedItemDetails.id }}
+                              </li>
+                              <li *ngIf="selectedItemDetails.name" class="list-group-item p-2">
+                                <strong>{{ 'titre' | translate }}:</strong> {{ selectedItemDetails.name }}
+                              </li>
+                              <li *ngIf="selectedItemDetails.author?.length" class="list-group-item p-2">
+                                <strong>{{ 'authors' | translate }}:</strong>
+                                <span *ngFor="let author of selectedItemDetails.author; let last = last">
                                     {{ author.value }}<span *ngIf="!last">, </span></span>
-                                    </li>
-                                    <li class="list-group-item p-2">
-                                      <strong>{{ 'collection' | translate }}:</strong> {{ this.collectionNames[item.id] }}
-                                    </li>
-                                    <li *ngIf="selectedItemDetails.dateAccessioned" class="list-group-item p-2">
-                                      <strong>{{ 'date_accessioned' | translate }}:</strong> {{ selectedItemDetails.dateAccessioned }}
-                                    </li>
-                                    <li *ngIf="selectedItemDetails.dateIssued" class="list-group-item p-2">
-                                      <strong>{{ 'date_issued' | translate }}:</strong> {{ selectedItemDetails.dateIssued }}
-                                    </li>
-                                    <li *ngIf="selectedItemDetails.description" class="list-group-item  p-2">
-                                      <strong>{{ 'item-description' | translate }}:</strong> {{ selectedItemDetails.description }}
-                                    </li>
+                              </li>
+                              <li class="list-group-item p-2">
+                                <strong>{{ 'collection' | translate }}:</strong> {{ this.collectionNames[item.id] }}
+                              </li>
+                              <li *ngIf="selectedItemDetails.dateAccessioned" class="list-group-item p-2">
+                                <strong>{{ 'date_accessioned' | translate }}:</strong> {{ selectedItemDetails.dateAccessioned }}
+                              </li>
+                              <li *ngIf="selectedItemDetails.dateIssued" class="list-group-item p-2">
+                                <strong>{{ 'date_issued' | translate }}:</strong> {{ selectedItemDetails.dateIssued }}
+                              </li>
+                              <li *ngIf="selectedItemDetails.description" class="list-group-item  p-2">
+                                <strong>{{ 'item-description' | translate }}:</strong> {{ selectedItemDetails.description }}
+                              </li>
 
-                                    <li *ngIf="selectedItemDetails.type" class="list-group-item  p-2">
-                                      <strong>{{ 'type' | translate }}:</strong> {{ selectedItemDetails.type }}
-                                    </li>
-                                    <li class="list-group-item p-2">
-                                      <strong>{{ 'in_archive' | translate }}:</strong>
-                                      {{ selectedItemDetails.inArchive ? ('yes' | translate) : ('no' | translate) }}
-                                    </li>
-                                    <li class="list-group-item p-2">
-                                      <strong>{{ 'discoverable' | translate }}:</strong>
-                                      {{ selectedItemDetails.discoverable ? ('yes' | translate) : ('no' | translate) }}
-                                    </li>
-                                    <li *ngIf="selectedItemDetails.itemType" class="list-group-item p-2">
-                                      <strong>{{ 'item_type' | translate }}:</strong> {{ selectedItemDetails.itemType }}
-                                    </li>
-                                    <li class="list-group-item p-2">
-                                      {{ selectedItemDetails.noteUdem?.length ? selectedItemDetails.noteUdem : ('non-comment' | translate) }}
-                                    </li>
-                                  </ul>
+                              <li *ngIf="selectedItemDetails.type" class="list-group-item  p-2">
+                                <strong>{{ 'type' | translate }}:</strong> {{ selectedItemDetails.type }}
+                              </li>
+                              <li class="list-group-item p-2">
+                                <strong>{{ 'in_archive' | translate }}:</strong>
+                                {{ selectedItemDetails.inArchive ? ('yes' | translate) : ('no' | translate) }}
+                              </li>
+                              <li class="list-group-item p-2">
+                                <strong>{{ 'discoverable' | translate }}:</strong>
+                                {{ selectedItemDetails.discoverable ? ('yes' | translate) : ('no' | translate) }}
+                              </li>
+                              <li *ngIf="selectedItemDetails.itemType" class="list-group-item p-2">
+                                <strong>{{ 'item_type' | translate }}:</strong> {{ selectedItemDetails.itemType }}
+                              </li>
+                              <li class="list-group-item p-2">
+                                {{ selectedItemDetails.noteUdem?.length ? selectedItemDetails.noteUdem : ('non-comment' | translate) }}
+                              </li>
+                            </ul>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-12 col-lg-8 col-xl-8 d-flex">
+                        <div class="card mb-0 radius-10 shadow-none w-100">
+                          <div class="card-body">
+                            <div  *ngIf="item.step?.id" class="mt-3 w-100">
+                              <h5 class="card-title">{{ 'workflowStep' | translate }}: {{ getStepProgress(item.step.id).label }}</h5>
+                              <div class="progress">
+                                <div class="progress-bar"
+                                     role="progressbar"
+                                     [style.width.%]="getStepProgress(item.step.id).progress"
+                                     aria-valuenow="{{ getStepProgress(item.step.id).progress }}"
+                                     aria-valuemin="0"
+                                     aria-valuemax="100">
+                                  {{ getStepProgress(item.step.id).progress }}%
                                 </div>
                               </div>
                             </div>
-                            <div class="col-12 col-lg-8 col-xl-8 d-flex">
-                              <div class="card mb-0 radius-10 shadow-none w-100">
-                                <div class="card-body">
-                                  <h5 class="card-title text-primary">{{ 'details-provenence' | translate }}</h5>
-                                  <div class="timeline mt-3">
-                                    <div *ngFor="let provenance of selectedItemDetails.provenance; let i = index" class="timeline-item">
-                                      <div class="timeline-marker"></div>
-                                      <div class="timeline-content my-2">
-                                        <h6 class="timeline-title">Étape {{ i + 1 }}</h6>
-                                        <p>{{ provenance.value }}</p>
-                                      </div>
-                                    </div>
-                                  </div>
+                            <h5 class="card-title mt-3">{{ 'details-provenence' | translate }}</h5>
+                            <div class="timeline mt-3">
+                              <div *ngFor="let provenance of selectedItemDetails.provenance; let i = index" class="timeline-item">
+                                <div class="timeline-marker"></div>
+                                <div class="timeline-content my-2">
+                                  <h6 class="timeline-title">Étape {{ i + 1 }}</h6>
+                                  <p>{{ provenance.value }}</p>
                                 </div>
                               </div>
                             </div>
                           </div>
                         </div>
-                  </td>
+                      </div>
+                    </div>
+                  </div>
+                </td>
               </tr>
             </ng-container>
             </tbody>
           </table>
         </div>
       </div>
-      <!-- Loader -->
       <div *ngIf="isLoading" class="text-center my-3">
         <div class="spinner-border text-primary" role="status">
           <span class="visually-hidden">{{ 'loading' | translate }}</span>

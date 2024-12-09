@@ -39,41 +39,89 @@ const getUsers = async (req, res) => {
 
 
 const getUserItems = async (req, res) => {
-  const userId = req.query.userId; // UUID de l'utilisateur
+  const userId = req.query.userId;
   if (!userId) {
     return res.status(400).send({ error: 'Le paramètre userId est requis' });
   }
 
   try {
-    const response = await axios.get(`${config.DSPACE_API_URL}/discover/search/objects?query=${userId}`, {
-      headers: {
-        'Authorization': req.dspaceAuthToken,
-        'Cookie': req.dspaceCookies,
-      },
-    });
+    // Récupération des workflow items
+    const workflowResponse = await axios.get(
+      `${config.DSPACE_API_URL}/workflow/workflowitems/search/findBySubmitter?uuid=${userId}`,
+      {
+        headers: {
+          Authorization: req.dspaceAuthToken,
+          Cookie: req.dspaceCookies,
+        },
+      }
+    );
 
-    // Récupération du nombre total d'éléments
-    const totalElements = response.data._embedded?.searchResult?.page?.totalElements || 0;
+    const workflowItems = workflowResponse.data._embedded?.workflowitems || [];
 
-    // Si aucun élément trouvé, retourner 0
-    if (totalElements === 0) {
-      return res.json({ items: 0 });
-    }
+    // Enrichir les données des workflow items avec les détails de l'étape
+    const enrichedWorkflowItems = await Promise.all(
+      workflowItems.map(async (item) => {
+        const metadata = item._embedded?.item?.metadata || {};
+        const stepLink = item._links?.step?.href;
 
-    // Extraire les objets si disponibles
-    const objects = response.data._embedded?.searchResult?._embedded?.objects || [];
+        // Récupérer les informations de l'étape si le lien est disponible
+        let stepDetails = {};
+        if (stepLink) {
+          try {
+            const stepResponse = await axios.get(stepLink, {
+              headers: {
+                Authorization: req.dspaceAuthToken,
+                Cookie: req.dspaceCookies,
+              },
+            });
+            stepDetails = stepResponse.data;
+          } catch (stepError) {
+            logger.warn(`Erreur lors de la récupération de l'étape pour l'item ${item.id}: ${stepError.message}`);
+          }
+        }
 
-    const items = objects.map(obj => {
+        return {
+          id: item._embedded?.item?.id,
+          title: metadata['dc.title']?.[0]?.value || 'Titre non disponible',
+          description: metadata['dcterms.abstract']?.[0]?.value || 'Description non disponible',
+          lastModified: item.lastModified || 'Date de modification non disponible',
+          submissionDate: metadata['dc.date.submitted']?.[0]?.value || 'Date de soumission non disponible',
+          step: {
+            id: stepDetails.id || 'Étape non disponible',
+            type: stepDetails.type || 'Type non disponible',
+          },
+        };
+      })
+    );
+
+    // Récupération des items de l'utilisateur
+    const userItemsResponse = await axios.get(
+      `${config.DSPACE_API_URL}/discover/search/objects?query=${userId}`,
+      {
+        headers: {
+          Authorization: req.dspaceAuthToken,
+          Cookie: req.dspaceCookies,
+        },
+      }
+    );
+
+    const objects = userItemsResponse.data._embedded?.searchResult?._embedded?.objects || [];
+    const userItems = objects.map((obj) => {
       const item = obj._embedded?.indexableObject;
       return {
         id: item.id || null,
         title: item.metadata['dc.title']?.[0]?.value || 'Titre non disponible',
+        description: item.metadata['dc.description']?.[0]?.value || 'Description non disponible',
         lastModified: item.lastModified || 'Date de modification non disponible',
         submissionDate: item.metadata['dc.date.accessioned']?.[0]?.value || 'Date de soumission non disponible',
       };
     });
 
-    res.json({ items });
+    // Structure des données pour le front-end
+    res.json({
+      workflowItems: enrichedWorkflowItems, // Items en workflow enrichis avec les détails des étapes
+      userItems, // Autres items de l'utilisateur enrichis
+    });
   } catch (error) {
     logger.error('Erreur lors de la récupération des items:', error.message);
     res.status(500).send({ error: 'Erreur lors de la récupération des items' });

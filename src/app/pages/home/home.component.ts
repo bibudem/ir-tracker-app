@@ -13,13 +13,13 @@ export class HomeComponent implements OnInit, AfterViewInit {
   @ViewChild('chart') chartElement!: ElementRef;
 
   options = {
-    series: [89, 45, 35, 62],
+    series: [1200, 645, 335],
     chart: {
       width: 340,
       type: 'donut',
     },
-    labels: ["Visitors", "Subscribers", "Contributor", "Author"],
-    colors: ["#3361ff", "#e72e2e", "#12bf24", "#ff6632"],
+    labels: ["Thèse et Mémoire ", "Travaux et publications", "Productions étudiantes"],
+    colors: ["#3361ff",  "#12bf24", "#ff6632"],
     legend: {
       show: false,
       position: 'top',
