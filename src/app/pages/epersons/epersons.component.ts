@@ -39,6 +39,7 @@ export class EpersonsComponent implements OnInit {
    * Crée une requête basée sur les champs remplis et affiche les résultats.
    */
   rechercher(): void {
+    this.result = [];
     const queryStr = [this.query.email, this.query.nom, this.query.prenom]
       .filter((value) => value?.trim())  // On filtre les champs vides
       .join('&');
@@ -77,6 +78,7 @@ export class EpersonsComponent implements OnInit {
     this.resultItemsCombined = []; // Réinitialisation des items combinés
     this.selectedItemDetails = null;
     this.isLoading = true;
+    this.expandedRows = {};
 
     this.dspaceService.getUserItems(userId).subscribe(
       (data) => {

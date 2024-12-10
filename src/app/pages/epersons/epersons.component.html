@@ -154,7 +154,7 @@
                               <div *ngFor="let provenance of selectedItemDetails.provenance; let i = index" class="timeline-item">
                                 <div class="timeline-marker"></div>
                                 <div class="timeline-content my-2">
-                                  <h6 class="timeline-title">Étape {{ i + 1 }}</h6>
+                                  <h6 class="timeline-title"> {{ 'processus' | translate }} {{ i + 1 }}</h6>
                                   <p>{{ provenance.value }}</p>
                                 </div>
                               </div>
