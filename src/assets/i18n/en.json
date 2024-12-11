@@ -59,5 +59,14 @@
   "details-note": "Note Details",
   "non-comment": "No comment",
   "list-items": "Associated Items",
-  "community-listTitle": "Community List"
+  "community-listTitle": "Community List",
+  "userItemsWorkflow": "User Items in Workflow",
+  "userItemsTout": "All User Items",
+  "workflowStep": "Workflow Step",
+  "processus": "Process",
+  "etape": "Step",
+  "workflowitems": "Workflow Items",
+  "rapports": "Raports",
+  "fermer": "Close",
+  "abstract": "Abstract"
 }

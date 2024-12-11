@@ -38,6 +38,7 @@
   "item": "Item",
   "titre": "Titre",
   "date": "Date",
+  "submissionDate": "Date de soumission",
   "author": "Auteur",
   "lastModified": "Dernière modification",
   "disseminatedOnPapyrus": "Diffusé sur Papyrus",
@@ -66,5 +67,14 @@
   "details-note": "Notes",
   "non-comment": "Aucun commentaire",
   "list-items": "Items associés",
-  "community-listTitle": "Liste des communautés"
+  "community-listTitle": "Liste des communautés",
+  "userItemsWorkflow": "Éléments en Workflow",
+  "userItemsTout": "Tous les éléments de déposant",
+  "workflowStep": "Étape de validation",
+  "processus": "Processus",
+  "etape": "Étape",
+  "workflowitems": "Éléments de workflow",
+  "rapports": "Rapports",
+  "fermer": "Fermer",
+  "abstract": "Résumé"
 }

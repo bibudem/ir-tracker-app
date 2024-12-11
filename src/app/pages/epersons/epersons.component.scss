@@ -36,3 +36,40 @@
 .card.border-3 {
   border-width: 1px !important;
 }
+.timeline {
+  position: relative;
+  padding-left: 40px;
+  margin-top: 20px;
+}
+
+.timeline-item {
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.timeline-marker {
+  position: absolute;
+  left: 0;
+  top: 5px;
+  width: 15px;
+  height: 15px;
+  background-color: #007bff;
+  border-radius: 50%;
+}
+
+.timeline-content {
+  padding-left: 25px;
+}
+
+.timeline-title {
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+.progress {
+  height: 20px;
+}
+
+.progress-bar {
+  background-color: #bd4607;
+  transition: width 0.4s ease;
+}
