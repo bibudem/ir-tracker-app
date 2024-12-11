@@ -1,0 +1,152 @@
+<div class="row">
+  <div class="col-12 col-lg-12 col-xl-12">
+    <div class="card radius-10 mh-500">
+      <div class="card-body">
+        <div class="row row-cols-1 row-cols-lg-2 g-3 align-items-center">
+          <div class="col">
+            <h4 class="mb-0 text-uppercase">{{ 'workflowitems' | translate }}</h4>
+          </div>
+          <div class="col">
+            <div class="d-flex align-items-center justify-content-sm-end gap-3 cursor-pointer">
+              <!--<button  type="button" class="btn btn-outline-info px-5"><i  class="bi bi-gear"></i> {{ 'workflowitems' | translate }}</button>-->
+            </div>
+          </div>
+        </div>
+        <div *ngIf="loading" class="spinner-border text-primary mt-2" role="status"></div>
+        <div *ngIf="!loading">
+          <div class="row mt-2 g-3">
+            <div class="col-12 col-lg-3 col-md-3" *ngFor="let item of items">
+              <div class="card radius-10 shadow-none border mb-0">
+                <div class="card-body">
+                  <div class="d-flex align-items-center">
+                    <div class="project-date">
+                      <p [ngClass]="'mb-0 font-13 text-' + getItemStyle(item.lastModified)" class="mb-0 font-12"><i class="bi bi-calendar-event" ></i> {{ item.lastModified | date }}</p>
+                    </div>
+                  </div>
+                  <div class="text-center my-3">
+                    <h6 class="mb-0 mh-50 ">{{ item.name }}</h6>
+                  </div>
+                  <div class="my-2" *ngIf="item.step">
+                    <p class="mb-1 font-13">{{ 'etape' | translate }}: {{ getStepProgress(item.step).label }}</p>
+                    <div class="progress radius-10" style="height:5px;">
+                      <div
+                        [ngClass]="'progress-bar bg-' + getItemStyle(item.lastModified)"
+                        role="progressbar"
+                        [style.width]="getStepProgress(item.step).progress + '%'"
+                      ></div>
+                    </div>
+                    <p class="mb-0 mt-1 font-13 text-end">
+                      {{ getStepProgress(item.step).progress }}%
+                    </p>
+                  </div>
+
+                  <div class="d-flex align-items-center" >
+                    <div class="project-user-groups">
+                      <img src="assets/images/icons/file.png" width="35" height="35" class="rounded-circle" alt="" >
+                    </div>
+                    <div class="project-user-plus"  data-bs-toggle="modal" data-bs-target="#itemDetailsModal" (click)="selectItem(item)" >+</div>
+                    <div [ngClass]="'py-1 px-3 radius-30 ms-auto bg-light-' + getItemStyle(item.lastModified) + ' text-' + getItemStyle(item.lastModified)">
+                      {{ getTimeElapsed(item.lastModified) }}
+                    </div>
+                  </div>
+                </div>
+                <!-- Modal -->
+                <div
+                  class="modal fade"
+                  id="itemDetailsModal"
+                  tabindex="-1"
+                  aria-labelledby="itemDetailsModalLabel"
+                  aria-hidden="true"
+                >
+                  <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="card-title text-primary">{{ 'details-generique' | translate }}</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                      </div>
+                      <div class="modal-body">
+                        <div class="row g-3 p-4">
+                          <div class="col-12 col-lg-12 col-xl-12">
+                              <ul class="list-unstyled">
+                                <li *ngIf="selectedItem?.uuid" class="list-group-item p-2">
+                                  <strong>{{ 'id' | translate }}:</strong> {{ selectedItem?.uuid }}
+                                </li>
+                                <li *ngIf="selectedItem?.name" class="list-group-item p-2">
+                                  <strong>{{ 'titre' | translate }}:</strong> {{ selectedItem?.name }}
+                                </li>
+                                <li *ngIf="selectedItem?.metadata.type" class="list-group-item p-2">
+                                  <strong>{{ 'type' | translate }}:</strong> {{ selectedItem?.metadata.type }}
+                                </li>
+                                <li *ngIf="selectedItem?.metadata.contributorAuthor.length" class="list-group-item p-2">
+                                  <strong>{{ 'authors' | translate }}:</strong>
+                                  <span *ngFor="let author of selectedItem.metadata.contributorAuthor; let last = last">
+                                  {{ author }}<span *ngIf="!last">, </span></span>
+                                </li>
+                                <li *ngIf="selectedItem?.metadata.abstract" class="list-group-item p-2">
+                                  <strong>{{ 'abstract' | translate }}:</strong> {{ selectedItem?.metadata.abstract }}
+                                </li>
+                              </ul>
+                          </div>
+                          <div class="col-12 col-lg-12 col-xl-12">
+                              <h5 class="card-title mt-3">{{ 'details-provenence' | translate }}</h5>
+                              <div *ngIf="selectedItem?.metadata.provenance" class="timeline mt-3">
+                                <div *ngFor="let provenance of selectedItem.metadata.provenance; let i = index" class="timeline-item">
+                                    <p>{{ provenance }}</p>
+                                </div>
+                              </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-dark" data-bs-dismiss="modal">{{ 'fermer' | translate }}</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+          <!-- Pagination -->
+          <nav aria-label="Page navigation " *ngIf="totalItems > pageSize">
+            <ul class="pagination justify-content-center mt-5">
+              <!-- Bouton précédent -->
+              <li
+                class="page-item p-1"
+                [class.disabled]="currentPage === 1"
+                (click)="onPageChange(currentPage - 1)"
+              >
+                <a class="page-link" href="javascript:void(0)"><i class="bi bi-chevron-double-left"></i></a>
+              </li>
+
+              <!-- Pages numérotées -->
+              <li
+                class="page-item p-1"
+                *ngFor="let page of getTotalPages()"
+                [class.active]="currentPage === page"
+              >
+                <a
+                  class="page-link"
+                  href="javascript:void(0)"
+                  (click)="onPageChange(page)"
+                >
+                  {{ page }}
+                </a>
+              </li>
+
+              <!-- Bouton suivant -->
+              <li
+                class="page-item p-1"
+                [class.disabled]="currentPage === getTotalPages().length"
+                (click)="onPageChange(currentPage + 1)"
+              >
+                <a class="page-link" href="javascript:void(0)"><i class="bi bi-chevron-double-right"></i></a>
+              </li>
+            </ul>
+          </nav>
+        </div>
+        <!--end row-->
+      </div>
+    </div>
+  </div>
+</div>
