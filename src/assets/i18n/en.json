@@ -63,5 +63,10 @@
   "userItemsWorkflow": "User Items in Workflow",
   "userItemsTout": "All User Items",
   "workflowStep": "Workflow Step",
-  "processus": "Process"
+  "processus": "Process",
+  "etape": "Step",
+  "workflowitems": "Workflow Items",
+  "rapports": "Raports",
+  "fermer": "Close",
+  "abstract": "Abstract"
 }

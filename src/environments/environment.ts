@@ -2,8 +2,8 @@
 export const environment = {
   production: false,
   apiUrl: 'http://localhost:3100',        // URL de votre backend
-  urlDSpace: 'http://localhost:4000',     // URL de votre instance DSpace
-  urlApiDspace: 'http://localhost:8080/server/api', // URL de l'API DSpace
+  urlDSpace: 'https://papyrus-dev.bib.umontreal.ca/',     // URL de votre instance DSpace
+  urlApiDspace: 'https://papyrus-dev.bib.umontreal.ca/server/api', // URL de l'API DSpace
 };
 
 

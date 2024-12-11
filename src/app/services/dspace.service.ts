@@ -28,6 +28,11 @@ export class DSpaceService {
     return this.http.get<any>(`${environment.apiUrl}/collections`);
   }
 
+  // Fonction pour récupérer les collections à partir du backend Node.js
+  getWorkflowItems(page: number = 1, size: number = 20): Observable<any> {
+    return this.http.get(`${environment.apiUrl}/rapports/workflowitems?page=${page}&size=${size}`);
+  }
+
   getMappedCollection(itemId: string): Observable<string> {
     return this.http.get<any>(`${environment.apiUrl}/items?query=${itemId}`).pipe(
       map(response => {

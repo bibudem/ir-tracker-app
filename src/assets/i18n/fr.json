@@ -71,5 +71,10 @@
   "userItemsWorkflow": "Éléments en Workflow",
   "userItemsTout": "Tous les éléments de déposant",
   "workflowStep": "Étape de validation",
-  "processus": "Processus"
+  "processus": "Processus",
+  "etape": "Étape",
+  "workflowitems": "Éléments de workflow",
+  "rapports": "Rapports",
+  "fermer": "Fermer",
+  "abstract": "Résumé"
 }
