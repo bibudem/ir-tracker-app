@@ -12,6 +12,7 @@ export class EpersonsComponent implements OnInit {
   query = { email: '', nom: '', prenom: '' };
   result: any[] = [];
   resultItemsWorkflow: any[] = [];
+  resultItemsWorkspace: any[] = [];
   resultItems: any[] = [];
   resultItemsCombined: any[] = [];
   selectedItemDetails: any = null;
@@ -83,7 +84,7 @@ export class EpersonsComponent implements OnInit {
 
     this.dspaceService.getUserItems(userId).subscribe(
       (data) => {
-        if (data.workflowItems.length === 0 && data.userItems.length === 0) {
+        if (data.workflowItems.length === 0 && data.userItems.length === 0 && data.workspaceItems.length === 0) {
           this.alertMessage = 'Aucun élément n\'est associé à ce compte.';
           this.showAlert = true;
           this.isLoading = false;
@@ -91,16 +92,17 @@ export class EpersonsComponent implements OnInit {
           this.showAlert = false;
           this.alertMessage = '';
           this.resultItemsWorkflow = data.workflowItems || [];
+          this.resultItemsWorkspace = data.workspaceItems || [];
           this.resultItems = data.userItems || [];
 
           // Combine les deux listes d'items
           this.resultItemsCombined = [
             ...this.resultItemsWorkflow,
-            ...this.resultItems
+            ...this.resultItemsWorkspace,
+            ...this.resultItems,
           ];
           this.isLoading = false;
         }
-        console.log(this.resultItemsCombined);
       },
       (error) => {
         this.isLoading = false;
@@ -125,7 +127,6 @@ export class EpersonsComponent implements OnInit {
 
     this.dspaceService.getItemDetails(itemId).subscribe(
       (data) => {
-        console.log(data);
         this.selectedItemDetails = data;
         this.loadingDetails = false;
       },

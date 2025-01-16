@@ -58,12 +58,28 @@ const getUserItems = async (req, res) => {
 
     const workflowItems = workflowResponse.data._embedded?.workflowitems || [];
 
-    // Enrichir les données des workflow items avec les détails de l'étape
+    // Récupération des workspace items
+    const workspaceResponse = await axios.get(
+      `${config.DSPACE_API_URL}/submission/workspaceitems/search/findBySubmitter?uuid=${userId}`,
+      {
+        headers: {
+          Authorization: req.dspaceAuthToken,
+          Cookie: req.dspaceCookies,
+        },
+      }
+    );
+
+    const workspaceItems = workspaceResponse.data._embedded?.workspaceitems || [];
+
+    // Récupérer les informations enrichies des workflow items
     const enrichedWorkflowItems = await Promise.all(
       workflowItems.map(async (item) => {
         const itemLink = item._links?.item?.href;
+        const stepLink = item._links?.step?.href;
+        const idCollection = item.sections?.collection || null;
 
-        const idCollection = item.sections.collection;
+        let itemDetails = {};
+        let stepDetails = {};
 
         if (itemLink) {
           try {
@@ -74,15 +90,11 @@ const getUserItems = async (req, res) => {
               },
             });
             itemDetails = itemResponse.data;
-          } catch (itemError) {
-            logger.warn(`Erreur lors de la récupération de l'étape pour l'item ${item.id}: ${itemError.message}`);
+          } catch (err) {
+            logger.warn(`Erreur lors de la récupération des détails pour l'item ${item.id}: ${err.message}`);
           }
         }
-        const stepLink = item._links?.step?.href;
 
-        const metadata = itemDetails?.metadata || {};
-        // Récupérer les informations de l'étape si le lien est disponible
-        let stepDetails = {};
         if (stepLink) {
           try {
             const stepResponse = await axios.get(stepLink, {
@@ -92,18 +104,19 @@ const getUserItems = async (req, res) => {
               },
             });
             stepDetails = stepResponse.data;
-          } catch (stepError) {
-            logger.warn(`Erreur lors de la récupération de l'étape pour l'item ${item.id}: ${stepError.message}`);
+          } catch (err) {
+            logger.warn(`Erreur lors de la récupération des détails de l'étape pour l'item ${item.id}: ${err.message}`);
           }
         }
 
+        const metadata = itemDetails?.metadata || {};
         return {
-          id: itemDetails?.id,
+          id: itemDetails?.id || null,
           title: metadata['dc.title']?.[0]?.value || 'Titre non disponible',
           description: metadata['dcterms.abstract']?.[0]?.value || 'Description non disponible',
           lastModified: item.lastModified || 'Date de modification non disponible',
           submissionDate: metadata['dc.date.submitted']?.[0]?.value || 'Date de soumission non disponible',
-          idCollection: idCollection || null,
+          idCollection,
           step: {
             id: stepDetails.id || 'Étape non disponible',
             type: stepDetails.type || 'Type non disponible',
@@ -112,7 +125,40 @@ const getUserItems = async (req, res) => {
       })
     );
 
-    // Récupération des items de l'utilisateur
+    // Récupérer les informations enrichies des workspace items
+    const enrichedWorkspaceItems = await Promise.all(
+      workspaceItems.map(async (item) => {
+        const itemLink = item._links?.item?.href;
+        const idCollection = item.sections?.collection || null;
+        let itemDetails = {};
+
+        if (itemLink) {
+          try {
+            const itemResponse = await axios.get(itemLink, {
+              headers: {
+                Authorization: req.dspaceAuthToken,
+                Cookie: req.dspaceCookies,
+              },
+            });
+            itemDetails = itemResponse.data;
+          } catch (err) {
+            logger.warn(`Erreur lors de la récupération des détails pour l'item ${item.id}: ${err.message}`);
+          }
+        }
+
+        const metadata = itemDetails?.metadata || {};
+        return {
+          id: itemDetails?.id || null,
+          title: metadata['dc.title']?.[0]?.value || 'Titre non disponible',
+          description: metadata['dcterms.abstract']?.[0]?.value || 'Description non disponible',
+          lastModified: item.lastModified || 'Date de modification non disponible',
+          submissionDate: metadata['dc.date.submitted']?.[0]?.value || 'Date de soumission non disponible',
+          idCollection
+        };
+      })
+    );
+
+    // Récupérer les autres items liés à l'utilisateur
     const userItemsResponse = await axios.get(
       `${config.DSPACE_API_URL}/discover/search/objects?query=${userId}`,
       {
@@ -126,25 +172,28 @@ const getUserItems = async (req, res) => {
     const objects = userItemsResponse.data._embedded?.searchResult?._embedded?.objects || [];
     const userItems = objects.map((obj) => {
       const item = obj._embedded?.indexableObject;
+      const metadata = item?.metadata || {};
       return {
-        id: item.id || null,
-        title: item.metadata['dc.title']?.[0]?.value || 'Titre non disponible',
-        description: item.metadata['dc.description']?.[0]?.value || 'Description non disponible',
-        lastModified: item.lastModified || 'Date de modification non disponible',
-        submissionDate: item.metadata['dc.date.accessioned']?.[0]?.value || 'Date de soumission non disponible',
+        id: item?.id || null,
+        title: metadata['dc.title']?.[0]?.value || 'Titre non disponible',
+        description: metadata['dcterms.abstract']?.[0]?.value || 'Description non disponible',
+        lastModified: item?.lastModified || 'Date de modification non disponible',
+        submissionDate: metadata['dc.date.accessioned']?.[0]?.value || 'Date de soumission non disponible',
       };
     });
 
     // Structure des données pour le front-end
     res.json({
-      workflowItems: enrichedWorkflowItems, // Items en workflow enrichis avec les détails des étapes
-      userItems, // Autres items de l'utilisateur enrichis
+      workflowItems: enrichedWorkflowItems,
+      workspaceItems: enrichedWorkspaceItems,
+      userItems,
     });
   } catch (error) {
     logger.error('Erreur lors de la récupération des items:', error.message);
     res.status(500).send({ error: 'Erreur lors de la récupération des items' });
   }
 };
+
 
 const getItemDetails = async (req, res) => {
   const itemId = req.query.itemId;
