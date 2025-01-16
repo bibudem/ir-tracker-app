@@ -8,6 +8,7 @@ import {HomeComponent} from "./home/home.component";
 import {TranslateModule} from "@ngx-translate/core";
 import {CollectionComponent} from "./collection/collection.component";
 import {EpersonsComponent} from "./epersons/epersons.component";
+import {RapportsComponent} from "./rapports/rapports.component";
 
 
 
@@ -16,7 +17,8 @@ import {EpersonsComponent} from "./epersons/epersons.component";
   declarations: [
     HomeComponent,
     CollectionComponent,
-    EpersonsComponent
+    EpersonsComponent,
+    RapportsComponent
   ],
   imports: [
     CommonModule,

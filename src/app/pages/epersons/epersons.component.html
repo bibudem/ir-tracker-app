@@ -1,7 +1,7 @@
 <div class="row">
-  <div class="card">
+  <div class="card mh-500">
     <div class="card-header py-3 mt-2">
-      <h4 class="mb-0 text-uppercase">{{ 'documentProgress' | translate }}</h4>
+      <h3 class="mb-0 ">{{ 'documentProgress' | translate }}</h3>
     </div>
     <div class="card-body">
       <form class="row g-3 mt-2 mb-2" (ngSubmit)="rechercher()">
@@ -26,7 +26,7 @@
       <!-- Résultats -->
       <div *ngIf="result.length" class="mt-5">
         <div class="row">
-        <h5>{{ 'results' | translate }} : {{this.searchQueryString}}</h5>
+        <h5>{{ 'results' | translate }} :  <span  class="text-primary"> {{this.searchQueryString}}</span></h5>
           <div *ngFor="let user of result" class="col-md-4 col-xl-4">
                   <div class="card border shadow-none radius-10"
                     [ngClass]="{'border-primary': selectedUserId === user.id, 'border-3': selectedUserId === user.id}">
@@ -59,7 +59,6 @@
               <th></th>
               <th>{{ 'id' | translate }}</th>
               <th>{{ 'titre' | translate }}</th>
-              <th>{{ 'lastModified' | translate }}</th>
               <th>{{ 'submissionDate' | translate }}</th>
             </tr>
             </thead>
@@ -68,13 +67,12 @@
               <tr>
                 <td>
                   <button class="btn btn-sm btn-outline-secondary"
-                          (click)="toggleRow(item.id); afficherDetailsItem(item.id); getNameCollection(item.id)">
-                    {{ expandedRows[item.id] ? '-' : '+' }}
+                          (click)="toggleRow(item.id); afficherDetailsItem(item.id); getNameCollection(item.id, item.idCollection);">
+                          {{ expandedRows[item.id] ? '-' : '+' }}
                   </button>
                 </td>
                 <td><a href="{{ urlDSpace + item.id }}" target="_blank" class="highcharts-link">{{ item.id }}</a></td>
                 <td><h6>{{ item.title }}</h6></td>
-                <td>{{ item.lastModified }}</td>
                 <td>{{ item.submissionDate }}</td>
               </tr>
               <tr *ngIf="expandedRows[item.id]">
@@ -108,6 +106,9 @@
                               <li *ngIf="selectedItemDetails.dateIssued" class="list-group-item p-2">
                                 <strong>{{ 'date_issued' | translate }}:</strong> {{ selectedItemDetails.dateIssued }}
                               </li>
+                              <li *ngIf="selectedItemDetails.lastModified" class="list-group-item p-2">
+                                <strong>{{ 'lastModified' | translate }}:</strong> {{ selectedItemDetails.lastModified }}
+                              </li>
                               <li *ngIf="selectedItemDetails.description" class="list-group-item  p-2">
                                 <strong>{{ 'item-description' | translate }}:</strong> {{ selectedItemDetails.description }}
                               </li>
@@ -118,13 +119,6 @@
                               <li class="list-group-item p-2">
                                 <strong>{{ 'in_archive' | translate }}:</strong>
                                 {{ selectedItemDetails.inArchive ? ('yes' | translate) : ('no' | translate) }}
-                              </li>
-                              <li class="list-group-item p-2">
-                                <strong>{{ 'discoverable' | translate }}:</strong>
-                                {{ selectedItemDetails.discoverable ? ('yes' | translate) : ('no' | translate) }}
-                              </li>
-                              <li *ngIf="selectedItemDetails.itemType" class="list-group-item p-2">
-                                <strong>{{ 'item_type' | translate }}:</strong> {{ selectedItemDetails.itemType }}
                               </li>
                               <li class="list-group-item p-2">
                                 {{ selectedItemDetails.noteUdem?.length ? selectedItemDetails.noteUdem : ('non-comment' | translate) }}

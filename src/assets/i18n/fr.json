@@ -1,6 +1,6 @@
 {
-  "title": "IRTracker",
-  "description": "OUTIL DE SUIVI DES SOUMISSIONS DANS PAPYRUS",
+  "title": "Suivi Papyrus UdeM",
+  "description": "OUTIL DE SUIVI PAPYRUS",
   "home": "Accueil",
   "depositor": "Déposant",
   "collection": "Collection",
@@ -57,7 +57,7 @@
   "date_issued": "Date de publication",
   "provenance": "Provenance",
   "type": "Type",
-  "in_archive": "Dans l'archive",
+  "in_archive": "Diffusé dans Papyrus",
   "discoverable": "Découvrable",
   "item_type": "Type d'item",
   "yes": "Oui",
@@ -76,5 +76,16 @@
   "workflowitems": "Éléments de workflow",
   "rapports": "Rapports",
   "fermer": "Fermer",
-  "abstract": "Résumé"
+  "abstract": "Résumé",
+  "statisticsTitle": "Statistiques",
+  "statisticsCommunities": "Communautés",
+  "statisticsCollections": "Collections",
+  "statisticsItems": "Articles",
+  "statisticsUsers": "Utilisateurs",
+  "statisticsTheses": "Thèses et Mémoires",
+  "statisticsPublications": "Publications et Recherches",
+  "statisticsStudentWorks": "Travaux Étudiants",
+  "tool_title": "Outil de suivi des dépôts dans Papyrus",
+  "tool_description": "Cet outil web est destiné aux administrateurs pour effectuer des requêtes dans les bases de données de Papyrus et SuiviTME, permettant un meilleur suivi des dépôts.",
+  "search_button": "Trouver un item"
 }

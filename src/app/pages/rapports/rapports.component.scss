@@ -1,0 +1,38 @@
+/* Stylisation du formulaire */
+.card {
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.form-label {
+  font-weight: 600;
+  color: #495057;
+}
+
+/* Espacement des champs */
+form .form-select,
+form .form-control {
+  border-radius: 5px;
+  padding: 0.5rem 0.75rem;
+}
+
+/* Icônes alignées */
+.bi {
+  vertical-align: middle;
+  margin-right: 5px;
+}
+
+/* Filtres appliqués */
+.alert-light {
+  border-left: 4px solid #007bff;
+  display: flex;
+  align-items: center;
+}
+
+.badge {
+  font-size: 0.875rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  border-radius: 20px;
+}

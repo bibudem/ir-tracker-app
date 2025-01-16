@@ -5,6 +5,7 @@ const discoverRoutes = require('./routes/discoverRoutes');
 const itemsRoutes = require('./routes/itemsRoutes');
 const epersonsRoutes = require('./routes/epersonsRoutes');
 const rapportsRoutes = require('./routes/rapportsRoutes');
+const homeRoutes = require('./routes/homeRoutes');
 const dspaceAuthMiddleware = require('./middlewares/authMiddleware'); // Ajoutez ce middleware
 const errorMiddleware = require('./middlewares/errorMiddleware');
 const config = require('./config/config');
@@ -24,6 +25,7 @@ app.use('/discover/objects', discoverRoutes);
 app.use('/items', itemsRoutes);
 app.use('/eperson', epersonsRoutes);
 app.use('/rapports', rapportsRoutes);
+app.use('/home', homeRoutes);
 
 // Middleware d'erreur
 app.use(errorMiddleware);

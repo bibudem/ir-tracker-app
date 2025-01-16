@@ -22,7 +22,7 @@ const getCollections = async (req, res) => {
 
 const getCollectionById = async (req, res) => {
   try {
-    const uuid = req.query.uuid;
+    const uuid = req.params.uuid;
     const response = await axios.get(`${config.DSPACE_API_URL}/core/collections/${uuid}`, {
       headers: {
         'Authorization': req.dspaceAuthToken,

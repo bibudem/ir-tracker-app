@@ -40,6 +40,7 @@ export class EpersonsComponent implements OnInit {
    */
   rechercher(): void {
     this.result = [];
+    this.resultItemsCombined = [];
     const queryStr = [this.query.email, this.query.nom, this.query.prenom]
       .filter((value) => value?.trim())  // On filtre les champs vides
       .join('&');
@@ -75,7 +76,7 @@ export class EpersonsComponent implements OnInit {
    */
   afficherItems(userId: string): void {
     this.selectedUserId = userId;
-    this.resultItemsCombined = []; // Réinitialisation des items combinés
+    this.resultItemsCombined = [];
     this.selectedItemDetails = null;
     this.isLoading = true;
     this.expandedRows = {};
@@ -99,6 +100,7 @@ export class EpersonsComponent implements OnInit {
           ];
           this.isLoading = false;
         }
+        console.log(this.resultItemsCombined);
       },
       (error) => {
         this.isLoading = false;
@@ -123,6 +125,7 @@ export class EpersonsComponent implements OnInit {
 
     this.dspaceService.getItemDetails(itemId).subscribe(
       (data) => {
+        console.log(data);
         this.selectedItemDetails = data;
         this.loadingDetails = false;
       },
@@ -154,19 +157,38 @@ export class EpersonsComponent implements OnInit {
    * Obtenir le nom de la collection associée à un item.
    * @param itemId - L'identifiant de l'item.
    */
-  getNameCollection(itemId: string): void {
-    // On vérifie si la propriété 'name' existe dans la réponse avant de l'utiliser
-    this.dspaceService.getMappedCollection(itemId).subscribe({
-      next: (names) => {
-        if (names && names[itemId]) {
-          this.collectionNames[itemId] = names[itemId];
-        }
-      },
-      error: (error) => {
-        console.error('Erreur lors de la récupération des collections', error);
-      },
-    });
+  getNameCollection(itemId: string, collectionId: string): void {
+    if (!itemId) {
+      return;
+    }
+
+    if (collectionId) {
+      this.dspaceService.getNameCollectionById(collectionId).subscribe({
+        next: (name) => {
+          if (name) {
+            this.collectionNames[itemId] = name;
+          } else {
+            console.warn(`Aucun nom trouvé pour la collection UUID: ${collectionId}`);
+          }
+        },
+        error: (err) => {
+          console.error('Erreur lors de la récupération du nom de la collection:', err);
+        },
+      });
+    } else {
+      this.dspaceService.getMappedCollection(itemId).subscribe({
+        next: (names) => {
+          if (names) {
+            this.collectionNames[itemId] = names;
+          }
+        },
+        error: (error) => {
+          console.error('Erreur lors de la récupération des collections', error);
+        },
+      });
+    }
   }
+
 
   /**
    * Réinitialiser le formulaire de recherche et effacer les résultats.
@@ -176,6 +198,7 @@ export class EpersonsComponent implements OnInit {
     this.result = [];
     this.resultItems = [];
     this.selectedItemDetails = null;
+    this.resultItemsCombined = [];
     this.showAlert = false;
     this.isLoading = false;
   }

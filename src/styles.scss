@@ -15,5 +15,27 @@
   min-height: 75px;
 }
 
+h1, h2 {
+  color: var(--darkBlue);
+  font-variant-numeric: lining-nums tabular-nums;
+  font-feature-settings: 'liga' off, 'clig' off;
+  font-family: 'Lora', sans-serif;
+  font-style: normal;
+  line-height: 120%;
+  color: #0B113A;
+}
+
+/* Utiliser la police Figtree pour les paragraphes et autres textes */
+p, span, small, h3, h4, h5, h6 {
+  font-family: 'Figtree', sans-serif;
+  line-height: 120%;
+}
+
+.btn {
+  border-radius: 60px;
+  padding: 5px 20px!important;
+  align-items: center;
+}
+
 
 

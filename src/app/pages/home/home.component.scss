@@ -1,0 +1,55 @@
+.card.radius-10 {
+  border-radius: 10px !important;
+}
+
+.card  {
+  border-radius: 25px;
+}
+.card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.card h2 {
+  font-size: 2rem;
+  color: #0057AC;
+}
+
+.card p {
+  font-size: 1.1rem;
+  color: #6c757d;
+}
+
+.col-md-5 {
+  padding: 0;
+  display: flex;
+  justify-content: center;
+}
+
+.btn-b-transparent-bib {
+  border-radius: 60px;
+  background: transparent;
+  border-color: #0057AC;
+  color: #0057AC;
+  align-items: center;
+  gap: 10px;
+  transition: all 0.3s ease-in-out;
+
+  svg path {
+    fill: #0057AC;
+    transition: all 0.3s ease-in-out;
+  }
+
+  &:hover {
+    background: #0B113A;
+    color: white;
+
+    svg path {
+      fill: white;
+      transform: scale(1.1);
+    }
+  }
+}
+
+

@@ -61,9 +61,26 @@ const getUserItems = async (req, res) => {
     // Enrichir les données des workflow items avec les détails de l'étape
     const enrichedWorkflowItems = await Promise.all(
       workflowItems.map(async (item) => {
-        const metadata = item._embedded?.item?.metadata || {};
+        const itemLink = item._links?.item?.href;
+
+        const idCollection = item.sections.collection;
+
+        if (itemLink) {
+          try {
+            const itemResponse = await axios.get(itemLink, {
+              headers: {
+                Authorization: req.dspaceAuthToken,
+                Cookie: req.dspaceCookies,
+              },
+            });
+            itemDetails = itemResponse.data;
+          } catch (itemError) {
+            logger.warn(`Erreur lors de la récupération de l'étape pour l'item ${item.id}: ${itemError.message}`);
+          }
+        }
         const stepLink = item._links?.step?.href;
 
+        const metadata = itemDetails?.metadata || {};
         // Récupérer les informations de l'étape si le lien est disponible
         let stepDetails = {};
         if (stepLink) {
@@ -81,11 +98,12 @@ const getUserItems = async (req, res) => {
         }
 
         return {
-          id: item._embedded?.item?.id,
+          id: itemDetails?.id,
           title: metadata['dc.title']?.[0]?.value || 'Titre non disponible',
           description: metadata['dcterms.abstract']?.[0]?.value || 'Description non disponible',
           lastModified: item.lastModified || 'Date de modification non disponible',
           submissionDate: metadata['dc.date.submitted']?.[0]?.value || 'Date de soumission non disponible',
+          idCollection: idCollection || null,
           step: {
             id: stepDetails.id || 'Étape non disponible',
             type: stepDetails.type || 'Type non disponible',
