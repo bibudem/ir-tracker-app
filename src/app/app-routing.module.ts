@@ -3,6 +3,7 @@ import { RouterModule, Routes, PreloadAllModules } from '@angular/router';
 
 import { Full_ROUTES } from "./shared/routes/full-layout.routes";
 import {FullLayoutComponent} from "./layouts/full/full-layout.component";
+import { LoginComponent } from './pages/login/login.component';
 
 const routes: Routes = [
   {
@@ -11,7 +12,8 @@ const routes: Routes = [
     pathMatch: 'full',
   },
   { path: '', component: FullLayoutComponent, data: { title: 'full Views' }, children: Full_ROUTES },
-  { path: '**', redirectTo: 'dashboard/cms-dashboard' }
+  { path: 'login', component: LoginComponent },
+  { path: '**', redirectTo: '/404' }
 ];
 
 @NgModule({

@@ -87,5 +87,6 @@
   "statisticsStudentWorks": "Travaux Étudiants",
   "tool_title": "Outil de suivi des dépôts dans Papyrus",
   "tool_description": "Cet outil web est destiné aux administrateurs pour effectuer des requêtes dans les bases de données de Papyrus et SuiviTME, permettant un meilleur suivi des dépôts.",
-  "search_button": "Trouver un item"
+  "search_button": "Trouver un item",
+  "login_text": "Connectez-vous"
 }

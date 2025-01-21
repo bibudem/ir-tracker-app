@@ -68,5 +68,17 @@
   "workflowitems": "Workflow Items",
   "rapports": "Raports",
   "fermer": "Close",
-  "abstract": "Abstract"
+  "abstract": "Abstract",
+  "statisticsTitle": "Statistics",
+  "statisticsCommunities": "Communities",
+  "statisticsCollections": "Collections",
+  "statisticsItems": "Items",
+  "statisticsUsers": "Users",
+  "statisticsTheses": "Theses and Dissertations",
+  "statisticsPublications": "Publications and Research",
+  "statisticsStudentWorks": "Student Works",
+  "tool_title": "Tracking Tool for Deposits in Papyrus",
+  "tool_description": "This web tool is intended for administrators to perform queries in the Papyrus and SuiviTME databases, enabling better tracking of deposits.",
+  "search_button": "Find an item",
+  "login_text": "Sign in"
 }
