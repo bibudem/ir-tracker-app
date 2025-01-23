@@ -40,6 +40,8 @@ const getUsers = async (req, res) => {
 
 const getUserItems = async (req, res) => {
   const userId = req.query.userId;
+  const filtreAuthor = encodeURIComponent(req.query.fullName);
+
   if (!userId) {
     return res.status(400).send({ error: 'Le paramètre userId est requis' });
   }
@@ -157,10 +159,9 @@ const getUserItems = async (req, res) => {
         };
       })
     );
-
     // Récupérer les autres items liés à l'utilisateur
-    const userItemsResponse = await axios.get(
-      `${config.DSPACE_API_URL}/discover/search/objects?query=${userId}`,
+    let userItemsResponse = await axios.get(
+      `${config.DSPACE_API_URL}/discover/search/objects?f.author=${filtreAuthor},equals`,
       {
         headers: {
           Authorization: req.dspaceAuthToken,
@@ -168,8 +169,35 @@ const getUserItems = async (req, res) => {
         },
       }
     );
+    let objects = userItemsResponse.data._embedded?.searchResult?._embedded?.objects || [];
+// Vérifier si aucun résultat n'a été trouvé
+    if (objects.length === 0) {
+      const decodedAuthor = decodeURIComponent(filtreAuthor);
+      const nameParts = decodedAuthor.split(' ');
+      let reversedAuthor = '';
+      if (nameParts.length === 2) {
+        // Inverser prénom et nom si les deux parties existent
+        reversedAuthor = `${nameParts[1]}, ${nameParts[0]}`.trim();
+      } else {
+        // Si le découpage ne produit pas deux parties, conserver l'original
+        reversedAuthor = decodedAuthor;
+      }
 
-    const objects = userItemsResponse.data._embedded?.searchResult?._embedded?.objects || [];
+      // Effectuer une seconde requête avec l'ordre inversé
+      userItemsResponse = await axios.get(
+        `${config.DSPACE_API_URL}/discover/search/objects?f.author=${encodeURIComponent(reversedAuthor)},equals`,
+        {
+          headers: {
+            Authorization: req.dspaceAuthToken,
+            Cookie: req.dspaceCookies,
+          },
+        }
+      );
+
+      objects = userItemsResponse.data._embedded?.searchResult?._embedded?.objects || [];
+    }
+
+// Mapper les objets pour les structurer avant de les retourner
     const userItems = objects.map((obj) => {
       const item = obj._embedded?.indexableObject;
       const metadata = item?.metadata || {};
@@ -223,6 +251,8 @@ const getItemDetails = async (req, res) => {
       type: data.metadata['dc.type']?.[0]?.value || null,
       uri: data.metadata['dc.identifier.uri']?.[0]?.value || null,
       lng: data.metadata['dc.language.iso']?.[0]?.value || null,
+      discipline: data.metadata['etd.degree.discipline']?.[0]?.value || null,
+      level: data.metadata['etd.degree.level']?.[0]?.value || null,
       handle: data.handle,
       inArchive: data.inArchive,
       discoverable: data.discoverable,

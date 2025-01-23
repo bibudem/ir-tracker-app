@@ -42,8 +42,15 @@ export class EpersonsComponent implements OnInit {
   rechercher(): void {
     this.result = [];
     this.resultItemsCombined = [];
+
+    // Nettoyer les valeurs saisies dans le formulaire
+    this.query.email = this.query.email?.trim() || '';
+    this.query.nom = this.query.nom?.trim() || '';
+    this.query.prenom = this.query.prenom?.trim() || '';
+
+    // Construire la chaîne de requête
     const queryStr = [this.query.email, this.query.nom, this.query.prenom]
-      .filter((value) => value?.trim())  // On filtre les champs vides
+      .filter((value) => value !== '') // On ne conserve que les champs non vides
       .join('&');
 
     this.searchQueryString = queryStr;
@@ -51,16 +58,47 @@ export class EpersonsComponent implements OnInit {
     if (!queryStr) return;
 
     this.isLoading = true;
+    console.log(queryStr);
+
     this.dspaceService.getPersonnes(queryStr).subscribe(
       (data) => {
         this.isLoading = false;
-        this.result = data.utilisateurs || [];
-        this.showAlert = this.result.length === 0;
+
+        let utilisateurs = data.utilisateurs || [];
+        this.showAlert = utilisateurs.length === 0;
 
         if (this.showAlert) {
           this.translate.get('searchNoResults', { query: queryStr }).subscribe((res: string) => {
             this.alertMessage = res;
           });
+        } else {
+          // Validation pour vérifier prénom et nom, y compris les inversions
+          if (this.query.nom && this.query.prenom) {
+            const nom = this.query.nom.toLowerCase();
+            const prenom = this.query.prenom.toLowerCase();
+
+            utilisateurs = utilisateurs.filter((user) => {
+              const [userPrenom, userNom] = user.fullName
+                .toLowerCase()
+                .split(' ')
+                .map((part) => part.trim());
+
+              // Vérifier les correspondances dans les deux ordres possibles
+              return (
+                (userPrenom === prenom && userNom === nom) || // Prénom et nom dans l'ordre correct
+                (userPrenom === nom && userNom === prenom)    // Prénom et nom inversés
+              );
+            });
+          }
+
+          this.result = utilisateurs;
+          this.showAlert = this.result.length === 0;
+
+          if (this.showAlert) {
+            this.translate.get('searchNoResults', { query: queryStr }).subscribe((res: string) => {
+              this.alertMessage = res;
+            });
+          }
         }
       },
       (error) => {
@@ -75,14 +113,15 @@ export class EpersonsComponent implements OnInit {
    * Met à jour les items affichés en fonction de l'utilisateur sélectionné.
    * @param userId - L'identifiant de l'utilisateur.
    */
-  afficherItems(userId: string): void {
+  afficherItems(userId: string, fullName:string): void {
     this.selectedUserId = userId;
     this.resultItemsCombined = [];
     this.selectedItemDetails = null;
     this.isLoading = true;
     this.expandedRows = {};
 
-    this.dspaceService.getUserItems(userId).subscribe(
+
+    this.dspaceService.getUserItems(userId, fullName).subscribe(
       (data) => {
         if (data.workflowItems.length === 0 && data.userItems.length === 0 && data.workspaceItems.length === 0) {
           this.alertMessage = 'Aucun élément n\'est associé à ce compte.';
@@ -138,23 +177,6 @@ export class EpersonsComponent implements OnInit {
   }
 
   /**
-   * Calculer la progression d'une étape de workflow.
-   * @param stepId - L'identifiant de l'étape.
-   * @returns Un objet avec l'étiquette de l'étape et la progression en pourcentage.
-   */
-  getStepProgress(stepId: string): { label: string, progress: string } {
-    const steps = ['reviewstep', 'editstep', 'finaleditstep'];
-    const stepIndex = steps.indexOf(stepId);
-
-    if (stepIndex === -1) {
-      return { label: 'Unknown', progress: '0.00' };
-    }
-
-    const progress = ((stepIndex + 1) / steps.length) * 100;
-    return { label: steps[stepIndex], progress: progress.toFixed(2) };
-  }
-
-  /**
    * Obtenir le nom de la collection associée à un item.
    * @param itemId - L'identifiant de l'item.
    */
@@ -162,7 +184,6 @@ export class EpersonsComponent implements OnInit {
     if (!itemId) {
       return;
     }
-
     if (collectionId) {
       this.dspaceService.getNameCollectionById(collectionId).subscribe({
         next: (name) => {
