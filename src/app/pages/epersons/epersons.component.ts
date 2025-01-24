@@ -211,6 +211,46 @@ export class EpersonsComponent implements OnInit {
     }
   }
 
+  /**
+   * Nettoie et traduit les données de provenance.
+   * Cette méthode remplace certains mots par des balises HTML correspondantes,
+   * et supprime tout ce qui suit "checksum:" et "No. of bitstreams:" et inclut ces chaînes de caractères.
+   *
+   * @param provenanceArray - Un tableau d'objets contenant les données de provenance.
+   * @returns Un tableau d'objets avec les valeurs nettoyées et traduites.
+   */
+  cleanAndTranslateData(provenanceArray: any[]): any[] {
+    if (!Array.isArray(provenanceArray)) {
+      console.warn('provenanceArray n\'est pas un tableau:', provenanceArray);
+      return [];  // Retourner un tableau vide si provenanceArray n'est pas un tableau.
+    }
+
+    const translations: { [key: string]: string } = {
+      'Submitted by': '<strong>Soumis par: </strong>',
+      'Approved for': '<strong>Approuvé par: </strong>',
+      'Rejected by': '<strong class="text-danger">Rejeté par: </strong>',
+      'Made available': '<strong>Mis à disposition: </strong>',
+    };
+
+    return provenanceArray.map((item) => {
+      let value = item.value;
+
+      // Remplacer les mots par les balises HTML correspondantes
+      Object.keys(translations).forEach((key) => {
+        const regex = new RegExp(key, 'g');
+        value = value.replace(regex, translations[key]);
+      });
+
+      // Supprimer tout ce qui suit "checksum:" et inclut "checksum:"
+      value = value.replace(/checksum:.*/, '').trim();
+
+      // Supprimer tout ce qui suit "No. of bitstreams:" et inclut "No. of bitstreams:"
+      value = value.replace(/No\. of bitstreams:.*/, '').trim();
+
+      return { ...item, value };
+    });
+  }
+
 
   /**
    * Réinitialiser le formulaire de recherche et effacer les résultats.
