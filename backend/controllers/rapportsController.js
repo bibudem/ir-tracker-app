@@ -2,163 +2,164 @@ const axios = require('axios');
 const config = require('../config/config');
 const logger = require('../utils/logger');
 
-const MAX_PARALLEL_REQUESTS = 5; // Nombre maximum de requêtes parallèles
+const MAX_PAGES = 5;
+const SIZE = 30;
 
 const getWorkflowitems = async (req, res) => {
   try {
-    const size = 30; // Taille des lots
+    const typeFiltre = req.query.type;
+    const sortOrder = req.query.sortOrder;
+    const sortField = 'lastModified';
+
+    let allItems = [];
     let page = 0;
     let hasMore = true;
 
-    // Définir les headers pour un streaming textuel
-    res.setHeader('Content-Type', 'text/event-stream');
-    res.setHeader('Cache-Control', 'no-cache');
-    res.setHeader('Connection', 'keep-alive');
-
-    while (hasMore) {
-      // Récupération de la page actuelle
-      const response = await axios.get(`${config.DSPACE_API_URL}/workflow/workflowitems`, {
-        headers: {
-          Authorization: req.dspaceAuthToken,
-          Cookie: req.dspaceCookies,
-        },
-        params: { page, size },
-      });
-
-      const workflowItems = response.data._embedded?.workflowitems || [];
-      const totalElements = response.data.page?.totalElements || 0;
-      const totalPages = response.data.page?.totalPages || 1;
-
-      hasMore = workflowItems.length === size; // Vérifie s'il y a une autre page
-
-      // Traiter les items par lots pour limiter le nombre de requêtes simultanées
-      const detailedItems = [];
-      for (let i = 0; i < workflowItems.length; i += MAX_PARALLEL_REQUESTS) {
-        // Créer un lot d'items à traiter
-        const chunk = workflowItems.slice(i, i + MAX_PARALLEL_REQUESTS);
-
-        // Attendre la fin de toutes les requêtes du lot actuel
-        const chunkDetails = await Promise.all(chunk.map((item) => getItemDetails(item, req)));
-        detailedItems.push(...chunkDetails); // Ajouter les résultats au tableau principal
+    while (hasMore && page < MAX_PAGES) {
+      const pageRequests = [];
+      for (let i = 0; i < MAX_PAGES && hasMore; i++) {
+        pageRequests.push(fetchPage(page + i, req));
       }
 
-      // Ajouter les informations de pagination dans la réponse
-      const pageInfo = {
-        page: {
-          size: size,
-          totalElements: totalElements,
-          totalPages: totalPages,
-          number: page,
-        },
-        items: detailedItems, // Les items détaillés à envoyer
-      };
-
-      // Chaque page est envoyée sous forme de ligne JSON indépendante
-      console.log('Sending page:', page + 1, 'with items:', detailedItems);
-      res.write(`data: ${JSON.stringify(pageInfo)}\n\n`);
-
-      page++; // Passe à la page suivante
+      const results = await Promise.all(pageRequests);
+      const filteredResults = results.flat();
+      allItems = allItems.concat(filteredResults);
+      hasMore = filteredResults.length === SIZE * MAX_PAGES;
+      page += MAX_PAGES;
     }
 
-    res.end(); // Termine le streaming
-  } catch (error) {
-    logger.error('Erreur lors du streaming des workflow items: ' + error.message);
-    if (!res.headersSent) {
-      res.status(500).send('Erreur lors du streaming des workflow items');
-    } else {
-      res.end();
-    }
-  }
-};
+    let detailedItems = await fetchItemDetails(allItems, req);
 
-
-// Récupération des détails d'un item
-const getItemDetails = async (item, req) => {
-  const itemDetails = { uuid: null, name: null, lastModified: null, metadata: {}, step: null };
-
-  try {
-    const requests = [];
-
-    // Récupère les détails de l'item
-    if (item._links?.item?.href) {
-      requests.push(
-        axios.get(item._links.item.href, {
-          headers: { Authorization: req.dspaceAuthToken, Cookie: req.dspaceCookies },
-        }).then(({ data }) => {
-          itemDetails.uuid = data.uuid;
-          itemDetails.name = data.name;
-          itemDetails.lastModified = data.lastModified;
-          itemDetails.metadata = {
-            ORCIDAuteurThese: data.metadata['UdeM.ORCIDAuteurThese']?.map((m) => m.value) || [],
-            contributorAuthor: data.metadata['dc.contributor.author']?.map((m) => m.value) || [],
-            provenance: data.metadata['dc.description.provenance']?.map((m) => m.value) || [],
-            type: data.metadata['dc.type']?.map((m) => m.value) || [],
-            title: data.metadata['dc.title']?.map((m) => m.value) || [],
-          };
-        })
+    if (typeFiltre.trim() !== '') {
+      detailedItems = detailedItems.filter(item =>
+        typeof item.type === 'string' && item.type.includes(typeFiltre)
       );
     }
 
-    // Récupère les détails du step
-    if (item._links?.step?.href) {
-      requests.push(
-        axios.get(item._links.step.href, {
-          headers: { Authorization: req.dspaceAuthToken, Cookie: req.dspaceCookies },
-        }).then(({ data }) => {
-          itemDetails.step = data?.id || null;
-        })
-      );
-    }
-
-    // Exécute toutes les requêtes en parallèle
-    await Promise.all(requests);
-  } catch (error) {
-    logger.warn(`Erreur lors de la récupération des détails d'un item: ${error.message}`);
-  }
-
-  return itemDetails;
-};
-
-
-const getWorkspaceitems = async (req, res) => {
-  try {
-    const response = await axios.get(`${config.DSPACE_API_URL}/submission/workspaceitems`, {
-      headers: {
-        'Authorization': req.dspaceAuthToken,
-        'Cookie': req.dspaceCookies,
-      }
+    // Appliquer le tri
+    detailedItems.sort((a, b) => {
+      const fieldA = a[sortField] || '';
+      const fieldB = b[sortField] || '';
+      return sortOrder === 'asc' ? fieldA.localeCompare(fieldB) : fieldB.localeCompare(fieldA);
     });
-    res.json(response.data);
+
+    res.json({ totalItems: detailedItems.length, items: detailedItems });
+
   } catch (error) {
-    logger.error('Erreur lors de la récupération des collections: ' + error.message);
-    if (error.response) {
-      logger.error('Détails de l\'erreur: ', error.response.data);
-    }
-    res.status(500).send('Erreur lors de la récupération des collections');
+    logger.error(`Erreur lors de la récupération des workflow items: ${error.message}`);
+    res.status(500).json({ error: 'Erreur lors de la récupération des workflow items' });
   }
 };
 
-const getFilters = async (req, res) => {
+const fetchPage = async (page, req) => {
   try {
-    const response = await axios.get(`${config.DSPACE_API_URL}/workflow/filters`, {
+    const collectionFilter = req.query.collection;
+    const response = await axios.get(`${config.DSPACE_API_URL}/workflow/workflowitems`, {
+      headers: {
+        Authorization: req.dspaceAuthToken,
+        Cookie: req.dspaceCookies,
+      },
+      params: { page, size: SIZE },
+    });
+
+    let items = response.data._embedded?.workflowitems || [];
+
+    if (collectionFilter && collectionFilter.trim() !== '') {
+      items = items.filter(item => item.sections?.collection === collectionFilter);
+    }
+
+    return Promise.all(
+      items.map(async (item) => {
+        const collectionId = item.sections?.collection || null;
+        const collectionName = collectionId ? await fetchCollectionName(collectionId, req) : null;
+        return {
+          workflowId: item.id,
+          lastModified: item.lastModified,
+          itemHref: item._links?.item?.href || null,
+          collection: collectionName,
+        };
+      })
+    );
+  } catch (error) {
+    logger.warn(`Erreur sur la page ${page}: ${error.message}`);
+    return [];
+  }
+};
+
+const fetchCollectionName = async (uuid, req) => {
+  try {
+    const response = await axios.get(`${config.DSPACE_API_URL}/core/collections/${uuid}`, {
       headers: {
         Authorization: req.dspaceAuthToken,
         Cookie: req.dspaceCookies,
       },
     });
-    // Traitez les filtres pour le format attendu par le front-end
-    res.json({
-      types: response.data.types || [],
-      statuses: response.data.statuses || [],
-    });
+    return response.data.name || null;
   } catch (error) {
-    logger.error('Erreur lors de la récupération des filtres : ' + error.message);
-    res.status(500).send('Erreur lors de la récupération des filtres');
+    logger.warn(`Erreur lors de la récupération de la collection ${uuid}: ${error.message}`);
+    return null;
   }
 };
 
-module.exports = {
-  getWorkflowitems,
-  getWorkspaceitems,
-  getFilters,
+// Récupérer les détails des items avec l'ID de la collection et filtrer
+const fetchItemDetails = async (items, req) => {
+  let countExcludedName = 0;
+
+  const requests = items.map(async (item) => {
+    if (!item.itemHref) return null;
+
+    try {
+      // Récupérer les infos détaillées de l'item
+      const response = await axios.get(item.itemHref, {
+        headers: {
+          Authorization: req.dspaceAuthToken,
+          Cookie: req.dspaceCookies,
+        },
+      });
+
+      const data = response.data;
+
+      // Vérifier si name est vide ou absent
+      if (!data.name || data.name.trim() === "") {
+        countExcludedName++;
+        return null;
+      }
+
+      return {
+        workflowId: item.workflowId, // Garder le workflow ID
+        id: data.id,
+        lastModified: data.lastModified,
+        uuid: data.uuid,
+        name: data.name,
+        handle: data.handle,
+        collection: item.collection || null, // Ajouter la collection récupérée dans fetchPage
+        type: data.metadata["dc.type"]?.[0]?.value || "",
+        metadata: {
+          "advisor": data.metadata["dc.contributor.advisor"] || [],
+          "author": data.metadata["dc.contributor.author"] || [],
+          "date.available": data.metadata["dc.date.available"] || [],
+          "date.submitted": data.metadata["dc.date.submitted"] || [],
+          "provenance": data.metadata["dc.description.provenance"] || [],
+          "degree.level": data.metadata["etd.degree.level"] || [],
+          "degree.name": data.metadata["etd.degree.name"] || [],
+          "affiliation": data.metadata["dc.contributor.affiliation"] || [],
+        },
+      };
+
+    } catch (error) {
+      logger.warn(`Erreur lors de la récupération de l'item ${item.id}: ${error.message}`);
+      return null;
+    }
+  });
+
+  const results = await Promise.all(requests);
+  const filteredResults = results.filter(item => item !== null);
+
+  logger.info(`Total items initial: ${items.length}`);
+  logger.info(`Items exclus par nom vide: ${countExcludedName}`);
+  logger.info(`Total items après filtres: ${filteredResults.length}`);
+
+  return filteredResults;
 };
+
+module.exports = { getWorkflowitems };

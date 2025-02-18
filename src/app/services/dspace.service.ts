@@ -28,8 +28,8 @@ export class DSpaceService {
    * @param userId Identifiant de l'utilisateur.
    * @returns Observable contenant la liste des items de l'utilisateur.
    */
-  getUserItems(userId: string): Observable<any> {
-    return this.http.get<any>(`${environment.apiUrl}/eperson/items?userId=${userId}`);
+  getUserItems(userId: string, fullName: string): Observable<any> {
+    return this.http.get<any>(`${environment.apiUrl}/eperson/items?userId=${userId}&fullName=${fullName}`);
   }
 
   /**
@@ -54,27 +54,7 @@ export class DSpaceService {
    * @returns Observable émettant les données des items en workflow.
    */
   getWorkflowItemsStream(): Observable<any> {
-    return new Observable(observer => {
-      const eventSource = new EventSource(`${environment.apiUrl}/rapports/workflowitems`);
-
-      eventSource.onmessage = event => {
-        try {
-          const data = JSON.parse(event.data);
-          observer.next(data);
-        } catch (error) {
-          observer.error(error);
-        }
-      };
-
-      eventSource.onerror = error => {
-        observer.error(error);
-        eventSource.close();
-      };
-
-      return () => {
-        eventSource.close();
-      };
-    });
+    return this.http.get<any>(`${environment.apiUrl}/rapports/itemsRapport`);
   }
 
   /**
@@ -119,5 +99,12 @@ export class DSpaceService {
   getStatistics(): Observable<any> {
     return this.http.get<any>(`${environment.apiUrl}/home/statistics`);
   }
+
+
+  getFilteredItems(params: any): Observable<any> {
+    return this.http.get<any>(`${environment.apiUrl}/rapports/itemsRapport`, { params });
+  }
+
+
 
 }

@@ -5,7 +5,7 @@ export const ROUTES: RouteInfo[] = [
    {
         path: '/home', title: 'Accueil', icon: 'bi bi-house-door', class: '', badge: '', badgeClass: '', isExternalLink: false, submenu: []
     },
-  {     path: '/eperson', title: 'Déposant', icon: 'bi bi-person-check', class: '', badge: '', badgeClass: '', isExternalLink: false, submenu: []
+  {     path: '/eperson', title: 'Suivi des soumissions', icon: 'bi bi-person-check', class: '', badge: '', badgeClass: '', isExternalLink: false, submenu: []
   },
   /*{     path: '/collection', title: 'Collection', icon: 'bi bi-collection', class: '', badge: '', badgeClass: '', isExternalLink: false, submenu: []
   },*/

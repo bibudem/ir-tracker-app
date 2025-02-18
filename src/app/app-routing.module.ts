@@ -4,6 +4,7 @@ import { RouterModule, Routes, PreloadAllModules } from '@angular/router';
 import { Full_ROUTES } from "./shared/routes/full-layout.routes";
 import {FullLayoutComponent} from "./layouts/full/full-layout.component";
 import { LoginComponent } from './pages/login/login.component';
+import { AuthGuard } from './services/auth/auth.guard';
 
 const routes: Routes = [
   {
@@ -11,7 +12,7 @@ const routes: Routes = [
     redirectTo: '/home',
     pathMatch: 'full',
   },
-  { path: '', component: FullLayoutComponent, data: { title: 'full Views' }, children: Full_ROUTES },
+  { path: '', component: FullLayoutComponent, data: { title: 'full Views' }, children: Full_ROUTES, canActivate: [AuthGuard]},
   { path: 'login', component: LoginComponent },
   { path: '**', redirectTo: '/404' }
 ];

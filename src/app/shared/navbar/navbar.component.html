@@ -21,23 +21,24 @@
             <div class="user-setting d-flex align-items-center gap-1">
               <i class="bi bi-person-circle m-lg-2 font-20"></i>
               <div class="user-name d-none d-sm-block">
-                {{ 'userName' | translate }}
+                {{ name }}
               </div>
             </div>
           </a>
           <ul class="dropdown-menu dropdown-menu-end">
             <li>
-              <a class="dropdown-item" routerLink="/auth/sign-up">
+              <a class="dropdown-item" >
                 <div class="d-flex align-items-center">
-                  <div class="setting-icon"><i class="bi bi-lock-fill"></i></div>
-                  <div class="setting-text ms-3"><span>{{ 'logout' | translate }}</span></div>
+                  <div class="setting-text ms-3">
+                    <a class="nav-link" (click)="logout()"><i class="bi bi-lock-fill "></i> {{ 'logout' | translate }}</a>
+                  </div>
                 </div>
               </a>
             </li>
           </ul>
         </li>
         <!-- Ajout du switch de langue avec un style similaire à la section profil -->
-        <li class="nav-item dropdown dropdown-medium">
+        <!--<li class="nav-item dropdown dropdown-medium">
           <a class="nav-link dropdown-toggle dropdown-toggle-nocaret" href="#" data-bs-toggle="dropdown">
             <div class="user-setting d-flex align-items-center gap-1">
               <i class="bi bi-translate m-lg-2 font-20"></i>
@@ -62,7 +63,7 @@
               </a>
             </li>
           </ul>
-        </li>
+        </li>-->
         <li class="nav-item dropdown dropdown-large">
           <a class="nav-link dropdown-toggle dropdown-toggle-nocaret" href="#" data-bs-toggle="dropdown">
             <div class="projects">

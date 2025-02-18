@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { DSpaceService } from '../../services/dspace.service';
 import { Subscription } from 'rxjs';
 
@@ -9,19 +9,16 @@ import { Subscription } from 'rxjs';
 })
 export class RapportsComponent implements OnInit, OnDestroy {
   items: any[] = [];
-  currentPage = 1;
-  totalItems = 0;
-  totalPages = 0;
+  collections: any[] = [];
+  filteredItems: any[] = [];
   searchQuery = '';
-  loading = false;
-  loadingDetails = false;
-  selectedItem: any;
-  sortField = 'lastModified';
-  sortOrder = 'asc';
+  loading = true;
+  loadingCollection = true;
   expandedRows: { [key: string]: boolean } = {};
-  filters: any = {
-    type: '', // Filtre par défaut
-  };
+  filters: any = { type: '', collection: '' };
+  sortField = 'lastModified';
+  sortOrder = 'desc';
+
   filterOptions: any = {
     types: [
       'Thèse ou mémoire / Thesis or Dissertation',
@@ -29,105 +26,147 @@ export class RapportsComponent implements OnInit, OnDestroy {
       'Rapport / Report',
       'Livre / Book',
       'Autre / Other',
-    ]
+    ],
   };
-  private subscription: Subscription;
 
-  constructor(
-    private dspaceService: DSpaceService,
-    private cdr: ChangeDetectorRef // Injection de ChangeDetectorRef
-  ) {}
+  private subscriptions: Subscription[] = [];
+
+  constructor(private dspaceService: DSpaceService) {}
 
   ngOnInit(): void {
-    this.loadItems();
+    this.listCollections();
+    this.loading = false;
   }
 
   ngOnDestroy(): void {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
-  }
-
-  applyFilters(): void {
-    this.currentPage = 1;
-    this.loadItems();
+    // Désabonnement propre lors de la destruction du composant
+    this.subscriptions.forEach(sub => sub.unsubscribe());
   }
 
   loadItems(): void {
-    this.loading = true;  // Démarre le chargement
-    this.items = []; // Réinitialise les items avant de charger une nouvelle page
-    this.totalItems = 0;
-    this.totalPages = 0;
+    const params = {
+      collection: this.filters.collection || '',
+      type: this.filters.type || '',
+      sortField: this.sortField,
+      sortOrder: this.sortOrder,
+    };
 
-    this.subscription = this.dspaceService.getWorkflowItemsStream().subscribe(
+    const sub = this.dspaceService.getFilteredItems(params).subscribe(
       (data: any) => {
-        console.log('Nouvelle page reçue :', data);
-
-        const parsedItems = Object.values(data.items); // Récupérer les items de la page actuelle
-        this.items = this.items.concat(parsedItems); // Ajouter les items au tableau existant
-
-        if (this.items.length > 0 && this.loading) {
-          this.loading = false;  // Désactive le chargement dès que la première page est reçue
-          // Mettre à jour les informations de pagination
-          this.totalItems = data.page.totalElements;
-          this.totalPages = data.page.totalPages;
-        }
-
-        console.log('Items après ajout:', this.items);
-
-        // Forcer la détection des changements après l'ajout de nouveaux items
-        this.cdr.detectChanges();
+        this.items = data.items.map(item => ({
+          ...item
+        }));
+        //console.log(this.items);
+        this.loading = false;
       },
       (err: any) => {
-        console.error('Erreur de streaming :', err);
-        // Réessayer la connexion après un certain délai
-        setTimeout(() => {
-          this.loadItems();
-        }, 5000);
+        console.error('Erreur de chargement des items :', err);
+        this.loading = false;
       }
     );
+    this.subscriptions.push(sub);
+  }
+
+  listCollections(): void {
+    const sub = this.dspaceService.getCollections().subscribe(
+      (data: any) => {
+        this.collections = data;
+        this.loadingCollection = false;
+      },
+      (err: any) => {
+        console.error('Erreur de chargement des collections :', err);
+      }
+    );
+    this.subscriptions.push(sub);
+  }
+
+
+  applyFilters(): void {
+    this.loading = true;
+    this.filteredItems = this.items
+      .filter(item => !this.filters.type || item.metadata.type?.includes(this.filters.type))
+      .sort((a, b) => {
+        const fieldA = a[this.sortField] || '';
+        const fieldB = b[this.sortField] || '';
+        return this.sortOrder === 'asc' ? fieldA.localeCompare(fieldB) : fieldB.localeCompare(fieldA);
+      });
   }
 
   getItemStyle(lastModified: string): string {
-    const diffInMonths =
-      (new Date().getTime() - new Date(lastModified).getTime()) / (1000 * 60 * 60 * 24 * 30);
-    return diffInMonths <= 2 ? 'info' : 'danger';
+    const date = new Date(lastModified);
+    const now = new Date();
+    const diff = (now.getTime() - date.getTime()) / (1000 * 60 * 60 * 24);
+
+    if (diff < 30) return 'success';
+    if (diff < 180) return 'warning';
+    return 'danger';
   }
 
   getTimeElapsed(lastModified: string): string {
-    if (!lastModified) return 'Date inconnue';
-    const lastModifiedDate = new Date(lastModified);
-    const today = new Date();
-    const diffInTime = today.getTime() - lastModifiedDate.getTime();
-
-    const days = Math.floor(diffInTime / (1000 * 60 * 60 * 24));
-    const months = Math.floor(days / 30);
-    const remainingDays = days % 30;
-
-    if (months > 0) {
-      return `${months} mois${remainingDays > 0 ? ` ${remainingDays} jours` : ''}`;
-    }
-    return `${days} jours`;
-  }
-
-  selectItem(item: any): void {
-    this.selectedItem = item;
+    return new Date(lastModified).toLocaleDateString();
   }
 
   toggleRow(id: string): void {
-    if (this.expandedRows[id]) {
-      this.expandedRows[id] = false;
-    } else {
-      this.expandedRows = {};
-      this.expandedRows[id] = true;
+    this.expandedRows[id] = !this.expandedRows[id];
+  }
+
+  /**
+   * Nettoie et traduit les données de provenance.
+   * Cette méthode remplace certains mots par des balises HTML correspondantes,
+   * et supprime tout ce qui suit "checksum:" et "No. of bitstreams:" et inclut ces chaînes de caractères.
+   *
+   * @param provenanceArray - Un tableau d'objets contenant les données de provenance.
+   * @returns Un tableau d'objets avec les valeurs nettoyées et traduites.
+   */
+  cleanAndTranslateData(provenanceArray: any[]): string[] {
+    if (!Array.isArray(provenanceArray)) {
+      console.warn('provenanceArray n\'est pas un tableau:', provenanceArray);
+      return [];
     }
+
+    const translations: { [key: string]: string } = {
+      '\\bon\\b': '<span>le</span>',
+      '\\bStep: reviewstep - action:reviewaction\\b': '',
+      '\\bStep: editstep - action:editaction\\b': '',
+      '\\bStep: finaleditstep - action:finaleditaction\\b': '',
+      '\\bItem was in collections\\b': '<span>Cet élément était dans les collections </span>',
+      '\\breason\\b': '<strong>pour la raison suivante </strong>',
+      'Submitted by': '<strong>Soumis par: </strong>',
+      'Approved for entry into archive by': '<strong>Approuvé par: </strong>',
+      'Rejected by': '<strong class="text-danger">Rejeté par: </strong>',
+      'Item withdrawn by': '<strong class="text-danger">Élément retiré par: </strong>',
+      'Item reinstated by': '<strong class="text-warning">Élément réintégré par: </strong>',
+      'Made available in DSpace': '<strong class="text-success">Publié sur Papyrus: </strong>',
+    };
+
+    return provenanceArray.map((item) => {
+      let value = item.value;
+
+      // Remplacer les mots par les balises HTML correspondantes
+      Object.keys(translations).forEach((key) => {
+        const regex = new RegExp(key, 'g');
+        value = value.replace(regex, translations[key]);
+      });
+
+      // Suppression de tout ce qui suit "No. of bitstreams:" et inclut "No. of bitstreams:"
+      value = value.replace(/No\. of bitstreams:.*/, '').trim();
+
+      // Supprimer tout ce qui suit "checksum:" et inclut "checksum:"
+      value = value.replace(/checksum:.*/, '').trim();
+
+
+      value = value.replace(/workflow start=.*/, '').trim();
+
+      value = value.replace(/(\d{4}-\d{2}-\d{2})T(\d{2}:\d{2}:\d{2}Z)?.*/, (match, datePart) => {
+        // Conserver la date originale (format UTC ou d'origine)
+        return datePart;
+      });
+
+      // Supprimer le nom du fichier (avec extensions .pdf, .zip, .mov) et tout ce qui suit
+      value = value.replace(/[\w-]+\.(pdf|zip|mov|txt|xlsx|docx)\b.*/gi, '').trim();
+
+      return value;
+    });
   }
 
-  trackById(index: number, item: any): string {
-    return item.uuid;
-  }
-
-  parseInt(value: string): number {
-    return parseInt(value, 10);
-  }
 }

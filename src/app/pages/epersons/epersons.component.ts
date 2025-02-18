@@ -23,8 +23,9 @@ export class EpersonsComponent implements OnInit {
   alertMessage = '';
   isLoading = false;
   loadingDetails = false;
+  actionListeAssocies = true;
 
-  urlDSpace = environment.urlDSpace + '/items/';
+  urlDSpace = environment.urlDSpace + 'items/';
   selectedUserId: string | null = null;
   searchQueryString: string = '';
 
@@ -58,7 +59,6 @@ export class EpersonsComponent implements OnInit {
     if (!queryStr) return;
 
     this.isLoading = true;
-    console.log(queryStr);
 
     this.dspaceService.getPersonnes(queryStr).subscribe(
       (data) => {
@@ -66,7 +66,6 @@ export class EpersonsComponent implements OnInit {
 
         let utilisateurs = data.utilisateurs || [];
         this.showAlert = utilisateurs.length === 0;
-
         if (this.showAlert) {
           this.translate.get('searchNoResults', { query: queryStr }).subscribe((res: string) => {
             this.alertMessage = res;
@@ -90,7 +89,7 @@ export class EpersonsComponent implements OnInit {
               );
             });
           }
-
+          //console.log(utilisateurs);
           this.result = utilisateurs;
           this.showAlert = this.result.length === 0;
 
@@ -167,6 +166,7 @@ export class EpersonsComponent implements OnInit {
     this.dspaceService.getItemDetails(itemId).subscribe(
       (data) => {
         this.selectedItemDetails = data;
+        //console.log(data);
         this.loadingDetails = false;
       },
       (error) => {
@@ -219,17 +219,25 @@ export class EpersonsComponent implements OnInit {
    * @param provenanceArray - Un tableau d'objets contenant les données de provenance.
    * @returns Un tableau d'objets avec les valeurs nettoyées et traduites.
    */
-  cleanAndTranslateData(provenanceArray: any[]): any[] {
+  cleanAndTranslateData(provenanceArray: any[]): string[] {
     if (!Array.isArray(provenanceArray)) {
       console.warn('provenanceArray n\'est pas un tableau:', provenanceArray);
-      return [];  // Retourner un tableau vide si provenanceArray n'est pas un tableau.
+      return [];
     }
 
     const translations: { [key: string]: string } = {
+      '\\bon\\b': '<span>le</span>',
+      '\\bStep: reviewstep - action:reviewaction\\b': '',
+      '\\bStep: editstep - action:editaction\\b': '',
+      '\\bStep: finaleditstep - action:finaleditaction\\b': '',
+      '\\bItem was in collections\\b': '<span>Cet élément était dans les collections </span>',
+      '\\breason\\b': '<strong>pour la raison suivante </strong>',
       'Submitted by': '<strong>Soumis par: </strong>',
-      'Approved for': '<strong>Approuvé par: </strong>',
+      'Approved for entry into archive by': '<strong>Approuvé par: </strong>',
       'Rejected by': '<strong class="text-danger">Rejeté par: </strong>',
-      'Made available': '<strong>Mis à disposition: </strong>',
+      'Item withdrawn by': '<strong class="text-danger">Élément retiré par: </strong>',
+      'Item reinstated by': '<strong class="text-warning">Élément réintégré par: </strong>',
+      'Made available in DSpace': '<strong class="text-success">Publié sur Papyrus: </strong>',
     };
 
     return provenanceArray.map((item) => {
@@ -241,13 +249,24 @@ export class EpersonsComponent implements OnInit {
         value = value.replace(regex, translations[key]);
       });
 
+      // Suppression de tout ce qui suit "No. of bitstreams:" et inclut "No. of bitstreams:"
+      value = value.replace(/No\. of bitstreams:.*/, '').trim();
+
       // Supprimer tout ce qui suit "checksum:" et inclut "checksum:"
       value = value.replace(/checksum:.*/, '').trim();
 
-      // Supprimer tout ce qui suit "No. of bitstreams:" et inclut "No. of bitstreams:"
-      value = value.replace(/No\. of bitstreams:.*/, '').trim();
 
-      return { ...item, value };
+      value = value.replace(/workflow start=.*/, '').trim();
+
+      value = value.replace(/(\d{4}-\d{2}-\d{2})T(\d{2}:\d{2}:\d{2}Z)?.*/, (match, datePart) => {
+        // Conserver la date originale (format UTC ou d'origine)
+        return datePart;
+      });
+
+      // Supprimer le nom du fichier (avec extensions .pdf, .zip, .mov) et tout ce qui suit
+      value = value.replace(/[\w-]+\.(pdf|zip|mov|txt|xlsx|docx)\b.*/gi, '').trim();
+
+      return value;
     });
   }
 

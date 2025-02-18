@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { SidebarService } from '../sidebar/sidebar.service';
 import { TranslateService } from "@ngx-translate/core";
+import { AuthService } from '../../services/auth/auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-navbar',
@@ -11,7 +13,9 @@ export class NavbarComponent implements OnInit {
 
   public translate: TranslateService;
 
-  constructor(public sidebarservice: SidebarService, translate: TranslateService) {
+  name = '';
+
+  constructor(public sidebarservice: SidebarService, translate: TranslateService, private authService: AuthService, private router: Router) {
     this.translate = translate;
   }
 
@@ -37,10 +41,32 @@ export class NavbarComponent implements OnInit {
         $(".top-header .navbar form").removeClass("full-searchbar");
       });
     });
+
+    this.authService.isAuthenticated().subscribe(async isAuthenticated => {
+      if (isAuthenticated) {
+        try {
+          const userInfo = await this.authService.getUserInfoFromLocalStorage();
+          if (userInfo) {
+            //console.log(userInfo);
+            this.name = userInfo;
+          }
+          // Rediriger si nécessaire
+          const redirectUrl = this.authService.redirectUrl || '/';
+          this.router.navigate([redirectUrl]);
+        } catch (error) {
+          console.error('Erreur lors de la récupération des informations utilisateur', error);
+        }
+      }
+    });
   }
 
   // Method to change the language
   changeLanguage(lang: string) {
     this.translate.use(lang);
+  }
+
+  // Méthode de déconnexion
+  logout(): void {
+    this.authService.logout();
   }
 }

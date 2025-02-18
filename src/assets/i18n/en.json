@@ -80,5 +80,16 @@
   "tool_title": "Tracking Tool for Deposits in Papyrus",
   "tool_description": "This web tool is intended for administrators to perform queries in the Papyrus and SuiviTME databases, enabling better tracking of deposits.",
   "search_button": "Find an item",
-  "login_text": "Sign in"
+  "login_text": "Sign in",
+  "collections": "Collections",
+  "all": "All",
+  "create_report": "Create report",
+  "displaying_items": "Displaying {{ count }} items.",
+  "validation_process_tracking": "Validation process tracking",
+  "last_modified": "Last modified",
+  "no_author": "-",
+  "no_provenance": "-",
+  "workflow_id": "[workflow_id = {{ id }}]",
+  "process_step": "Process {{ step }}",
+  "loading_message": "Loading in progress, please wait..."
 }

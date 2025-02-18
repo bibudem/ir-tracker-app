@@ -2,25 +2,36 @@ const axios = require('axios');
 const config = require('../config/config');
 const logger = require('../utils/logger');
 
+const removeAccents = (str) => {
+  return str.normalize("NFD").replace(/[\u0300-\u036f]/g, ""); // Normalise les accents
+};
+
+// Fonction de récupération des utilisateurs
 const getUsers = async (req, res) => {
-  const query = req.query.query;
-  if (!query) {
+  const querySaisi = req.query.query;
+  if (!querySaisi) {
     return res.status(400).send({ error: 'Le paramètre query est requis' });
   }
 
   try {
-    const response = await axios.get(`${config.DSPACE_API_URL}/eperson/epersons/search/byMetadata?query=${query}`, {
-      headers: {
-        'Authorization': req.dspaceAuthToken,
-        'Cookie': req.dspaceCookies,
-      },
-    });
+    let utilisateurs = [];
 
-    // Vérifier si des utilisateurs sont retournés
-    const epersons = response.data._embedded?.epersons || [];
+    // Requête dans /eperson/epersons/search/byMetadata
+    const fetchUsers = async (query) => {
+      const response = await axios.get(`${config.DSPACE_API_URL}/eperson/epersons/search/byMetadata?query=${encodeURIComponent(query)}`, {
+        headers: {
+          'Authorization': req.dspaceAuthToken,
+          'Cookie': req.dspaceCookies,
+        },
+      });
+      return response.data._embedded?.epersons || [];
+    };
 
-    // Structurer les données avant de les envoyer au front-end
-    const utilisateurs = epersons.map(user => {
+    // Effectuer la première recherche
+    let epersons = await fetchUsers(querySaisi);
+
+    // Structurer les résultats
+    utilisateurs = epersons.map(user => {
       const firstname = user.metadata?.['eperson.firstname']?.[0]?.value || 'N/A';
       const lastname = user.metadata?.['eperson.lastname']?.[0]?.value || 'N/A';
       return {
@@ -30,6 +41,55 @@ const getUsers = async (req, res) => {
       };
     });
 
+    // Si aucun utilisateur trouvé, effectuer une recherche dans /discover/search/objects
+    if (utilisateurs.length === 0) {
+      const discoverResponse = await axios.get(`${config.DSPACE_API_URL}/discover/search/objects?f.author=${encodeURIComponent(querySaisi)},contains`, {
+        headers: {
+          'Authorization': req.dspaceAuthToken,
+          'Cookie': req.dspaceCookies,
+        },
+      });
+      const objects = discoverResponse.data._embedded?.searchResult?._embedded?.objects || [];
+
+      const uniqueUsers = new Set();
+      const additionalUsers = objects.map((obj) => {
+        const item = obj._embedded?.indexableObject;
+        const metadata = item?.metadata || {};
+        const author = metadata['dc.contributor.author']?.[0]?.value || 'N/A';
+        const [lastname, firstname] = author.split(',').map(part => part.trim());
+        const userId = `N/A${author}`;
+
+        if (!uniqueUsers.has(userId)) {
+          uniqueUsers.add(userId);
+          return {
+            id: userId,
+            email: 'N/A', // L'email n'est pas disponible ici
+            fullName: `${firstname} ${lastname}`,
+          };
+        }
+        return null;
+      }).filter(user => user !== null);  // Éliminer les doublons
+
+      utilisateurs.push(...additionalUsers);
+    }
+
+    // Recherche avec les accents retirés
+    if (utilisateurs.length === 0) {
+      const stringSansAccent = removeAccents(querySaisi);
+      const epersonsSansAccent = await fetchUsers(stringSansAccent);
+
+      utilisateurs = epersonsSansAccent.map(user => {
+        const firstname = user.metadata?.['eperson.firstname']?.[0]?.value || 'N/A';
+        const lastname = user.metadata?.['eperson.lastname']?.[0]?.value || 'N/A';
+        const uuid = `N/A-${user.uuid}`;
+        return {
+          id: uuid,
+          email: user.email,
+          fullName: `${firstname} ${lastname}`,
+        };
+      });
+    }
+
     res.json({ utilisateurs });
   } catch (error) {
     logger.error('Erreur lors de la récupération des utilisateurs:', error.message);
@@ -37,167 +97,103 @@ const getUsers = async (req, res) => {
   }
 };
 
+module.exports = {
+  getUsers,
+};
+
+const fetchItems = async (url, headers) => {
+  try {
+    const response = await axios.get(url, { headers });
+    return response.data._embedded || {};
+  } catch (error) {
+    logger.warn(`Erreur lors de la récupération des données depuis ${url}: ${error.message}`);  // Correction de la syntaxe des backticks
+    return {};
+  }
+};
+
+const enrichItems = async (items, headers) => {
+  return Promise.all(
+    items.map(async (item) => {
+      const itemLink = item._links?.item?.href;
+      const idCollection = item.sections?.collection || null;
+      let itemDetails = {};
+
+      if (itemLink) {
+        try {
+          const itemResponse = await axios.get(itemLink, { headers });
+          itemDetails = itemResponse.data;
+        } catch (err) {
+          logger.warn(`Erreur lors de la récupération des détails pour l'item ${item.id}: ${err.message}`);  // Correction de la syntaxe des backticks
+        }
+      }
+
+      const metadata = itemDetails?.metadata || {};
+      return {
+        id: itemDetails?.id || null,
+        title: metadata['dc.title']?.[0]?.value || 'Titre non disponible',
+        description: metadata['dcterms.abstract']?.[0]?.value || 'Description non disponible',
+        lastModified: item.lastModified || 'Date de modification non disponible',
+        submissionDate: metadata['dc.date.submitted']?.[0]?.value || 'Date de soumission non disponible',
+        idCollection,
+      };
+    })
+  );
+};
 
 const getUserItems = async (req, res) => {
   const userId = req.query.userId;
   const filtreAuthor = encodeURIComponent(req.query.fullName);
+  const headers = {
+    Authorization: req.dspaceAuthToken,
+    Cookie: req.dspaceCookies,
+  };
 
   if (!userId) {
     return res.status(400).send({ error: 'Le paramètre userId est requis' });
   }
 
   try {
-    // Récupération des workflow items
-    const workflowResponse = await axios.get(
-      `${config.DSPACE_API_URL}/workflow/workflowitems/search/findBySubmitter?uuid=${userId}`,
-      {
-        headers: {
-          Authorization: req.dspaceAuthToken,
-          Cookie: req.dspaceCookies,
-        },
-      }
-    );
+    let enrichedWorkflowItems = [];
+    let enrichedWorkspaceItems = [];
 
-    const workflowItems = workflowResponse.data._embedded?.workflowitems || [];
+    if (!userId.includes('N/A')) {
+      // Récupération des workflows et workspaces
+      const { workflowitems = [] } = await fetchItems(
+        `${config.DSPACE_API_URL}/workflow/workflowitems/search/findBySubmitter?uuid=${userId}`,  // Correction des backticks
+        headers
+      );
 
-    // Récupération des workspace items
-    const workspaceResponse = await axios.get(
-      `${config.DSPACE_API_URL}/submission/workspaceitems/search/findBySubmitter?uuid=${userId}`,
-      {
-        headers: {
-          Authorization: req.dspaceAuthToken,
-          Cookie: req.dspaceCookies,
-        },
-      }
-    );
+      const { workspaceitems = [] } = await fetchItems(
+        `${config.DSPACE_API_URL}/submission/workspaceitems/search/findBySubmitter?uuid=${userId}`,  // Correction des backticks
+        headers
+      );
 
-    const workspaceItems = workspaceResponse.data._embedded?.workspaceitems || [];
+      enrichedWorkflowItems = await enrichItems(workflowitems, headers);
+      enrichedWorkspaceItems = await enrichItems(workspaceitems, headers);
+    }
 
-    // Récupérer les informations enrichies des workflow items
-    const enrichedWorkflowItems = await Promise.all(
-      workflowItems.map(async (item) => {
-        const itemLink = item._links?.item?.href;
-        const stepLink = item._links?.step?.href;
-        const idCollection = item.sections?.collection || null;
-
-        let itemDetails = {};
-        let stepDetails = {};
-
-        if (itemLink) {
-          try {
-            const itemResponse = await axios.get(itemLink, {
-              headers: {
-                Authorization: req.dspaceAuthToken,
-                Cookie: req.dspaceCookies,
-              },
-            });
-            itemDetails = itemResponse.data;
-          } catch (err) {
-            logger.warn(`Erreur lors de la récupération des détails pour l'item ${item.id}: ${err.message}`);
-          }
-        }
-
-        if (stepLink) {
-          try {
-            const stepResponse = await axios.get(stepLink, {
-              headers: {
-                Authorization: req.dspaceAuthToken,
-                Cookie: req.dspaceCookies,
-              },
-            });
-            stepDetails = stepResponse.data;
-          } catch (err) {
-            logger.warn(`Erreur lors de la récupération des détails de l'étape pour l'item ${item.id}: ${err.message}`);
-          }
-        }
-
-        const metadata = itemDetails?.metadata || {};
-        return {
-          id: itemDetails?.id || null,
-          title: metadata['dc.title']?.[0]?.value || 'Titre non disponible',
-          description: metadata['dcterms.abstract']?.[0]?.value || 'Description non disponible',
-          lastModified: item.lastModified || 'Date de modification non disponible',
-          submissionDate: metadata['dc.date.submitted']?.[0]?.value || 'Date de soumission non disponible',
-          idCollection,
-          step: {
-            id: stepDetails.id || 'Étape non disponible',
-            type: stepDetails.type || 'Type non disponible',
-          },
-        };
-      })
-    );
-
-    // Récupérer les informations enrichies des workspace items
-    const enrichedWorkspaceItems = await Promise.all(
-      workspaceItems.map(async (item) => {
-        const itemLink = item._links?.item?.href;
-        const idCollection = item.sections?.collection || null;
-        let itemDetails = {};
-
-        if (itemLink) {
-          try {
-            const itemResponse = await axios.get(itemLink, {
-              headers: {
-                Authorization: req.dspaceAuthToken,
-                Cookie: req.dspaceCookies,
-              },
-            });
-            itemDetails = itemResponse.data;
-          } catch (err) {
-            logger.warn(`Erreur lors de la récupération des détails pour l'item ${item.id}: ${err.message}`);
-          }
-        }
-
-        const metadata = itemDetails?.metadata || {};
-        return {
-          id: itemDetails?.id || null,
-          title: metadata['dc.title']?.[0]?.value || 'Titre non disponible',
-          description: metadata['dcterms.abstract']?.[0]?.value || 'Description non disponible',
-          lastModified: item.lastModified || 'Date de modification non disponible',
-          submissionDate: metadata['dc.date.submitted']?.[0]?.value || 'Date de soumission non disponible',
-          idCollection
-        };
-      })
-    );
     // Récupérer les autres items liés à l'utilisateur
-    let userItemsResponse = await axios.get(
-      `${config.DSPACE_API_URL}/discover/search/objects?f.author=${filtreAuthor},equals`,
-      {
-        headers: {
-          Authorization: req.dspaceAuthToken,
-          Cookie: req.dspaceCookies,
-        },
-      }
+    let userItemsResponse = await fetchItems(
+      `${config.DSPACE_API_URL}/discover/search/objects?f.author=${filtreAuthor},equals`,  // Correction des backticks
+      headers
     );
-    let objects = userItemsResponse.data._embedded?.searchResult?._embedded?.objects || [];
-// Vérifier si aucun résultat n'a été trouvé
+
+    let objects = userItemsResponse.searchResult?._embedded?.objects || [];
+
+    // Si aucun résultat, essayer avec l'inversion Prénom/Nom
     if (objects.length === 0) {
       const decodedAuthor = decodeURIComponent(filtreAuthor);
       const nameParts = decodedAuthor.split(' ');
-      let reversedAuthor = '';
-      if (nameParts.length === 2) {
-        // Inverser prénom et nom si les deux parties existent
-        reversedAuthor = `${nameParts[1]}, ${nameParts[0]}`.trim();
-      } else {
-        // Si le découpage ne produit pas deux parties, conserver l'original
-        reversedAuthor = decodedAuthor;
-      }
+      const reversedAuthor = nameParts.length === 2 ? `${nameParts[1]}, ${nameParts[0]}` : decodedAuthor;
 
-      // Effectuer une seconde requête avec l'ordre inversé
-      userItemsResponse = await axios.get(
-        `${config.DSPACE_API_URL}/discover/search/objects?f.author=${encodeURIComponent(reversedAuthor)},equals`,
-        {
-          headers: {
-            Authorization: req.dspaceAuthToken,
-            Cookie: req.dspaceCookies,
-          },
-        }
+      userItemsResponse = await fetchItems(
+        `${config.DSPACE_API_URL}/discover/search/objects?f.author=${encodeURIComponent(reversedAuthor)},equals`,  // Correction des backticks
+        headers
       );
-
-      objects = userItemsResponse.data._embedded?.searchResult?._embedded?.objects || [];
+      objects = userItemsResponse.searchResult?._embedded?.objects || [];
     }
 
-// Mapper les objets pour les structurer avant de les retourner
+    // Mapper les objets
     const userItems = objects.map((obj) => {
       const item = obj._embedded?.indexableObject;
       const metadata = item?.metadata || {};
@@ -210,7 +206,6 @@ const getUserItems = async (req, res) => {
       };
     });
 
-    // Structure des données pour le front-end
     res.json({
       workflowItems: enrichedWorkflowItems,
       workspaceItems: enrichedWorkspaceItems,
@@ -221,7 +216,6 @@ const getUserItems = async (req, res) => {
     res.status(500).send({ error: 'Erreur lors de la récupération des items' });
   }
 };
-
 
 const getItemDetails = async (req, res) => {
   const itemId = req.query.itemId;
@@ -245,7 +239,6 @@ const getItemDetails = async (req, res) => {
       name: data.name,
       author: data.metadata['dc.contributor.author'] || [],
       dateAccessioned: data.metadata['dc.date.accessioned']?.[0]?.value || null,
-      dateIssued: data.metadata['dc.date.issued']?.[0]?.value || null,
       description: data.metadata['dc.description']?.[0]?.value || null,
       provenance: data.metadata['dc.description.provenance'] || [],
       type: data.metadata['dc.type']?.[0]?.value || null,
@@ -266,7 +259,6 @@ const getItemDetails = async (req, res) => {
     res.status(500).send({ error: 'Erreur lors de la récupération des détails de l\'item' });
   }
 };
-
 
 module.exports = {
   getUserItems,

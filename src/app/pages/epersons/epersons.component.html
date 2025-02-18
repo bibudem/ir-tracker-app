@@ -30,6 +30,9 @@
           <div *ngFor="let user of result" class="col-md-4 col-xl-4">
                   <div class="card border shadow-none radius-10"
                     [ngClass]="{'border-primary': selectedUserId === user.id, 'border-3': selectedUserId === user.id}">
+                    <div *ngIf="user.id.includes('N/A')"  class="alert alert-warning mt-2">
+                      {{ 'profileRequiresUpdate' | translate }}
+                    </div>
                     <div class="card-body">
                       <div class="d-flex align-items-center gap-3">
                         <div class="icon-box bg-light-primary border-0">
@@ -39,7 +42,8 @@
                           <p class="mb-1">#{{ user.id }}</p>
                           <p class="mb-1">{{ user.fullName }}</p>
                           <p class="mb-1">{{ user.email }}</p>
-                          <button class="btn btn-dark btn-sm shadow-sm p-2" (click)="afficherItems(user.id, user.fullName)">
+                          <button class="btn btn-dark btn-sm shadow-sm p-2"
+                                  (click)="afficherItems(user.id, user.fullName)">
                             <i class="bi bi-files-alt"></i> {{ 'list-items' | translate }}
                           </button>
                         </div>
@@ -98,12 +102,6 @@
                               <li class="list-group-item p-2">
                                 <strong>{{ 'collection' | translate }}:</strong> {{ this.collectionNames[item.id] }}
                               </li>
-                              <li *ngIf="selectedItemDetails.dateAccessioned" class="list-group-item p-2">
-                                <strong>{{ 'date_accessioned' | translate }}:</strong> {{ selectedItemDetails.dateAccessioned }}
-                              </li>
-                              <li *ngIf="selectedItemDetails.dateIssued" class="list-group-item p-2">
-                                <strong>{{ 'date_issued' | translate }}:</strong> {{ selectedItemDetails.dateIssued }}
-                              </li>
                               <li *ngIf="selectedItemDetails.lastModified" class="list-group-item p-2">
                                 <strong>{{ 'lastModified' | translate }}:</strong> {{ selectedItemDetails.lastModified }}
                               </li>
@@ -124,6 +122,9 @@
                                 <strong>{{ 'in_archive' | translate }}:</strong>
                                 {{ selectedItemDetails.inArchive ? ('yes' | translate) : ('no' | translate) }}
                               </li>
+                              <li *ngIf="selectedItemDetails.dateAccessioned" class="list-group-item p-2">
+                                <strong>{{ 'date_accessioned' | translate }}:</strong> {{ selectedItemDetails.dateAccessioned }}
+                              </li>
                             </ul>
                           </div>
                         </div>
@@ -131,19 +132,13 @@
                       <div class="col-12 col-lg-8 col-xl-8 d-flex">
                         <div class="card mb-0 radius-10 shadow-none w-100">
                           <div class="card-body">
-                            <div  *ngIf="item.step?.id" class="mt-3 w-100">
-                              <h5 class="card-title">{{ 'workflowStep' | translate }}: {{ getStepProgress(item.step.id).label }}</h5>
-                            </div>
                             <h4 class="card-title mt-3 text-primary">{{ 'details-provenence' | translate }}</h4>
-                            <div class="timeline mt-3">
-                              <div *ngFor="let provenance of selectedItemDetails.provenance; let i = index" class="timeline-item">
-                                <div class="timeline-marker"></div>
-                                <div class="timeline-content my-2">
-                                  <h5 class="timeline-title"> {{ 'processus' | translate }} {{ i + 1 }}</h5>
-                                  <p [innerHTML]="cleanAndTranslateData([provenance])[0]?.value"></p>
-                                </div>
-                              </div>
-                            </div>
+                              <ul class="list-group list-group-flush">
+                              <li *ngFor="let provenance of cleanAndTranslateData(selectedItemDetails.provenance); let i = index" class="list-group-item">
+                                  <h6 class="card-title"> [{{ 'processus' | translate }} {{ i + 1 }}]</h6>
+                                  <p [innerHTML]="provenance"></p>
+                               </li>
+                            </ul>
                           </div>
                         </div>
                       </div>
