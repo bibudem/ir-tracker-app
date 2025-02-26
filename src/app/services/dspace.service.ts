@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
@@ -16,11 +16,23 @@ export class DSpaceService {
 
   /**
    * Récupère une liste de personnes correspondant à une requête de recherche.
-   * @param query Chaîne de recherche.
+   * @param query Object contenant les critères de recherche (nom, prenom, email).
    * @returns Observable contenant les résultats de la recherche.
    */
-  getPersonnes(query: string): Observable<any> {
-    return this.http.get<any>(`${environment.apiUrl}/eperson/epersons/search?query=${query}`);
+  getPersonnes(query: { email: string; nom: string; prenom: string }): Observable<any> {
+    let params = new HttpParams();
+
+    if (query.email) {
+      params = params.set('email', query.email);
+    }
+    if (query.nom) {
+      params = params.set('nom', query.nom);
+    }
+    if (query.prenom) {
+      params = params.set('prenom', query.prenom);
+    }
+
+    return this.http.get<any>(`${environment.apiUrl}/eperson/epersons/search`, { params: params });
   }
 
   /**

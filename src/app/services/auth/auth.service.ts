@@ -25,7 +25,7 @@ export class AuthService {
           this.user = response.user;
           //console.log(this.user);
 
-          // Vérification si l'utilisateur fait partie du groupe 'bib-aut-papyrus-tme-admin' et 'esp-tgde-m2'
+          // Vérification si l'utilisateur fait partie du groupe 'bib-aut-papyrus-tme-admin' et 'esp-TGDE-M2'
           if (this.user.groups && (this.user.groups.includes('bib-aut-papyrus-tme-admin') || this.user.groups.includes('esp-TGDE-M2'))) {
             this.setUserInfoInLocalStorage(this.user.name);
             this.isLoggedIn = true;

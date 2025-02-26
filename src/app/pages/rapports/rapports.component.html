@@ -2,7 +2,7 @@
   <div class="col-12">
     <div class="card radius-10 mh-500">
       <div class="card-body">
-        <form (ngSubmit)="applyFilters()" class="row gy-3 gx-4 align-items-end">
+        <form (ngSubmit)="loadItems();" class="row gy-3 gx-4 align-items-end">
           <div class="col-md-5">
             <label for="collectionFilter" class="form-label fw-bold">
               <i class="bi bi-bricks"></i> {{ 'collections' | translate }}
@@ -32,27 +32,41 @@
             </button>
           </div>
         </form>
+        <div *ngIf="loading" class="spinner-border text-primary mt-2" role="status"></div>
+        <div>
+          <p class="text-muted mt-5" *ngIf="!loading">{{ 'displaying_items' | translate: { count: items.length } }}</p>
+          <div class="d-flex align-items-center gap-3 pt-3 pb-3" *ngIf="items.length!=0">
+            <button class="btn btn-success btn-sm" data-toggle="tooltip" data-placement="bottom"></button>
+            <span>Moins d'un mois</span>
 
-        <div *ngIf="this.loading" class="spinner-border text-primary mt-2" role="status"></div>
+            <button class="btn btn-warning btn-sm" data-toggle="tooltip" data-placement="bottom"></button>
+            <span>Entre 30 et 60 jours</span>
 
-        <div *ngIf="this.items.length!==0">
-          <p class="text-muted mt-5">{{ 'displaying_items' | translate: { count: items.length } }}</p>
-
-          <table class="table align-middle">
+            <button class="btn btn-danger btn-sm" data-toggle="tooltip" data-placement="bottom"></button>
+            <span>Plus de 60 jours</span>
+          </div>
+          <table class="table col-md-12" *ngIf="items.length!=0">
             <thead class="table-light">
             <tr>
-              <th class="col-md-2">{{ 'id' | translate }}</th>
+              <th class="col-md-1">{{ 'id' | translate }}</th>
+              <th class="col-md-2 text-center" (click)="toggleSortOrder()">
+                <i *ngIf="sortField === 'lastModified'" class="bi" [ngClass]="sortOrder === 'asc' ? 'bi-sort-up' : 'bi-sort-down'"></i>
+                {{ 'last_modified' | translate }}
+              </th>
               <th class="col-md-2">{{ 'authors' | translate }}</th>
-              <th class="col-md-2">{{ 'title' | translate }}</th>
-              <th class="col-md-2">{{ 'collection' | translate }}</th>
-              <th class="col-md-3">{{ 'validation_process_tracking' | translate }}</th>
-              <th class="col-md-1">{{ 'last_modified' | translate }}</th>
+              <th class="col-md-3" >{{ 'itemDetails' | translate }}</th>
+              <th class="col-md-4">{{ 'validation_process_tracking' | translate }}</th>
             </tr>
             </thead>
             <tbody>
-            <ng-container *ngFor="let item of items">
+            <ng-container *ngFor="let item of filteredItems;let i = index; trackBy: trackByFn">
               <tr>
-                <td>{{ item.uuid }}</td>
+                <td>{{ i+1 }}</td>
+                <td class="text-center">
+                  <div [ngClass]="'py-1 px-3 radius-30 ms-auto bg-light-' + getItemStyle(item.lastModified) + ' text-' + getItemStyle(item.lastModified)">
+                    {{ getTimeElapsed(item.lastModified) }}
+                  </div>
+                </td>
                 <td>
                   <ng-container *ngIf="item.metadata.author">
                     <ul class="list-group list-group-flush">
@@ -63,12 +77,16 @@
                   </ng-container>
                   <ng-container *ngIf="!item.metadata.author">{{ 'no_author' | translate }}</ng-container>
                 </td>
-                <td>{{ item.name }}</td>
-                <td>{{ item.collection }}</td>
+                <td>
+                  <p><strong>{{ 'id' | translate }}</strong>: {{item.uuid }}</p>
+                  <p><strong>{{ 'titre' | translate }}</strong>: {{ item.name }}</p>
+                  <p><strong>{{ 'collection' | translate }}</strong>:{{ item.collection }}</p>
+                  <p><strong>{{ 'type' | translate }}</strong>: {{ item.type }}</p>
+                </td>
                 <td>
                   <ng-container *ngIf="item.metadata.provenance">
                     <ul class="list-group list-group-flush">
-                      <li *ngFor="let provenance of cleanAndTranslateData(item.metadata.provenance); let i = index" class="list-group-item">
+                      <li *ngFor="let provenance of methodesUtils.cleanAndTranslateData(item.metadata.provenance); let i = index" class="list-group-item">
                         <h6 class="card-title">{{ 'process_step' | translate: { step: i + 1 } }}</h6>
                         <p [innerHTML]="provenance"></p>
                       </li>
@@ -77,16 +95,13 @@
                   <strong class="text-info ml-2">{{ 'workflow_id' | translate: { id: item.workflowId } }}</strong>
                   <ng-container *ngIf="!item.metadata.provenance">{{ 'no_provenance' | translate }}</ng-container>
                 </td>
-                <td>
-                  <div [ngClass]="'py-1 px-3 radius-30 ms-auto bg-light-' + getItemStyle(item.lastModified) + ' text-' + getItemStyle(item.lastModified)">
-                    {{ getTimeElapsed(item.lastModified) }}
-                  </div>
-                </td>
+
               </tr>
             </ng-container>
             </tbody>
           </table>
         </div>
+
       </div>
     </div>
   </div>

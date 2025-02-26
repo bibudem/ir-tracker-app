@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { DSpaceService } from '../../services/dspace.service';
 import { TranslateService } from '@ngx-translate/core';
 import { environment } from '../../../environments/environment';
+import {Utils} from "../../utils/utils";
 
 @Component({
   selector: 'app-epersons',
@@ -29,6 +30,9 @@ export class EpersonsComponent implements OnInit {
   selectedUserId: string | null = null;
   searchQueryString: string = '';
 
+  //importer les fonctions global
+  methodesUtils: Utils = new Utils();
+
   constructor(
     private dspaceService: DSpaceService,
     public translate: TranslateService
@@ -44,14 +48,8 @@ export class EpersonsComponent implements OnInit {
     this.result = [];
     this.resultItemsCombined = [];
 
-    // Nettoyer les valeurs saisies dans le formulaire
-    this.query.email = this.query.email?.trim() || '';
-    this.query.nom = this.query.nom?.trim() || '';
-    this.query.prenom = this.query.prenom?.trim() || '';
-
-    // Construire la chaîne de requête
     const queryStr = [this.query.email, this.query.nom, this.query.prenom]
-      .filter((value) => value !== '') // On ne conserve que les champs non vides
+      .filter((value) => value?.trim())
       .join('&');
 
     this.searchQueryString = queryStr;
@@ -60,32 +58,42 @@ export class EpersonsComponent implements OnInit {
 
     this.isLoading = true;
 
-    this.dspaceService.getPersonnes(queryStr).subscribe(
+    this.dspaceService.getPersonnes(this.query).subscribe(
       (data) => {
         this.isLoading = false;
+        //console.log(data);
 
         let utilisateurs = data.utilisateurs || [];
-        this.showAlert = utilisateurs.length === 0;
-        if (this.showAlert) {
+
+        this.showAlert = utilisateurs.length == 0;
+        if (utilisateurs.length == 0) {
           this.translate.get('searchNoResults', { query: queryStr }).subscribe((res: string) => {
             this.alertMessage = res;
           });
         } else {
           // Validation pour vérifier prénom et nom, y compris les inversions
           if (this.query.nom && this.query.prenom) {
-            const nom = this.query.nom.toLowerCase();
-            const prenom = this.query.prenom.toLowerCase();
+            const normalize = (str: string) =>
+              str
+                .toLowerCase()
+                .normalize("NFD")
+                .replace(/[\u0300-\u036f]/g, ""); // Supprime les accents
+
+            const nom = normalize(this.query.nom);
+            const prenom = normalize(this.query.prenom);
 
             utilisateurs = utilisateurs.filter((user) => {
               const [userPrenom, userNom] = user.fullName
                 .toLowerCase()
-                .split(' ')
+                .normalize("NFD")
+                .replace(/[\u0300-\u036f]/g, "")
+                .split(',')
                 .map((part) => part.trim());
 
               // Vérifier les correspondances dans les deux ordres possibles
               return (
-                (userPrenom === prenom && userNom === nom) || // Prénom et nom dans l'ordre correct
-                (userPrenom === nom && userNom === prenom)    // Prénom et nom inversés
+                (userPrenom === prenom && userNom === nom) ||
+                (userPrenom === nom && userNom === prenom)
               );
             });
           }
@@ -210,66 +218,6 @@ export class EpersonsComponent implements OnInit {
       });
     }
   }
-
-  /**
-   * Nettoie et traduit les données de provenance.
-   * Cette méthode remplace certains mots par des balises HTML correspondantes,
-   * et supprime tout ce qui suit "checksum:" et "No. of bitstreams:" et inclut ces chaînes de caractères.
-   *
-   * @param provenanceArray - Un tableau d'objets contenant les données de provenance.
-   * @returns Un tableau d'objets avec les valeurs nettoyées et traduites.
-   */
-  cleanAndTranslateData(provenanceArray: any[]): string[] {
-    if (!Array.isArray(provenanceArray)) {
-      console.warn('provenanceArray n\'est pas un tableau:', provenanceArray);
-      return [];
-    }
-
-    const translations: { [key: string]: string } = {
-      '\\bon\\b': '<span>le</span>',
-      '\\bStep: reviewstep - action:reviewaction\\b': '',
-      '\\bStep: editstep - action:editaction\\b': '',
-      '\\bStep: finaleditstep - action:finaleditaction\\b': '',
-      '\\bItem was in collections\\b': '<span>Cet élément était dans les collections </span>',
-      '\\breason\\b': '<strong>pour la raison suivante </strong>',
-      'Submitted by': '<strong>Soumis par: </strong>',
-      'Approved for entry into archive by': '<strong>Approuvé par: </strong>',
-      'Rejected by': '<strong class="text-danger">Rejeté par: </strong>',
-      'Item withdrawn by': '<strong class="text-danger">Élément retiré par: </strong>',
-      'Item reinstated by': '<strong class="text-warning">Élément réintégré par: </strong>',
-      'Made available in DSpace': '<strong class="text-success">Publié sur Papyrus: </strong>',
-    };
-
-    return provenanceArray.map((item) => {
-      let value = item.value;
-
-      // Remplacer les mots par les balises HTML correspondantes
-      Object.keys(translations).forEach((key) => {
-        const regex = new RegExp(key, 'g');
-        value = value.replace(regex, translations[key]);
-      });
-
-      // Suppression de tout ce qui suit "No. of bitstreams:" et inclut "No. of bitstreams:"
-      value = value.replace(/No\. of bitstreams:.*/, '').trim();
-
-      // Supprimer tout ce qui suit "checksum:" et inclut "checksum:"
-      value = value.replace(/checksum:.*/, '').trim();
-
-
-      value = value.replace(/workflow start=.*/, '').trim();
-
-      value = value.replace(/(\d{4}-\d{2}-\d{2})T(\d{2}:\d{2}:\d{2}Z)?.*/, (match, datePart) => {
-        // Conserver la date originale (format UTC ou d'origine)
-        return datePart;
-      });
-
-      // Supprimer le nom du fichier (avec extensions .pdf, .zip, .mov) et tout ce qui suit
-      value = value.replace(/[\w-]+\.(pdf|zip|mov|txt|xlsx|docx)\b.*/gi, '').trim();
-
-      return value;
-    });
-  }
-
 
   /**
    * Réinitialiser le formulaire de recherche et effacer les résultats.
