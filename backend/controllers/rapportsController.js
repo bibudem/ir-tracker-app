@@ -8,8 +8,6 @@ const SIZE = 30;
 const getWorkflowitems = async (req, res) => {
   try {
     const typeFiltre = req.query.type;
-    const sortOrder = req.query.sortOrder;
-    const sortField = 'lastModified';
 
     let allItems = [];
     let page = 0;
@@ -35,13 +33,6 @@ const getWorkflowitems = async (req, res) => {
         typeof item.type === 'string' && item.type.includes(typeFiltre)
       );
     }
-
-    // Appliquer le tri
-    detailedItems.sort((a, b) => {
-      const fieldA = a[sortField] || '';
-      const fieldB = b[sortField] || '';
-      return sortOrder === 'asc' ? fieldA.localeCompare(fieldB) : fieldB.localeCompare(fieldA);
-    });
 
     res.json({ totalItems: detailedItems.length, items: detailedItems });
 
@@ -74,7 +65,7 @@ const fetchPage = async (page, req) => {
         const collectionName = collectionId ? await fetchCollectionName(collectionId, req) : null;
         return {
           workflowId: item.id,
-          lastModified: item.lastModified,
+          //lastModified: item.lastModified,
           itemHref: item._links?.item?.href || null,
           collection: collectionName,
         };
@@ -135,7 +126,6 @@ const fetchItemDetails = async (items, req) => {
         collection: item.collection || null, // Ajouter la collection récupérée dans fetchPage
         type: data.metadata["dc.type"]?.[0]?.value || "",
         metadata: {
-          "advisor": data.metadata["dc.contributor.advisor"] || [],
           "author": data.metadata["dc.contributor.author"] || [],
           "date.available": data.metadata["dc.date.available"] || [],
           "date.submitted": data.metadata["dc.date.submitted"] || [],
@@ -155,11 +145,13 @@ const fetchItemDetails = async (items, req) => {
   const results = await Promise.all(requests);
   const filteredResults = results.filter(item => item !== null);
 
-  logger.info(`Total items initial: ${items.length}`);
-  logger.info(`Items exclus par nom vide: ${countExcludedName}`);
-  logger.info(`Total items après filtres: ${filteredResults.length}`);
+  // Logger pour debug
+  //logger.info(`Total items initial: ${items.length}`);
+  //logger.info(`Items exclus par nom vide: ${countExcludedName}`);
+  //logger.info(`Total items après filtres: ${filteredResults.length}`);
 
   return filteredResults;
+
 };
 
 module.exports = { getWorkflowitems };

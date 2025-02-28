@@ -59,4 +59,23 @@ form .form-control {
 .text-red {
   color: #dc3545;
 }
+.input-with-icon {
+  position: relative;
+}
+
+.input-with-icon .icon {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.input-with-icon input {
+  padding-left: 30px;
+}
+
+.align-top {
+  vertical-align: top !important;
+}
 

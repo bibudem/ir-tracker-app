@@ -19,6 +19,7 @@ export class RapportsComponent implements OnInit, OnDestroy {
   filters: any = { type: '', collection: '' };
   sortField = 'lastModified';  // Par défaut, on trie par 'lastModified'
   sortOrder = 'desc';  // Ordre de tri par défaut
+  searchDetailsQuery = ''; // Pour filtrer les détails de soumission
 
   filterOptions: any = {
     types: [
@@ -61,7 +62,9 @@ export class RapportsComponent implements OnInit, OnDestroy {
           ...item
         }));
         this.filteredItems = [...this.items]; // Copie les items dans filteredItems
-        this.sortItems();  // Appliquer le tri dès que les données sont chargées
+        this.sortItems();
+        this.filteredItems = [...this.items];
+        this.applyFilters();
         this.loading = false;
       },
       (err: any) => {
@@ -121,6 +124,23 @@ export class RapportsComponent implements OnInit, OnDestroy {
   toggleSortOrder(): void {
     this.sortOrder = this.sortOrder === 'asc' ? 'desc' : 'asc';
     this.sortItems();
+  }
+  applyFilters(): void {
+    this.filteredItems = this.items.filter(item => {
+      const authorMatch = this.searchQuery
+        ? item.metadata.author?.some(author =>
+          author.value.toLowerCase().includes(this.searchQuery.toLowerCase())
+        )
+        : true;
+
+      const detailsMatch = this.searchDetailsQuery
+        ? item.name.toLowerCase().includes(this.searchDetailsQuery.toLowerCase()) ||
+        item.collection.toLowerCase().includes(this.searchDetailsQuery.toLowerCase()) ||
+        item.type.toLowerCase().includes(this.searchDetailsQuery.toLowerCase())
+        : true;
+
+      return authorMatch && detailsMatch;
+    });
   }
 
 }

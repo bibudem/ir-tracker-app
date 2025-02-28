@@ -48,14 +48,40 @@
           <table class="table col-md-12" *ngIf="items.length!=0">
             <thead class="table-light">
             <tr>
-              <th class="col-md-1">{{ 'id' | translate }}</th>
-              <th class="col-md-2 text-center" (click)="toggleSortOrder()">
+              <th class="col-md-1 text-left align-top">{{ 'id' | translate }}</th>
+              <th class="col-md-2 text-left align-top" (click)="toggleSortOrder()">
                 <i *ngIf="sortField === 'lastModified'" class="bi" [ngClass]="sortOrder === 'asc' ? 'bi-sort-up' : 'bi-sort-down'"></i>
                 {{ 'last_modified' | translate }}
               </th>
-              <th class="col-md-2">{{ 'authors' | translate }}</th>
-              <th class="col-md-3" >{{ 'itemDetails' | translate }}</th>
-              <th class="col-md-4">{{ 'validation_process_tracking' | translate }}</th>
+              <th class="col-md-2 text-left align-top">{{ 'authors' | translate }}
+                <div class="input-with-icon">
+                  <i class="bi bi-search icon"></i>
+                  <input
+                    id="searchAuthor"
+                    type="text"
+                    class="form-control"
+                    [(ngModel)]="searchQuery"
+                    name="searchQuery"
+                    placeholder="{{ 'search_author' | translate }}"
+                    (input)="applyFilters()"
+                  />
+                </div>
+              </th>
+              <th class="col-md-3 text-left align-top" >{{ 'itemDetails' | translate }}
+                <div class="input-with-icon">
+                  <i class="bi bi-search icon"></i>
+                  <input
+                    id="searchDetails"
+                    type="text"
+                    class="form-control"
+                    [(ngModel)]="searchDetailsQuery"
+                    name="searchQuery"
+                    placeholder="{{ 'enter_submission_details' | translate }}"
+                    (input)="applyFilters()"
+                  />
+                </div>
+              </th>
+              <th class="col-md-4 text-left align-top">{{ 'validation_process_tracking' | translate }}</th>
             </tr>
             </thead>
             <tbody>

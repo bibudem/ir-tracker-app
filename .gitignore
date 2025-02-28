@@ -48,4 +48,6 @@ testem.log
 # System Files
 .DS_Store
 Thumbs.db
-/backend/logs/error.log
+backend/logs/error.log
+backend/logs/*
+backend/config/*
