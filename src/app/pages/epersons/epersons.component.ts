@@ -47,10 +47,15 @@ export class EpersonsComponent implements OnInit {
   rechercher(): void {
     this.result = [];
     this.resultItemsCombined = [];
+    this.query.email=this.methodesUtils.nettoyerQueryEspace(this.query.email);
+    this.query.nom=this.methodesUtils.nettoyerQueryEspace(this.query.nom);
+    this.query.prenom=this.methodesUtils.nettoyerQueryEspace(this.query.prenom);
 
-    const queryStr = [this.query.email, this.query.nom, this.query.prenom]
-      .filter((value) => value?.trim())
-      .join('&');
+    const queryStr = [
+      this.query.email,
+      this.query.nom,
+      this.query.prenom
+    ].filter(value => value).join('&');
 
     this.searchQueryString = queryStr;
 
@@ -76,6 +81,7 @@ export class EpersonsComponent implements OnInit {
             const normalize = (str: string) =>
               str
                 .toLowerCase()
+                .trim()
                 .normalize("NFD")
                 .replace(/[\u0300-\u036f]/g, ""); // Supprime les accents
 

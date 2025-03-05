@@ -58,6 +58,7 @@ export class RapportsComponent implements OnInit, OnDestroy {
     this.loading = true;
     const sub = this.dspaceService.getFilteredItems(params).subscribe(
       (data: any) => {
+        console.log(data.items.length);
         this.items = data.items.map(item => ({
           ...item
         }));

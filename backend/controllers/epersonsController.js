@@ -6,25 +6,55 @@ const removeAccents = (str) => {
   return str.normalize("NFD").replace(/[\u0300-\u036f]/g, ""); // Normalise les accents
 };
 
+
 // Fonction de récupération des utilisateurs
 const getUsers = async (req, res) => {
-  const querySaisi = req.query.query;
-  if (!querySaisi) {
+  const queryParams = req.query;
+  //console.log("Paramètres reçus:", queryParams);
+
+  if (!queryParams || Object.keys(queryParams).length === 0) {
     return res.status(400).send({ error: 'Le paramètre query est requis' });
   }
 
   try {
     let utilisateurs = [];
+    let errorsMetadata = [];
 
-    // Requête dans /eperson/epersons/search/byMetadata
+    // Utiliser directement les paramètres reçus pour la recherche par metadata
+    const { nom, prenom, email } = queryParams;
+    let searchQueries = [];
+
+    if (nom) {
+      searchQueries.push(`${nom}`);
+    }
+    if (prenom) {
+      searchQueries.push(`${prenom}`);
+    }
+    if (email) {
+      searchQueries.push(`${email}`);
+    }
+    const querySaisi = searchQueries.join('&').toString();
+
+    //console.log(`Query String utilisée : ${querySaisi}`);
+
     const fetchUsers = async (query) => {
-      const response = await axios.get(`${config.DSPACE_API_URL}/eperson/epersons/search/byMetadata?query=${encodeURIComponent(query)}`, {
-        headers: {
-          'Authorization': req.dspaceAuthToken,
-          'Cookie': req.dspaceCookies,
-        },
-      });
-      return response.data._embedded?.epersons || [];
+      let allUsers = [];
+      let page = 0;
+      let totalPages = 1;
+
+      while (page < totalPages) {
+        const response = await axios.get(`${config.DSPACE_API_URL}/eperson/epersons/search/byMetadata?query=${query}&page=${page}&size=20`, {
+          headers: {
+            'Authorization': req.dspaceAuthToken,
+            'Cookie': req.dspaceCookies,
+          },
+        });
+        const data = response.data;
+        allUsers = allUsers.concat(data._embedded?.epersons || []);
+        totalPages = data.page.totalPages;
+        page++;
+      }
+      return allUsers;
     };
 
     // Effectuer la première recherche
@@ -37,9 +67,49 @@ const getUsers = async (req, res) => {
       return {
         id: user.uuid,
         email: user.email,
-        fullName: `${firstname} ${lastname}`,
+        fullName: `${firstname}, ${lastname}`,
+        errorsMetadata:errorsMetadata
       };
     });
+
+    // Vérification supplémentaire : comparer le nom et prénom avec les métadonnées
+    utilisateurs = utilisateurs.filter(user => {
+      const nomLower = nom ? nom.toLowerCase() : null;
+      const prenomLower = prenom ? prenom.toLowerCase() : null;
+      const fullNameLower = user.fullName.toLowerCase();
+
+      const nomMatch = !nomLower || fullNameLower.includes(nomLower);
+      const prenomMatch = !prenomLower || fullNameLower.includes(prenomLower);
+
+      if (!nomMatch || !prenomMatch) {
+        errorsMetadata.push(`Veuillez vérifier les informations.`);
+      }
+      return nomMatch && prenomMatch;
+    });
+
+    // Si aucun utilisateur trouvé, effectuer une recherche dans /discover/browses/author
+    if (utilisateurs.length === 0) {
+      const browseResponse = await axios.get(`${config.DSPACE_API_URL}/discover/browses/author/items?filterValue=${encodeURIComponent(querySaisi)}`, {
+        headers: {
+          'Authorization': req.dspaceAuthToken,
+          'Cookie': req.dspaceCookies,
+        },
+      });
+      const browseObjects = browseResponse.data._embedded?.items || [];
+
+      const browseUsers = browseObjects.map((item) => {
+        const metadata = item.metadata || {};
+        const author = metadata['dc.contributor.author']?.[0]?.value || 'N/A';
+        const [lastname, firstname] = author.split(',').map(part => part.trim());
+        return {
+          id:  `N/A-${author}`,
+          email: 'N/A',
+          fullName: `${firstname}, ${lastname}`,
+          errorsMetadata: errorsMetadata
+        };
+      });
+      utilisateurs.push(...browseUsers);
+    }
 
     // Si aucun utilisateur trouvé, effectuer une recherche dans /discover/search/objects
     if (utilisateurs.length === 0) {
@@ -64,12 +134,12 @@ const getUsers = async (req, res) => {
           return {
             id: userId,
             email: 'N/A', // L'email n'est pas disponible ici
-            fullName: `${firstname} ${lastname}`,
+            fullName: `${firstname}, ${lastname}`,
+            errorsMetadata:errorsMetadata
           };
         }
         return null;
-      }).filter(user => user !== null);  // Éliminer les doublons
-
+      }).filter(user => user !== null);
       utilisateurs.push(...additionalUsers);
     }
 
@@ -85,11 +155,11 @@ const getUsers = async (req, res) => {
         return {
           id: uuid,
           email: user.email,
-          fullName: `${firstname} ${lastname}`,
+          fullName: `${firstname}, ${lastname}`,
+          errorsMetadata:errorsMetadata
         };
       });
     }
-
     res.json({ utilisateurs });
   } catch (error) {
     logger.error('Erreur lors de la récupération des utilisateurs:', error.message);
@@ -97,19 +167,16 @@ const getUsers = async (req, res) => {
   }
 };
 
-module.exports = {
-  getUsers,
-};
-
 const fetchItems = async (url, headers) => {
   try {
-    const response = await axios.get(url, { headers });
+    const response = await axios.get(`${url}&page=0&size=100`, { headers });
     return response.data._embedded || {};
   } catch (error) {
-    logger.warn(`Erreur lors de la récupération des données depuis ${url}: ${error.message}`);  // Correction de la syntaxe des backticks
+    logger.warn(`Erreur lors de la récupération des données depuis ${url}: ${error.message}`);  
     return {};
   }
 };
+
 
 const enrichItems = async (items, headers) => {
   return Promise.all(
@@ -157,14 +224,13 @@ const getUserItems = async (req, res) => {
     let enrichedWorkspaceItems = [];
 
     if (!userId.includes('N/A')) {
-      // Récupération des workflows et workspaces
       const { workflowitems = [] } = await fetchItems(
-        `${config.DSPACE_API_URL}/workflow/workflowitems/search/findBySubmitter?uuid=${userId}`,  // Correction des backticks
+        `${config.DSPACE_API_URL}/workflow/workflowitems/search/findBySubmitter?uuid=${userId}`,
         headers
       );
 
       const { workspaceitems = [] } = await fetchItems(
-        `${config.DSPACE_API_URL}/submission/workspaceitems/search/findBySubmitter?uuid=${userId}`,  // Correction des backticks
+        `${config.DSPACE_API_URL}/submission/workspaceitems/search/findBySubmitter?uuid=${userId}`,
         headers
       );
 
@@ -172,28 +238,25 @@ const getUserItems = async (req, res) => {
       enrichedWorkspaceItems = await enrichItems(workspaceitems, headers);
     }
 
-    // Récupérer les autres items liés à l'utilisateur
     let userItemsResponse = await fetchItems(
-      `${config.DSPACE_API_URL}/discover/search/objects?f.author=${filtreAuthor},equals`,  // Correction des backticks
+      `${config.DSPACE_API_URL}/discover/search/objects?f.author=${filtreAuthor},contains`,
       headers
     );
 
     let objects = userItemsResponse.searchResult?._embedded?.objects || [];
 
-    // Si aucun résultat, essayer avec l'inversion Prénom/Nom
     if (objects.length === 0) {
       const decodedAuthor = decodeURIComponent(filtreAuthor);
-      const nameParts = decodedAuthor.split(' ');
+      const nameParts = decodedAuthor.split(',');
       const reversedAuthor = nameParts.length === 2 ? `${nameParts[1]}, ${nameParts[0]}` : decodedAuthor;
 
       userItemsResponse = await fetchItems(
-        `${config.DSPACE_API_URL}/discover/search/objects?f.author=${encodeURIComponent(reversedAuthor)},equals`,  // Correction des backticks
+        `${config.DSPACE_API_URL}/discover/search/objects?f.author=${encodeURIComponent(reversedAuthor)},contains`,
         headers
       );
       objects = userItemsResponse.searchResult?._embedded?.objects || [];
     }
 
-    // Mapper les objets
     const userItems = objects.map((obj) => {
       const item = obj._embedded?.indexableObject;
       const metadata = item?.metadata || {};
@@ -206,10 +269,50 @@ const getUserItems = async (req, res) => {
       };
     });
 
+    let browseItemsResponse = await fetchItems(
+      `${config.DSPACE_API_URL}/discover/browses/author/items?filterValue=${filtreAuthor}`,
+      headers
+    );
+
+    let browseObjects = browseItemsResponse?.items || [];
+
+    if (browseObjects.length === 0) {
+      const decodedAuthor = decodeURIComponent(filtreAuthor);
+      const nameParts = decodedAuthor.split(',');
+      if (nameParts.length === 2) {
+        const reversedAuthor = `${nameParts[1].trim()}, ${nameParts[0].trim()}`;
+        browseItemsResponse = await fetchItems(
+          `${config.DSPACE_API_URL}/discover/browses/author/items?filterValue=${encodeURIComponent(reversedAuthor)}`,
+          headers
+        );
+        browseObjects = browseItemsResponse?.items || [];
+      }
+    }
+
+    const browseItems = browseObjects.map((item) => {
+      const metadata = item?.metadata || {};
+      return {
+        id: item?.id || null,
+        title: metadata['dc.title']?.[0]?.value || 'Titre non disponible',
+        description: metadata['dcterms.abstract']?.[0]?.value || 'Description non disponible',
+        lastModified: item?.lastModified || 'Date de modification non disponible',
+        submissionDate: metadata['dc.date.accessioned']?.[0]?.value || 'Date de soumission non disponible',
+      };
+    });
+
+    const itemSet = new Map();
+    [...userItems, ...browseItems].forEach(item => {
+      if (!itemSet.has(item.id)) {
+        itemSet.set(item.id, item);
+      }
+    });
+
+    const allUserItems = Array.from(itemSet.values());
+
     res.json({
       workflowItems: enrichedWorkflowItems,
       workspaceItems: enrichedWorkspaceItems,
-      userItems,
+      userItems: allUserItems,
     });
   } catch (error) {
     logger.error('Erreur lors de la récupération des items:', error.message);

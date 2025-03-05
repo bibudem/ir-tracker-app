@@ -32,6 +32,9 @@
                     [ngClass]="{'border-primary': selectedUserId === user.id, 'border-3': selectedUserId === user.id}">
                     <div *ngIf="user.id.includes('N/A')"  class="alert alert-warning mt-2">
                       {{ 'profileRequiresUpdate' | translate }}
+                      <p *ngIf="user.errorsMetadata.length!=0"  >
+                        {{ user.errorsMetadata[0] }}
+                      </p>
                     </div>
                     <div class="card-body">
                       <div class="d-flex align-items-center gap-3">
