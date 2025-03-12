@@ -4,6 +4,7 @@ import {HomeComponent} from "./home/home.component";
 import {CollectionComponent} from "./collection/collection.component";
 import {EpersonsComponent} from "./epersons/epersons.component";
 import {RapportsComponent} from "./rapports/rapports.component";
+import {DiscoverComponent} from "./discover/discover.component";
 
 
 
@@ -30,6 +31,13 @@ const routes: Routes = [
         component: EpersonsComponent,
         data: {
           title: 'Déposant'
+        }
+      },
+      {
+        path: 'discover',
+        component: DiscoverComponent,
+        data: {
+          title: 'Découvrir'
         }
       },
       {

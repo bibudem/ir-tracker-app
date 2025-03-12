@@ -9,6 +9,7 @@ import {CollectionComponent} from "./collection/collection.component";
 import {EpersonsComponent} from "./epersons/epersons.component";
 import {RapportsComponent} from "./rapports/rapports.component";
 import { LoginComponent } from './login/login.component';
+import {DiscoverComponent} from "./discover/discover.component";
 
 @NgModule({
   declarations: [
@@ -16,6 +17,7 @@ import { LoginComponent } from './login/login.component';
     CollectionComponent,
     EpersonsComponent,
     RapportsComponent,
+    DiscoverComponent,
     LoginComponent
   ],
   imports: [

@@ -1,84 +1,62 @@
 <div class="row">
   <div class="card mh-500">
     <div class="card-header py-3 mt-2">
-      <h3 class="product-title mb-1">{{ 'documentProgress' | translate }}</h3>
+      <h3 class="product-title mb-2">{{ 'searchByIndex' | translate }}</h3>
+      <p>{{ 'searchByIndex_description' | translate }}</p>
     </div>
     <div class="card-body">
-      <form class="row g-3 mt-2 mb-2" (ngSubmit)="rechercher()">
-        <!-- Formulaire -->
-        <div class="col-12 col-md-3">
-          <label>{{ 'email' | translate }}</label>
-          <input type="email" class="form-control" [(ngModel)]="query.email" name="email" />
+      <form class="row g-3 mb-2" (ngSubmit)="rechercher()">
+        <div class="col-12 col-md-7">
+          <input
+            type="text"
+            id="indexInput"
+            class="form-control"
+            [(ngModel)]="indexQuery"
+            name="index"
+            placeholder="Recherche "
+          />
         </div>
-        <div class="col-12 col-md-3">
-          <label>{{ 'lastName' | translate }}</label>
-          <input type="text" class="form-control" [(ngModel)]="query.nom" name="nom" />
-        </div>
-        <div class="col-12 col-md-3">
-          <label>{{ 'firstName' | translate }}</label>
-          <input type="text" class="form-control" [(ngModel)]="query.prenom" name="prenom" />
-        </div>
-        <div class="col-12 col-md-3 d-flex align-items-end">
+        <div class="col-12 col-md-5 d-flex align-items-end">
           <button type="submit" class="btn btn-primary mx-2">{{ 'search' | translate }}</button>
-          <button type="button" class="btn btn-danger" (click)="resetForm()">{{ 'reset' | translate }}</button>
+          <button type="button" class="btn btn-danger" (click)="resetSearch()">{{ 'reset' | translate }}</button>
         </div>
       </form>
-      <!-- Résultats -->
-      <div *ngIf="result.length" class="mt-5">
-        <div class="row">
-        <h5>{{ 'results' | translate }} :  <span  class="text-primary"> {{this.searchQueryString}}</span></h5>
-          <div *ngFor="let user of result" class="col-md-4 col-xl-4">
-                  <div class="card border shadow-none radius-10"
-                    [ngClass]="{'border-primary': selectedUserId === user.id, 'border-3': selectedUserId === user.id}">
-                    <div *ngIf="user.id.includes('N/A')"  class="alert alert-warning mt-2">
-                      {{ 'profileRequiresUpdate' | translate }}
-                      <p *ngIf="user.errorsMetadata.length!=0"  >
-                        {{ user.errorsMetadata[0] }}
-                      </p>
-                    </div>
-                    <div class="card-body">
-                      <div class="d-flex align-items-center gap-3">
-                        <div class="icon-box bg-light-primary border-0">
-                          <i class="bi bi-person text-primary"></i>
-                        </div>
-                        <div class="info">
-                          <p class="mb-1">#{{ user.id }}</p>
-                          <p class="mb-1">{{ user.fullName }}</p>
-                          <p class="mb-1">{{ user.email }}</p>
-                          <button class="btn btn-dark btn-sm shadow-sm p-2"
-                                  (click)="afficherItems(user.id, user.fullName)">
-                            <i class="bi bi-files-alt"></i> {{ 'list-items' | translate }}
-                          </button>
-                        </div>
-                      </div>
-              </div>
-        </div>
-        </div>
-        </div>
-      </div>
       <!-- Items -->
-      <div *ngIf="resultItemsCombined.length && selectedUserId" class="mt-3">
-        <h4>{{ 'userItems' | translate }} : {{ selectedUserId }}</h4>
-        <div class="mt-2">
+      <div *ngIf="resultItems.length " class="mt-3">
+        <h4>{{ 'results' | translate }} : <span class="text-primary">{{ indexQuery }}</span></h4>
+        <div class="mt-3">
           <table class="table align-middle">
             <thead class="table-light">
             <tr>
               <th></th>
+              <th>{{ 'authors' | translate }}</th>
+              <th>{{ 'advisor' | translate }}</th>
               <th>{{ 'id' | translate }}</th>
               <th>{{ 'titre' | translate }}</th>
             </tr>
             </thead>
             <tbody>
-            <ng-container *ngFor="let item of resultItemsCombined">
+            <ng-container *ngFor="let item of resultItems">
               <tr>
                 <td>
                   <button class="btn btn-sm btn-outline-secondary"
-                          (click)="toggleRow(item.id, item.idCollection)">
-                          {{ expandedRows[item.id] ? '-' : '+' }}
+                          (click)="toggleRow(item.id, null);">
+                    {{ expandedRows[item.id] ? '-' : '+' }}
                   </button>
                 </td>
+                <td>
+                  <h6 *ngFor="let author of item.metadata['dc.contributor.author']; let last = last">
+                    {{ author.value }}<span *ngIf="!last">, </span>
+                  </h6>
+                </td>
+                <td>
+                  <h6 *ngFor="let directeur of item.metadata['dc.contributor.advisor']; let last = last">
+                    {{ directeur.value }}<span *ngIf="!last">, </span>
+                  </h6>
+                  <span *ngIf="!item.metadata['dc.contributor.advisor']">-</span>
+                </td>
                 <td><a href="{{ urlDSpace + item.id }}" target="_blank" class="highcharts-link">{{ item.id }}</a></td>
-                <td><h6>{{ item.title }}</h6></td>
+                <td><h6>{{ item.metadata['dc.title'][0]?.value }}</h6></td>
               </tr>
               <tr *ngIf="expandedRows[item.id]">
                 <td colspan="4">
@@ -102,8 +80,13 @@
                                 <span *ngFor="let author of selectedItemDetails.author; let last = last">
                                     {{ author.value }}<span *ngIf="!last">, </span></span>
                               </li>
+                              <li *ngIf="selectedItemDetails.advisor?.length" class="list-group-item p-2">
+                                <strong>{{ 'advisor' | translate }}:</strong>
+                                <span *ngFor="let directeur of selectedItemDetails.advisor; let last = last">
+                                    {{ directeur.value }}<span *ngIf="!last">, </span></span>
+                              </li>
                               <li class="list-group-item p-2">
-                                <strong>{{ 'collection' | translate }}:</strong> {{ this.collectionNames[item.id] }}
+                                <strong>{{ 'collection' | translate }}:</strong> {{ collectionNames[item.id] }}
                               </li>
                               <li *ngIf="selectedItemDetails.lastModified" class="list-group-item p-2">
                                 <strong>{{ 'lastModified' | translate }}:</strong> {{ selectedItemDetails.lastModified }}
@@ -136,11 +119,11 @@
                         <div class="card mb-0 radius-10 shadow-none w-100">
                           <div class="card-body">
                             <h4 class="card-title mt-3 text-primary">{{ 'details-provenence' | translate }}</h4>
-                              <ul class="list-group list-group-flush">
-                              <li *ngFor="let provenance of methodesUtils.cleanAndTranslateData(selectedItemDetails.provenance); let i = index" class="list-group-item">
-                                  <h6 class="card-title"> [{{ 'processus' | translate }} {{ i + 1 }}]</h6>
-                                  <p [innerHTML]="provenance"></p>
-                               </li>
+                            <ul class="list-group list-group-flush">
+                              <li *ngFor="let provenance of utils.cleanAndTranslateData(selectedItemDetails.provenance); let i = index" class="list-group-item">
+                                <h6 class="card-title"> [{{ 'processus' | translate }} {{ i + 1 }}]</h6>
+                                <p [innerHTML]="provenance"></p>
+                              </li>
                             </ul>
                           </div>
                         </div>
@@ -162,10 +145,11 @@
       </div>
       <ng-container *ngIf="showAlert">
         <div class="alert border-0 border-danger border-start border-4 bg-light-danger alert-dismissible fade show mt-5">
-          <div class="text-danger">{{ alertMessage }}</div>
+          <div class="text-danger">{{ 'resultVideMessage' | translate }}</div>
           <button type="button" class="btn-close" (click)="showAlert = false" aria-label="Close"></button>
         </div>
       </ng-container>
     </div>
   </div>
 </div>
+

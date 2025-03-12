@@ -78,11 +78,16 @@
       <div class="col-md-6">
         <h2 class="fw-bold mb-4">{{ 'tool_title' | translate }}</h2>
         <p>{{ 'tool_description' | translate }}</p>
-        <a [routerLink]="'/eperson'" class="btn btn-b-transparent-bib mt-3">{{ 'search_button' | translate }}
-          <svg  width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M24.0888 14.464L16.2138 22.339C16.0893 22.4549 15.9248 22.518 15.7548 22.515C15.5848 22.512 15.4226 22.4431 15.3023 22.3229C15.1821 22.2027 15.1132 22.0405 15.1102 21.8704C15.1072 21.7004 15.1703 21.5359 15.2862 21.4115L22.0402 14.6565H4.375C4.20095 14.6565 4.03403 14.5873 3.91096 14.4643C3.78789 14.3412 3.71875 14.1743 3.71875 14.0002C3.71875 13.8262 3.78789 13.6593 3.91096 13.5362C4.03403 13.4131 4.20095 13.344 4.375 13.344H22.0402L15.2862 6.58898C15.1703 6.46458 15.1072 6.30004 15.1102 6.13002C15.1132 5.96001 15.1821 5.7978 15.3023 5.67756C15.4226 5.55733 15.5848 5.48845 15.7548 5.48545C15.9248 5.48245 16.0893 5.54556 16.2138 5.66148L24.0888 13.5365C24.2116 13.6595 24.2807 13.8263 24.2807 14.0002C24.2807 14.1741 24.2116 14.3409 24.0888 14.464Z" fill="#0057ac"/>
-          </svg>
-        </a>
+        <div class="d-flex align-items-center gap-3 mt-3">
+          <a [routerLink]="'/eperson'" class="btn btn-primary b-darkBlue d-flex align-items-center">
+            {{ 'search_button' | translate }}
+            <i class="bi bi-arrow-right ms-2"></i>
+          </a>
+          <a [routerLink]="'/discover'" class="btn btn-b-transparent-bib d-flex align-items-center">
+            <i class="bi bi-search me-2"></i>
+            {{ 'index_button' | translate }}
+          </a>
+        </div>
       </div>
       <div class="col-md-6 p-0">
         <img src="assets/images/gallery/generated-image-2.png" alt="Bibliothèque" class="img-fluid rounded">

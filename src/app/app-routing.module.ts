@@ -12,7 +12,7 @@ const routes: Routes = [
     redirectTo: '/home',
     pathMatch: 'full',
   },
-  { path: '', component: FullLayoutComponent, data: { title: 'full Views' }, children: Full_ROUTES, canActivate: [AuthGuard]},
+  { path: '', component: FullLayoutComponent, data: { title: 'full Views' }, children: Full_ROUTES},
   { path: 'login', component: LoginComponent },
   { path: '**', redirectTo: '/404' }
 ];

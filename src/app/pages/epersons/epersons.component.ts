@@ -3,6 +3,7 @@ import { DSpaceService } from '../../services/dspace.service';
 import { TranslateService } from '@ngx-translate/core';
 import { environment } from '../../../environments/environment';
 import {Utils} from "../../utils/utils";
+import {CollectionData} from "../../core/collection.data";
 
 @Component({
   selector: 'app-epersons',
@@ -35,6 +36,7 @@ export class EpersonsComponent implements OnInit {
 
   constructor(
     private dspaceService: DSpaceService,
+    private collectionData: CollectionData,
     public translate: TranslateService
   ) {}
 
@@ -190,39 +192,15 @@ export class EpersonsComponent implements OnInit {
     );
   }
 
-  /**
-   * Obtenir le nom de la collection associée à un item.
-   * @param itemId - L'identifiant de l'item.
-   */
   getNameCollection(itemId: string, collectionId: string): void {
-    if (!itemId) {
-      return;
-    }
-    if (collectionId) {
-      this.dspaceService.getNameCollectionById(collectionId).subscribe({
-        next: (name) => {
-          if (name) {
-            this.collectionNames[itemId] = name;
-          } else {
-            console.warn(`Aucun nom trouvé pour la collection UUID: ${collectionId}`);
-          }
-        },
-        error: (err) => {
-          console.error('Erreur lors de la récupération du nom de la collection:', err);
-        },
-      });
-    } else {
-      this.dspaceService.getMappedCollection(itemId).subscribe({
-        next: (names) => {
-          if (names) {
-            this.collectionNames[itemId] = names;
-          }
-        },
-        error: (error) => {
-          console.error('Erreur lors de la récupération des collections', error);
-        },
-      });
-    }
+    this.collectionData.getNameCollection(itemId, collectionId).subscribe(
+      (collectionName) => {
+        this.collectionNames[itemId] = collectionName; // Met à jour le nom de la collection pour l'item donné
+      },
+      (error) => {
+        console.error('Erreur lors de la récupération du nom de la collection:', error);
+      }
+    );
   }
 
   /**
@@ -238,20 +216,21 @@ export class EpersonsComponent implements OnInit {
     this.isLoading = false;
   }
 
+
   /**
    * Basculer l'affichage des détails pour une ligne spécifique.
    * @param id - L'identifiant de l'item ou de l'utilisateur.
    */
-  toggleRow(id: string): void {
-    // Si l'élément est déjà ouvert, on le ferme
+  toggleRow(id: string, idCollection: string): void {
     if (this.expandedRows[id]) {
-      this.expandedRows[id] = false;
-    } else {
-      // Réinitialiser tous les éléments (fermer tous les détails)
       this.expandedRows = {};
-
-      // Ouvrir uniquement l'élément sélectionné
-      this.expandedRows[id] = true;
+      this.selectedItemDetails = null;
+    } else {
+      this.expandedRows = { [id]: true };
+      if (!this.selectedItemDetails || this.selectedItemDetails.id !== id) {
+        this.afficherDetailsItem(id);
+        this.getNameCollection(id, idCollection);
+      }
     }
   }
 }

@@ -62,6 +62,13 @@ export class DSpaceService {
   }
 
   /**
+   * Récupère la liste des items selon un index author
+   */
+  getItemsByIndex(indexQuery: string): Observable<any> {
+    return this.http.get<any>(`${environment.apiUrl}/discover/objects/?query=${indexQuery}`);
+  }
+
+  /**
    * Récupère les items en workflow via un flux d'événements.
    * @returns Observable émettant les données des items en workflow.
    */

@@ -58,4 +58,14 @@ export class Utils  {
     });
   }
 
+  /**
+   * Nettoie une requête en supprimant les espaces inutiles.
+   * @param query - La chaîne de caractères représentant la requête.
+   * @returns La requête nettoyée.
+   */
+  nettoyerQueryEspace(query: string): string {
+    return query ? query.replace(/\s+/g, ' ').trim() : '';
+  }
+
+
 }

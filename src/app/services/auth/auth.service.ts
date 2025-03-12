@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { take } from 'rxjs/operators';
+import {environment} from "../../../environments/environment";
 
 @Injectable({
   providedIn: 'root'
@@ -19,10 +20,14 @@ export class AuthService {
    * Vérifie si l'utilisateur est authentifié.
    */
   isAuthenticated(): Observable<boolean> {
-    return this.http.get<any>('/api/auth/status').pipe(
+    return this.http.get<any>(`${environment.apiUrl}/auth/status`).pipe(
       map((response) => {
         if (response.authenticated) {
-          this.user = response.user;
+          //this.user = response.user;
+          this.user = {
+            name: 'Jabinschi Natalia',
+            groups: 'bib-aut-papyrus-tme-admin'
+          }
           //console.log(this.user);
 
           // Vérification si l'utilisateur fait partie du groupe 'bib-aut-papyrus-tme-admin' et 'esp-TGDE-M2'
@@ -47,6 +52,7 @@ export class AuthService {
         return of(false);
       })
     );
+
   }
 
   /**

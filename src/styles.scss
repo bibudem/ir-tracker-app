@@ -25,6 +25,15 @@ h1, h2 {
   color: #0B113A;
 }
 
+.b-darkBlue {
+  background: #0B113A;
+}
+
+.b-darkBlue:hover {
+  transition: all 0.3s ease-in-out;
+  background: #0057AC;
+}
+
 /* Utiliser la police Figtree pour les paragraphes et autres textes */
 p, span, small, h3, h4, h5, h6 {
   font-family: 'Figtree', sans-serif;
