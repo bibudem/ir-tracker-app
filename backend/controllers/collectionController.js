@@ -63,7 +63,55 @@ const getCollectionById = async (req, res) => {
   }
 };
 
+/**
+ * Récupère la liste des administrateurs pour chaque étape de validation d'une collection spécifique
+ */
+const getCollectionWorkflowAdmins = async (req, res) => {
+  try {
+    const uuid = req.params.uuid;
+    const roles = ['reviewer', 'editor', 'finaleditor']; // Étapes du workflow
+    const adminsByRole = {}; // Stocke les gestionnaires par rôle
+    for (const role of roles) {
+      try {
+        // Récupération du groupe de l'étape
+        const groupResponse = await axios.get(`${config.DSPACE_API_URL}/core/collections/${uuid}/workflowGroups/${role}`, {
+          headers: {
+            'Authorization': req.dspaceAuthToken,
+            'Cookie': req.dspaceCookies,
+          }
+        });
+
+        if (!groupResponse.data._links?.epersons?.href) {
+          adminsByRole[role] = []; // Aucun utilisateur trouvé pour cette étape
+          continue;
+        }
+
+        // Récupération des utilisateurs du groupe
+        const epersonsResponse = await axios.get(groupResponse.data._links.epersons.href, {
+          headers: {
+            'Authorization': req.dspaceAuthToken,
+            'Cookie': req.dspaceCookies,
+          }
+        });
+        adminsByRole[role] = epersonsResponse.data._embedded?.epersons || [];
+      } catch (err) {
+        logger.warn(`Impossible de récupérer les gestionnaires pour l'étape ${role}: ${err.message}`);
+        adminsByRole[role] = []; // En cas d'erreur, on met une liste vide
+      }
+    }
+
+    res.json(adminsByRole);
+  } catch (error) {
+    logger.error(`Erreur lors de la récupération des gestionnaires du workflow pour la collection ${req.params.uuid}: ${error.message}`);
+    if (error.response) {
+      logger.error('Détails de l\'erreur: ', JSON.stringify(error.response.data, null, 2));
+    }
+    res.status(500).send('Erreur lors de la récupération des gestionnaires du workflow');
+  }
+};
+
 module.exports = {
   getCollections,
-  getCollectionById
+  getCollectionById,
+  getCollectionWorkflowAdmins
 };

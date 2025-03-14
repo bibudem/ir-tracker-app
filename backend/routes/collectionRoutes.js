@@ -7,4 +7,6 @@ router.get('/', collectionController.getCollections);
 
 router.get('/:uuid', collectionController.getCollectionById);
 
+router.get('/groups/:uuid', collectionController.getCollectionWorkflowAdmins);
+
 module.exports = router;

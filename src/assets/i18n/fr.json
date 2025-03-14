@@ -108,5 +108,22 @@
   "searchByIndex": "Recherche avancée dans l'index",
   "searchByIndex_description": "Amélioration du repérage des auteurs, autrices et directeurs de recherche avec une recherche en plein texte",
   "resultVideMessage": "Aucun résultat trouvé. Essayez avec d'autres mots-clés!",
-  "index_button": "Recherche avancée dans l'index"
+  "index_button": "Recherche avancée dans l'index",
+  "filterByRole": "Filtrer par rôle",
+  "allRoles": "Tous les rôles",
+  "reviewer": "Relecteur",
+  "editor": "Éditeur",
+  "finalEditor": "Éditeur final",
+  "administrators": "Administrateurs",
+  "previous": "Précédent",
+  "page": "Page",
+  "next": "Suivant",
+  "noAdminsFound": "Aucun administrateur trouvé",
+  "enterCollectionName": "Entrez le nom de la collection",
+  "validationUsers": "Utilisateurs de validation",
+  "validationUsers_description": "Liste des Reviewers, Editors et Final Editors par collection, avec leurs courriels et noms, pour un contact rapide en cas de besoin.",
+  "less_than_one_month": "Moins d'un mois",
+  "between_30_and_60_days": "Entre 30 et 60 jours",
+  "more_than_60_days": "Plus de 60 jours"
 }
+

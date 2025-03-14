@@ -17,7 +17,6 @@ const getDiscover = async (req, res) => {
         'Cookie': req.dspaceCookies,
       }
     });
-    //console.log(`${config.DSPACE_API_URL}/discover/search/objects?query=${query}`);
     let resultSearch = response.data?._embedded?.searchResult || null;
     res.json(resultSearch);
   } catch (error) {

@@ -28,22 +28,16 @@
           <table class="table align-middle">
             <thead class="table-light">
             <tr>
-              <th></th>
-              <th>{{ 'authors' | translate }}</th>
-              <th>{{ 'advisor' | translate }}</th>
-              <th>{{ 'id' | translate }}</th>
-              <th>{{ 'titre' | translate }}</th>
+              <th class="col-md-2">{{ 'id' | translate }}</th>
+              <th class="col-md-3">{{ 'authors' | translate }}</th>
+              <th class="col-md-3">{{ 'advisor' | translate }}</th>
+              <th class="col-md-4">{{ 'titre' | translate }}</th>
             </tr>
             </thead>
             <tbody>
             <ng-container *ngFor="let item of resultItems">
               <tr>
-                <td>
-                  <button class="btn btn-sm btn-outline-secondary"
-                          (click)="toggleRow(item.id, null);">
-                    {{ expandedRows[item.id] ? '-' : '+' }}
-                  </button>
-                </td>
+                <td><a href="{{ urlDSpace + item.id }}" target="_blank" class="highcharts-link">{{ item.id }}</a></td>
                 <td>
                   <h6 *ngFor="let author of item.metadata['dc.contributor.author']; let last = last">
                     {{ author.value }}<span *ngIf="!last">, </span>
@@ -55,82 +49,7 @@
                   </h6>
                   <span *ngIf="!item.metadata['dc.contributor.advisor']">-</span>
                 </td>
-                <td><a href="{{ urlDSpace + item.id }}" target="_blank" class="highcharts-link">{{ item.id }}</a></td>
                 <td><h6>{{ item.metadata['dc.title'][0]?.value }}</h6></td>
-              </tr>
-              <tr *ngIf="expandedRows[item.id]">
-                <td colspan="4">
-                  <div *ngIf="loadingDetails" class="spinner-border text-primary" role="status"></div>
-                  <div *ngIf="!loadingDetails" class="item-details">
-                    <!-- Nouvelle ligne pour afficher les détails -->
-                    <div class="row g-3 p-4">
-                      <div class="col-12 col-lg-4 col-xl-4 d-flex">
-                        <div class="card mb-0 radius-10 shadow-none w-100">
-                          <div class="card-body">
-                            <h5 class="card-title text-primary">{{ 'details-generique' | translate }}</h5>
-                            <ul class="list-group mt-3">
-                              <li *ngIf="selectedItemDetails?.id" class="list-group-item p-2">
-                                <strong>{{ 'id' | translate }}:</strong> {{ selectedItemDetails.id }}
-                              </li>
-                              <li *ngIf="selectedItemDetails.name" class="list-group-item p-2">
-                                <strong>{{ 'titre' | translate }}:</strong> {{ selectedItemDetails.name }}
-                              </li>
-                              <li *ngIf="selectedItemDetails.author?.length" class="list-group-item p-2">
-                                <strong>{{ 'authors' | translate }}:</strong>
-                                <span *ngFor="let author of selectedItemDetails.author; let last = last">
-                                    {{ author.value }}<span *ngIf="!last">, </span></span>
-                              </li>
-                              <li *ngIf="selectedItemDetails.advisor?.length" class="list-group-item p-2">
-                                <strong>{{ 'advisor' | translate }}:</strong>
-                                <span *ngFor="let directeur of selectedItemDetails.advisor; let last = last">
-                                    {{ directeur.value }}<span *ngIf="!last">, </span></span>
-                              </li>
-                              <li class="list-group-item p-2">
-                                <strong>{{ 'collection' | translate }}:</strong> {{ collectionNames[item.id] }}
-                              </li>
-                              <li *ngIf="selectedItemDetails.lastModified" class="list-group-item p-2">
-                                <strong>{{ 'lastModified' | translate }}:</strong> {{ selectedItemDetails.lastModified }}
-                              </li>
-                              <li *ngIf="selectedItemDetails.description" class="list-group-item  p-2">
-                                <strong>{{ 'item-description' | translate }}:</strong> {{ selectedItemDetails.description }}
-                              </li>
-
-                              <li *ngIf="selectedItemDetails.type" class="list-group-item  p-2">
-                                <strong>{{ 'type' | translate }}:</strong> {{ selectedItemDetails.type }}
-                              </li>
-                              <li class="list-group-item p-2" *ngIf="selectedItemDetails.discipline">
-                                <strong>{{ 'discipline' | translate }}:</strong> {{ selectedItemDetails.discipline}}
-                              </li>
-                              <li class="list-group-item p-2" *ngIf="selectedItemDetails.level">
-                                <strong>{{ 'level' | translate }}:</strong> {{ selectedItemDetails.level  }}
-                              </li>
-                              <li class="list-group-item p-2">
-                                <strong>{{ 'in_archive' | translate }}:</strong>
-                                {{ selectedItemDetails.inArchive ? ('yes' | translate) : ('no' | translate) }}
-                              </li>
-                              <li *ngIf="selectedItemDetails.dateAccessioned" class="list-group-item p-2">
-                                <strong>{{ 'date_accessioned' | translate }}:</strong> {{ selectedItemDetails.dateAccessioned }}
-                              </li>
-                            </ul>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="col-12 col-lg-8 col-xl-8 d-flex">
-                        <div class="card mb-0 radius-10 shadow-none w-100">
-                          <div class="card-body">
-                            <h4 class="card-title mt-3 text-primary">{{ 'details-provenence' | translate }}</h4>
-                            <ul class="list-group list-group-flush">
-                              <li *ngFor="let provenance of utils.cleanAndTranslateData(selectedItemDetails.provenance); let i = index" class="list-group-item">
-                                <h6 class="card-title"> [{{ 'processus' | translate }} {{ i + 1 }}]</h6>
-                                <p [innerHTML]="provenance"></p>
-                              </li>
-                            </ul>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </td>
               </tr>
             </ng-container>
             </tbody>

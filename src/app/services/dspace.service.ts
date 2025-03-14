@@ -124,6 +124,14 @@ export class DSpaceService {
     return this.http.get<any>(`${environment.apiUrl}/rapports/itemsRapport`, { params });
   }
 
+  /**
+   * Récupère la liste des administrateurs d'une collection spécifique
+   * @param collectionId ID de la collection
+   * @returns Liste des groupes administrateurs
+   */
+  getCollectionAdmins(collectionId: string): Observable<any> {
+    return this.http.get<any>(`${environment.apiUrl}/collections/groups/${collectionId}`);
+  }
 
 
 }

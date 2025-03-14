@@ -67,5 +67,25 @@ export class Utils  {
     return query ? query.replace(/\s+/g, ' ').trim() : '';
   }
 
+  /**
+   * Cette méthode copie le texte donné dans le presse-papiers et change temporairement la couleur du bouton pour indiquer que l'action a réussi.
+   * Après 2 secondes, la couleur du bouton revient à son état d'origine.
+   *
+   * @param text Le texte à copier dans le presse-papiers.
+   * @param textCopied La variable qui sera mise à jour avec le texte copié, utilisée pour changer la couleur du bouton.
+   */
+  copyToClipboard(text: string, textCopied:string): void {
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(text).then(() => {
+        textCopied = text; // Changer la couleur du bouton
+      }).catch(err => {
+        console.error('Erreur lors de la copie dans le presse-papiers :', err);
+        alert('Impossible de copier dans le presse-papiers');
+      });
+    } else {
+      console.warn('API Clipboard non disponible');
+    }
+  }
+
 
 }

@@ -10,6 +10,7 @@ import {EpersonsComponent} from "./epersons/epersons.component";
 import {RapportsComponent} from "./rapports/rapports.component";
 import { LoginComponent } from './login/login.component';
 import {DiscoverComponent} from "./discover/discover.component";
+import {AdminListComponent} from "./admin-list/admin-list.component";
 
 @NgModule({
   declarations: [
@@ -18,6 +19,7 @@ import {DiscoverComponent} from "./discover/discover.component";
     EpersonsComponent,
     RapportsComponent,
     DiscoverComponent,
+    AdminListComponent,
     LoginComponent
   ],
   imports: [

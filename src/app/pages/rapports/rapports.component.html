@@ -33,18 +33,18 @@
           </div>
         </form>
         <div *ngIf="loading" class="spinner-border text-primary mt-2" role="status"></div>
-        <div>
           <p class="text-muted mt-5" *ngIf="!loading">{{ 'displaying_items' | translate: { count: items.length } }}</p>
-          <div class="d-flex align-items-center gap-3 pt-3 pb-3" *ngIf="items.length!=0">
-            <button class="btn btn-success btn-sm" data-toggle="tooltip" data-placement="bottom"></button>
-            <span>Moins d'un mois</span>
+        <div class="d-flex align-items-center gap-3 pt-3 pb-3" *ngIf="items.length != 0">
+          <button class="btn btn-success btn-sm" (click)="filterByDateRange('success')" data-toggle="tooltip" data-placement="bottom"></button>
+          <span>{{ 'less_than_one_month' | translate }}</span>
 
-            <button class="btn btn-warning btn-sm" data-toggle="tooltip" data-placement="bottom"></button>
-            <span>Entre 30 et 60 jours</span>
+          <button class="btn btn-warning btn-sm" (click)="filterByDateRange('warning')" data-toggle="tooltip" data-placement="bottom"></button>
+          <span>{{ 'between_30_and_60_days' | translate }}</span>
 
-            <button class="btn btn-danger btn-sm" data-toggle="tooltip" data-placement="bottom"></button>
-            <span>Plus de 60 jours</span>
-          </div>
+          <button class="btn btn-danger btn-sm" (click)="filterByDateRange('danger')" data-toggle="tooltip" data-placement="bottom"></button>
+          <span>{{ 'more_than_60_days' | translate }}</span>
+        </div>
+
           <table class="table col-md-12" *ngIf="items.length!=0">
             <thead class="table-light">
             <tr>
@@ -131,4 +131,3 @@
       </div>
     </div>
   </div>
-</div>

@@ -126,6 +126,7 @@ export class RapportsComponent implements OnInit, OnDestroy {
     this.sortOrder = this.sortOrder === 'asc' ? 'desc' : 'asc';
     this.sortItems();
   }
+
   applyFilters(): void {
     this.filteredItems = this.items.filter(item => {
       const authorMatch = this.searchQuery
@@ -143,5 +144,26 @@ export class RapportsComponent implements OnInit, OnDestroy {
       return authorMatch && detailsMatch;
     });
   }
+
+  filterByDateRange(range: string): void {
+    const now = new Date();
+    const oneMonthAgo = new Date(now.setMonth(now.getMonth() - 1));
+    const twoMonthsAgo = new Date(now.setMonth(now.getMonth() - 2));
+
+    this.filteredItems = this.items.filter(item => {
+      const itemDate = new Date(item.lastModified);
+      const diffDays = (now.getTime() - itemDate.getTime()) / (1000 * 3600 * 24);
+
+      if (range === 'danger') {
+        return diffDays > 60;
+      } else if (range === 'warning') {
+        return diffDays >= 30 && diffDays <= 60;
+      } else if (range === 'success') {
+        return diffDays < 30;
+      }
+      return true;
+    });
+  }
+
 
 }
