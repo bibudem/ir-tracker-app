@@ -88,4 +88,18 @@ export class Utils  {
   }
 
 
+  /**
+   * Normalise une chaîne de caractères : supprime les accents, met en minuscule,
+   * enlève les caractères non alphanumériques.
+   */
+  normalize(str: string): string {
+    return str
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-z0-9]/g, '')
+      .trim();
+  }
+
+
 }

@@ -28,6 +28,7 @@ export class RapportsComponent implements OnInit, OnDestroy {
       'Rapport / Report',
       'Livre / Book',
       'Autre / Other',
+      'Travail étudiant / Student work'
     ],
   };
 
@@ -147,19 +148,16 @@ export class RapportsComponent implements OnInit, OnDestroy {
 
   filterByDateRange(range: string): void {
     const now = new Date();
-    const oneMonthAgo = new Date(now.setMonth(now.getMonth() - 1));
-    const twoMonthsAgo = new Date(now.setMonth(now.getMonth() - 2));
-
     this.filteredItems = this.items.filter(item => {
       const itemDate = new Date(item.lastModified);
       const diffDays = (now.getTime() - itemDate.getTime()) / (1000 * 3600 * 24);
 
       if (range === 'danger') {
-        return diffDays > 60;
+        return diffDays > 60; // Plus de 2 mois
       } else if (range === 'warning') {
-        return diffDays >= 30 && diffDays <= 60;
+        return diffDays >= 30 && diffDays <= 60; // Entre 30 et 60 jours
       } else if (range === 'success') {
-        return diffDays < 30;
+        return diffDays <= 29; // Moins d'un mois
       }
       return true;
     });
