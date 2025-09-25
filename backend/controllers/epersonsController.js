@@ -72,14 +72,26 @@ const getUsers = async (req, res) => {
       };
     });
 
+  
     // Vérification supplémentaire : comparer le nom et prénom avec les métadonnées
     utilisateurs = utilisateurs.filter(user => {
-      const nomLower = nom ? nom.toLowerCase() : null;
-      const prenomLower = prenom ? prenom.toLowerCase() : null;
-      const fullNameLower = user.fullName.toLowerCase();
+      const nomLower = nom ? removeAccents(nom.toLowerCase()) : null;
+      const prenomLower = prenom ? removeAccents(prenom.toLowerCase()) : null;
+      const fullNameLower = removeAccents(user.fullName.toLowerCase());
 
+      // Vérification du nom (simple contains)
       const nomMatch = !nomLower || fullNameLower.includes(nomLower);
-      const prenomMatch = !prenomLower || fullNameLower.includes(prenomLower);
+
+      // Vérification du prénom avec support des prénoms composés
+      let prenomMatch = !prenomLower;
+      if (prenomLower) {
+        const prenomParts = prenomLower.split(/\s+/);
+        
+        // Pour les prénoms composés, au moins une partie doit correspondre
+        prenomMatch = prenomParts.some(part => {
+          return part.length > 1 && fullNameLower.includes(part);
+        });
+      }
 
       if (!nomMatch || !prenomMatch) {
         errorsMetadata.push(`Veuillez vérifier les informations.`);
@@ -172,7 +184,7 @@ const fetchItems = async (url, headers) => {
     const response = await axios.get(`${url}&page=0&size=100`, { headers });
     return response.data._embedded || {};
   } catch (error) {
-    logger.warn(`Erreur lors de la récupération des données depuis ${url}: ${error.message}`);  
+    logger.warn(`Erreur lors de la récupération des données depuis ${url}: ${error.message}`);
     return {};
   }
 };
@@ -255,7 +267,114 @@ const getUserItems = async (req, res) => {
         headers
       );
       objects = userItemsResponse.searchResult?._embedded?.objects || [];
+
+      // Si toujours aucun résultat, essayer avec seulement la première partie du prénom
+        if (objects.length === 0) {
+          // Décoder d'abord le filtreAuthor
+          const decodedAuthor = decodeURIComponent(reversedAuthor);
+          //console.log('filtreAuthor décodé:', decodedAuthor);
+          
+          let namePrenomPart1 = '';
+          
+          if (decodedAuthor.includes(',')) {
+            // Format "Nom, Prénom Composé"
+            const parts = decodedAuthor.split(',');
+            const nomComplet = parts[0]?.trim() || '';
+            const prenomComplet = parts[1]?.trim() || '';
+            
+            // Prendre seulement la première partie du prénom
+            const prenomPart1 = prenomComplet.split(/\s+/)[0]?.trim() || '';
+            
+            // Construire "Nom, PremièrePartiePrénom"
+            namePrenomPart1 = nomComplet + ',' + prenomPart1;
+            //console.log('Format "Nom, Prénom" détecté - première partie du prénom:', prenomPart1);
+          } else {
+            // Format "Prénom Composé Nom" - on garde le format original
+            namePrenomPart1 = decodedAuthor;
+            //console.log('Format "Prénom Nom" détecté - garde le format original');
+          }
+          
+          // Vérifier qu'on a une valeur valide
+          if (namePrenomPart1) {
+            //console.log('Recherche avec nom et première partie du prénom:', namePrenomPart1);
+            
+            const encodedSearch = encodeURIComponent(namePrenomPart1);
+            const searchUrl = `${config.DSPACE_API_URL}/discover/search/objects?f.author=${encodedSearch},contains`;
+            //console.log('URL de recherche créée:', searchUrl);
+            
+            userItemsResponse = await fetchItems(searchUrl, headers);
+            objects = userItemsResponse.searchResult?._embedded?.objects || [];
+            
+            //console.log('Nombre de résultats trouvés:', objects.length);
+          }
+        }
     }
+    // NOUVELLE RECHERCHE : Recherche admin DSpace similaire à /admin/search?spc.page=1&query=Marguirault
+      let adminSearchItems = [];
+      if (objects.length === 0) {
+        try {
+          const decodedAuthor = decodeURIComponent(filtreAuthor);
+          
+          // Extraire le nom de famille pour la recherche admin (ex: "Marguirault" depuis "Marguirault, Jean")
+          let searchQuery = decodedAuthor;
+          if (decodedAuthor.includes(',')) {
+            searchQuery = decodedAuthor.split(',')[0]?.trim() || decodedAuthor;
+          }
+          
+          // Validation du nom - s'assurer que c'est un nom valide (pas vide, pas trop court)
+          if (!searchQuery || searchQuery.trim().length < 2) {
+            logger.warn('Nom de recherche trop court ou invalide:', searchQuery);
+            // Ne pas exécuter la recherche avec un nom invalide
+            searchQuery = null;
+          }
+          
+          if (searchQuery) {
+            // Recherche admin DSpace avec pagination (page 1)
+            const adminSearchResponse = await fetchItems(
+              `${config.DSPACE_API_URL}/discover/search/objects?query=${encodeURIComponent(searchQuery)}&spc.page=1`,
+              headers
+            );
+            
+            adminSearchItems = adminSearchResponse.searchResult?._embedded?.objects || [];
+            
+            // Fonction de validation pour vérifier que l'item correspond au nom recherché
+            const validateItemAuthor = (item, authorName) => {
+              try {
+                const metadata = item?._embedded?.items?.metadata || {};
+                console.log(metadata)
+                const authors = metadata['dc.contributor'] || metadata['dc.creator'] || [];
+                
+                const searchName = authorName.toLowerCase().trim();
+                
+                // Vérifier si au moins un auteur contient le nom recherché
+                return authors.some(author => {
+                  const authorValue = author.value.toLowerCase().trim();
+                  return authorValue.includes(searchName);
+                });
+              } catch (error) {
+                logger.warn('Erreur lors de la validation de l\'auteur:', error.message);
+                return false;
+              }
+            };
+            
+            // Filtrer les résultats pour ne garder que ceux qui correspondent au nom
+            const validatedAdminItems = adminSearchItems.filter(item => 
+              validateItemAuthor(item, decodedAuthor)
+            );
+            
+            // Si on trouve des résultats validés avec la recherche admin, on les ajoute aux objets
+            if (validatedAdminItems.length > 0) {
+              objects = validatedAdminItems;
+              logger.info(`Recherche admin: ${validatedAdminItems.length} items validés sur ${adminSearchItems.length} résultats`);
+            } else if (adminSearchItems.length > 0) {
+              logger.warn(`Recherche admin: Aucun des ${adminSearchItems.length} résultats ne correspond au nom "${decodedAuthor}"`);
+            }
+          }
+        } catch (adminError) {
+          logger.warn('Recherche admin DSpace a échoué:', adminError.message);
+          // On continue sans échouer la requête principale
+        }
+      }
 
     const userItems = objects.map((obj) => {
       const item = obj._embedded?.indexableObject;
