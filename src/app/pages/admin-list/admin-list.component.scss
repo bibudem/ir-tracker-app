@@ -1,0 +1,10 @@
+.copy-icon {
+  cursor: pointer;
+  display: inline-block;
+}
+
+.copy-icon i:hover {
+  color: #007bff; /* Bleu Bootstrap */
+  transform: scale(1.2);
+  transition: color 0.3s, transform 0.3s;
+}

@@ -1,0 +1,38 @@
+.input-with-icon {
+  position: relative;
+}
+
+.input-with-icon .icon {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.input-with-icon input {
+  padding-left: 30px;
+}
+
+.align-top {
+  vertical-align: top !important;
+}
+ul.brxe-list {
+  list-style:none;
+  padding-left: 0;
+  margin: 20px 0;
+}
+
+ul.brxe-list li {
+  padding-left: 2em;
+  margin-bottom: 1em;
+  position: relative;
+  font-size: 1.1em;
+  color: #333;
+}
+
+ul.brxe-list li:hover {
+  color: #0057AC;
+}
+
+

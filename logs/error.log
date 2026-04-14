@@ -1,0 +1,527 @@
+{"level":"error","message":"Url: https://umontreal-dev.scholaris.ca/server/api/core/items/undefined/owningCollection","timestamp":"2024-12-12T19:30:54.349Z"}
+{"level":"error","message":"Erreur lors de la récupération de owningCollection: Request failed with status code 400","timestamp":"2024-12-12T19:30:54.353Z"}
+{"level":"error","message":"Url: https://umontreal-dev.scholaris.ca/server/api/core/items/undefined/owningCollection","timestamp":"2024-12-12T19:30:55.799Z"}
+{"level":"error","message":"Erreur lors de la récupération de owningCollection: Request failed with status code 400","timestamp":"2024-12-12T19:30:55.799Z"}
+{"level":"error","message":"Url: https://umontreal-dev.scholaris.ca/server/api/core/items/undefined/owningCollection","timestamp":"2024-12-12T20:59:16.888Z"}
+{"level":"error","message":"Erreur lors de la récupération de owningCollection: Request failed with status code 400","timestamp":"2024-12-12T20:59:16.888Z"}
+{"level":"error","message":"Url: https://umontreal-dev.scholaris.ca/server/api/core/items/undefined/owningCollection","timestamp":"2024-12-12T20:59:20.259Z"}
+{"level":"error","message":"Erreur lors de la récupération de owningCollection: Request failed with status code 400","timestamp":"2024-12-12T20:59:20.260Z"}
+{"level":"error","message":"Url: https://umontreal-dev.scholaris.ca/server/api/core/items/undefined/owningCollection","timestamp":"2024-12-12T21:00:53.911Z"}
+{"level":"error","message":"Erreur lors de la récupération de owningCollection: Request failed with status code 400","timestamp":"2024-12-12T21:00:53.911Z"}
+{"level":"error","message":"Url: https://umontreal-dev.scholaris.ca/server/api/core/items/undefined/owningCollection","timestamp":"2024-12-12T21:00:55.097Z"}
+{"level":"error","message":"Erreur lors de la récupération de owningCollection: Request failed with status code 400","timestamp":"2024-12-12T21:00:55.098Z"}
+{"level":"error","message":"Url: https://umontreal-dev.scholaris.ca/server/api/core/items/undefined/owningCollection","timestamp":"2024-12-12T21:00:56.004Z"}
+{"level":"error","message":"Erreur lors de la récupération de owningCollection: Request failed with status code 400","timestamp":"2024-12-12T21:00:56.008Z"}
+{"level":"error","message":"Url: https://umontreal-dev.scholaris.ca/server/api/core/items/undefined/owningCollection","timestamp":"2024-12-12T21:00:57.430Z"}
+{"level":"error","message":"Erreur lors de la récupération de owningCollection: Request failed with status code 400","timestamp":"2024-12-12T21:00:57.430Z"}
+{"level":"error","message":"Url: https://umontreal-dev.scholaris.ca/server/api/core/items/undefined/owningCollection","timestamp":"2024-12-12T21:00:58.282Z"}
+{"level":"error","message":"Erreur lors de la récupération de owningCollection: Request failed with status code 400","timestamp":"2024-12-12T21:00:58.283Z"}
+{"level":"error","message":"Url: https://umontreal-dev.scholaris.ca/server/api/core/items/undefined/owningCollection","timestamp":"2024-12-12T21:01:01.951Z"}
+{"level":"error","message":"Erreur lors de la récupération de owningCollection: Request failed with status code 400","timestamp":"2024-12-12T21:01:01.951Z"}
+{"level":"error","message":"Url: https://umontreal-dev.scholaris.ca/server/api/core/items/undefined/owningCollection","timestamp":"2024-12-12T21:01:03.310Z"}
+{"level":"error","message":"Erreur lors de la récupération de owningCollection: Request failed with status code 400","timestamp":"2024-12-12T21:01:03.311Z"}
+{"level":"error","message":"Url: https://umontreal-dev.scholaris.ca/server/api/core/items/undefined/owningCollection","timestamp":"2024-12-12T21:01:05.068Z"}
+{"level":"error","message":"Erreur lors de la récupération de owningCollection: Request failed with status code 400","timestamp":"2024-12-12T21:01:05.068Z"}
+{"level":"error","message":"Erreur lors de la récupération des détails de l'item:","timestamp":"2024-12-13T21:20:40.693Z"}
+{"level":"error","message":"Erreur lors de la récupération des détails de l'item:","timestamp":"2024-12-13T21:20:45.828Z"}
+{"level":"error","message":"Erreur lors de la récupération des détails de l'item: Request failed with status code 404","timestamp":"2024-12-13T21:37:21.966Z"}
+{"error":"Not Found","level":"error","message":"Détails de l'erreur:  An exception has occurred","path":"/server/api/workflow/workflowitems/undefined","status":404,"timestamp":"2024-12-13T21:37:21.288+00:00"}
+{"level":"error","message":"Erreur lors de la récupération des détails de l'item: Request failed with status code 404","timestamp":"2024-12-13T21:41:52.599Z"}
+{"error":"Not Found","level":"error","message":"Détails de l'erreur:  An exception has occurred","path":"/server/api/workflow/workflowitems/da2af819-50ab-4f26-830a-51b70fe16b92","status":404,"timestamp":"2024-12-13T21:41:51.920+00:00"}
+{"level":"error","message":"Erreur lors de la récupération des détails de l'item: Cannot read properties of undefined (reading 'UdeM.ORCIDAuteurThese')","timestamp":"2024-12-13T21:47:27.724Z"}
+{"level":"error","message":"Erreur lors de la récupération des détails de l'item: Cannot read properties of undefined (reading 'UdeM.ORCIDAuteurThese')","timestamp":"2024-12-13T21:47:42.592Z"}
+{"level":"error","message":"Erreur lors de la récupération des workflow items: Request failed with status code 401","timestamp":"2024-12-15T17:17:57.867Z"}
+{"error":"Unauthorized","level":"error","message":"Détails de l'erreur:  Authentication is required","path":"/server/api/workflow/workflowitems/37821/item","status":401,"timestamp":"2024-12-15T17:17:57.155+00:00"}
+{"level":"error","message":"Erreur lors de la récupération des workflow items: Request failed with status code 401","timestamp":"2024-12-16T01:32:09.201Z"}
+{"error":"Unauthorized","level":"error","message":"Détails de l'erreur:  Authentication is required","path":"/server/api/workflow/workflowitems/38006/item","status":401,"timestamp":"2024-12-16T01:32:08.267+00:00"}
+{"level":"error","message":"Erreur lors de la récupération des workflow items: Request failed with status code 500","timestamp":"2024-12-16T01:49:22.422Z"}
+{"level":"error","message":"Détails de l'erreur: ","timestamp":"2024-12-16T01:49:22.423Z"}
+{"level":"error","message":"Erreur lors de la récupération des workflow items: Request failed with status code 500","timestamp":"2024-12-16T01:50:26.810Z"}
+{"level":"error","message":"Détails de l'erreur: ","timestamp":"2024-12-16T01:50:26.810Z"}
+{"level":"error","message":"Erreur lors de la récupération des workflow items: Request failed with status code 500","timestamp":"2024-12-16T02:17:33.846Z"}
+{"level":"error","message":"Détails de l'erreur: ","timestamp":"2024-12-16T02:17:33.849Z"}
+{"level":"error","message":"Erreur lors de la récupération des workflow items: Request failed with status code 500","timestamp":"2024-12-16T02:19:53.443Z"}
+{"level":"error","message":"Détails de l'erreur: ","timestamp":"2024-12-16T02:19:53.444Z"}
+{"level":"error","message":"Erreur lors de la récupération des workflow items: itemDetails is not defined","timestamp":"2024-12-16T03:46:34.898Z"}
+{"level":"error","message":"Erreur lors de la récupération des workflow items: itemDetails is not defined","timestamp":"2024-12-16T03:47:04.160Z"}
+{"level":"error","message":"Erreur lors de la récupération des workflow items: itemDetails is not defined","timestamp":"2024-12-16T03:48:32.951Z"}
+{"level":"error","message":"Erreur lors de la récupération des workflow items: itemDetails is not defined","timestamp":"2024-12-16T03:55:04.276Z"}
+{"level":"error","message":"Erreur lors de la récupération des workflow items: itemDetails is not defined","timestamp":"2024-12-16T03:58:24.810Z"}
+{"level":"error","message":"Erreur lors de la récupération des workflow items: itemDetails is not defined","timestamp":"2024-12-16T04:00:02.849Z"}
+{"level":"error","message":"Erreur lors de la récupération des workflow items: itemDetails is not defined","timestamp":"2024-12-16T04:00:06.050Z"}
+{"level":"error","message":"Erreur lors de la récupération des workflow items: itemDetails is not defined","timestamp":"2024-12-16T04:01:04.953Z"}
+{"level":"error","message":"Erreur lors de la récupération des workflow items: itemDetails is not defined","timestamp":"2024-12-16T04:04:13.628Z"}
+{"level":"error","message":"Erreur lors de la récupération des workflow items: itemDetails is not defined","timestamp":"2024-12-16T04:05:34.276Z"}
+{"level":"error","message":"Erreur lors de la récupération des workflow items: Request failed with status code 500","timestamp":"2024-12-16T16:14:32.571Z"}
+{"level":"error","message":"Détails de l'erreur: ","timestamp":"2024-12-16T16:14:32.580Z"}
+{"level":"error","message":"Erreur lors de la récupération des workflow items: Request failed with status code 500","timestamp":"2024-12-16T17:17:55.239Z"}
+{"level":"error","message":"Détails de l'erreur: ","timestamp":"2024-12-16T17:17:55.239Z"}
+{"level":"error","message":"Erreur lors de la récupération des workflow items: itemDetails is not defined","timestamp":"2024-12-16T17:24:53.489Z"}
+{"level":"error","message":"Erreur lors de la récupération des workflow items: itemDetails is not defined","timestamp":"2024-12-16T17:25:31.021Z"}
+{"level":"error","message":"Erreur lors de la récupération des workflow items: itemDetails is not defined","timestamp":"2024-12-16T17:28:08.342Z"}
+{"level":"error","message":"Erreur lors de la récupération des workflow items: Request failed with status code 500","timestamp":"2024-12-16T20:45:28.208Z"}
+{"level":"error","message":"Détails de l'erreur: ","timestamp":"2024-12-16T20:45:28.213Z"}
+{"level":"error","message":"Erreur lors de la récupération des workflow items: itemDetails is not defined","timestamp":"2024-12-16T21:01:04.227Z"}
+{"level":"error","message":"Erreur lors de la récupération des workflow items: itemDetails is not defined","timestamp":"2024-12-16T21:02:08.188Z"}
+{"level":"error","message":"Erreur lors de la récupération des workflow items: Request failed with status code 401","timestamp":"2024-12-16T21:05:58.434Z"}
+{"error":"Unauthorized","level":"error","message":"Détails de l'erreur:  Authentication is required","path":"/server/api/workflow/workflowitems/37779/item","status":401,"timestamp":"2024-12-16T21:05:57.766+00:00"}
+{"level":"error","message":"Erreur lors de la récupération des workflow items: totalItems is not defined","timestamp":"2024-12-16T21:29:56.329Z"}
+{"level":"error","message":"Erreur lors de la récupération des workflow items: Cannot read properties of undefined (reading 'totalElements')","timestamp":"2024-12-16T21:40:42.141Z"}
+{"level":"error","message":"Erreur lors de la récupération des workflow items: Request failed with status code 500","timestamp":"2024-12-16T22:43:23.195Z"}
+{"level":"error","message":"Détails de l'erreur: ","timestamp":"2024-12-16T22:43:23.199Z"}
+{"level":"error","message":"Erreur lors de la récupération des workflow items: params is not defined","timestamp":"2024-12-16T23:01:20.842Z"}
+{"level":"error","message":"Erreur lors de la récupération des workflow items: params is not defined","timestamp":"2024-12-16T23:01:50.348Z"}
+{"level":"error","message":"Erreur lors de la récupération des workflow items: params is not defined","timestamp":"2024-12-16T23:02:37.001Z"}
+{"level":"error","message":"Erreur lors de la récupération des workflow items: Request failed with status code 500","timestamp":"2024-12-16T23:09:47.305Z"}
+{"level":"error","message":"Détails de l'erreur: ","timestamp":"2024-12-16T23:09:47.308Z"}
+{"level":"error","message":"Erreur lors de la récupération des workflow items: type is not defined","timestamp":"2024-12-16T23:21:15.448Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Converting circular structure to JSON\n    --> starting at object with constructor 'Socket'\n    |     property 'parser' -> object with constructor 'HTTPParser'\n    --- property 'socket' closes the circle","timestamp":"2024-12-17T14:31:51.031Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Cannot set headers after they are sent to the client","timestamp":"2024-12-17T14:39:57.387Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: workflowItems is not defined","timestamp":"2024-12-17T14:55:51.752Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: res.flush is not a function","timestamp":"2024-12-17T14:56:26.850Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: res.flush is not a function","timestamp":"2024-12-17T14:58:22.530Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: res.flush is not a function","timestamp":"2024-12-17T14:58:23.862Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: res.flush is not a function","timestamp":"2024-12-17T15:00:56.786Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: res.flush is not a function","timestamp":"2024-12-17T15:03:54.925Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: res.flush is not a function","timestamp":"2024-12-17T15:07:47.574Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: res.flush is not a function","timestamp":"2024-12-17T15:11:48.048Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 500","timestamp":"2024-12-17T15:16:05.886Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 500","timestamp":"2024-12-17T15:16:15.904Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 500","timestamp":"2024-12-17T15:16:54.292Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 500","timestamp":"2024-12-17T15:16:54.380Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 500","timestamp":"2024-12-17T15:16:54.468Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 500","timestamp":"2024-12-17T15:16:54.509Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 500","timestamp":"2024-12-17T15:16:54.570Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 500","timestamp":"2024-12-17T15:16:54.638Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 500","timestamp":"2024-12-17T15:16:54.704Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 500","timestamp":"2024-12-17T15:16:54.730Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 500","timestamp":"2024-12-17T15:16:54.829Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 500","timestamp":"2024-12-17T15:16:54.920Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 500","timestamp":"2024-12-17T15:16:54.932Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 500","timestamp":"2024-12-17T15:16:55.022Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 500","timestamp":"2024-12-17T15:16:55.025Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 500","timestamp":"2024-12-17T15:16:55.109Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 500","timestamp":"2024-12-17T15:16:55.354Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 500","timestamp":"2024-12-17T15:16:55.792Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 500","timestamp":"2024-12-17T15:19:16.142Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 500","timestamp":"2024-12-17T15:19:26.215Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 500","timestamp":"2024-12-17T15:20:04.676Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 500","timestamp":"2024-12-17T15:20:04.732Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 500","timestamp":"2024-12-17T15:20:04.830Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 500","timestamp":"2024-12-17T15:20:04.909Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 500","timestamp":"2024-12-17T15:20:04.949Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 500","timestamp":"2024-12-17T15:20:05.054Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 500","timestamp":"2024-12-17T15:20:05.163Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 500","timestamp":"2024-12-17T15:20:05.330Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 500","timestamp":"2024-12-17T15:20:05.491Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 500","timestamp":"2024-12-17T15:20:05.519Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 500","timestamp":"2024-12-17T15:20:05.522Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 500","timestamp":"2024-12-17T15:20:05.637Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 500","timestamp":"2024-12-17T15:20:05.646Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 500","timestamp":"2024-12-17T15:20:05.751Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 500","timestamp":"2024-12-17T15:20:05.862Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 500","timestamp":"2024-12-17T15:20:05.948Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 500","timestamp":"2024-12-17T15:20:06.115Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 500","timestamp":"2024-12-17T15:22:03.700Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 500","timestamp":"2024-12-17T15:22:03.751Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 500","timestamp":"2024-12-17T15:22:13.779Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 500","timestamp":"2024-12-17T15:32:16.039Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 500","timestamp":"2024-12-17T15:32:16.159Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 500","timestamp":"2024-12-17T15:32:26.102Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 401","timestamp":"2024-12-17T16:31:00.504Z"}
+{"level":"error","message":"Url: https://umontreal-dev.scholaris.ca/server/api/core/items/undefined/owningCollection","timestamp":"2024-12-18T16:27:56.604Z"}
+{"level":"error","message":"Erreur lors de la récupération de owningCollection: Request failed with status code 400","timestamp":"2024-12-18T16:27:56.613Z"}
+{"level":"error","message":"Url: https://umontreal-dev.scholaris.ca/server/api/core/items/undefined/owningCollection","timestamp":"2024-12-18T16:27:58.039Z"}
+{"level":"error","message":"Erreur lors de la récupération de owningCollection: Request failed with status code 400","timestamp":"2024-12-18T16:27:58.040Z"}
+{"level":"error","message":"Url: https://umontreal-dev.scholaris.ca/server/api/core/items/undefined/owningCollection","timestamp":"2024-12-18T16:34:35.608Z"}
+{"level":"error","message":"Erreur lors de la récupération de owningCollection: Request failed with status code 400","timestamp":"2024-12-18T16:34:35.609Z"}
+{"level":"error","message":"Erreur lors de la récupération des détails de l'item:","timestamp":"2024-12-18T16:43:25.769Z"}
+{"level":"error","message":"Url: https://umontreal-dev.scholaris.ca/server/api/core/items/undefined/owningCollection","timestamp":"2024-12-18T16:43:25.773Z"}
+{"level":"error","message":"Erreur lors de la récupération de owningCollection: Request failed with status code 400","timestamp":"2024-12-18T16:43:25.774Z"}
+{"level":"error","message":"Url: https://umontreal-dev.scholaris.ca/server/api/core/items/undefined/owningCollection","timestamp":"2024-12-18T16:43:38.068Z"}
+{"level":"error","message":"Erreur lors de la récupération de owningCollection: Request failed with status code 400","timestamp":"2024-12-18T16:43:38.068Z"}
+{"level":"error","message":"Url: https://umontreal-dev.scholaris.ca/server/api/core/items/undefined/owningCollection","timestamp":"2024-12-18T16:43:38.769Z"}
+{"level":"error","message":"Erreur lors de la récupération de owningCollection: Request failed with status code 400","timestamp":"2024-12-18T16:43:38.770Z"}
+{"level":"error","message":"Url: https://umontreal-dev.scholaris.ca/server/api/core/items/undefined/owningCollection","timestamp":"2024-12-18T16:43:42.321Z"}
+{"level":"error","message":"Erreur lors de la récupération de owningCollection: Request failed with status code 400","timestamp":"2024-12-18T16:43:42.321Z"}
+{"level":"error","message":"Url: https://umontreal-dev.scholaris.ca/server/api/core/items/undefined/owningCollection","timestamp":"2024-12-18T16:43:43.585Z"}
+{"level":"error","message":"Erreur lors de la récupération de owningCollection: Request failed with status code 400","timestamp":"2024-12-18T16:43:43.585Z"}
+{"level":"error","message":"Url: https://umontreal-dev.scholaris.ca/server/api/core/items/undefined/owningCollection","timestamp":"2024-12-18T16:43:44.968Z"}
+{"level":"error","message":"Erreur lors de la récupération de owningCollection: Request failed with status code 400","timestamp":"2024-12-18T16:43:44.968Z"}
+{"level":"error","message":"Url: https://umontreal-dev.scholaris.ca/server/api/core/items/undefined/owningCollection","timestamp":"2024-12-18T16:43:46.024Z"}
+{"level":"error","message":"Erreur lors de la récupération de owningCollection: Request failed with status code 400","timestamp":"2024-12-18T16:43:46.024Z"}
+{"level":"error","message":"Url: https://umontreal-dev.scholaris.ca/server/api/core/items/undefined/owningCollection","timestamp":"2024-12-18T16:48:50.604Z"}
+{"level":"error","message":"Erreur lors de la récupération de owningCollection: Request failed with status code 400","timestamp":"2024-12-18T16:48:50.604Z"}
+{"level":"error","message":"Url: https://umontreal-dev.scholaris.ca/server/api/core/items/undefined/owningCollection","timestamp":"2024-12-18T16:49:58.297Z"}
+{"level":"error","message":"Erreur lors de la récupération de owningCollection: Request failed with status code 400","timestamp":"2024-12-18T16:49:58.297Z"}
+{"level":"error","message":"Url: https://umontreal-dev.scholaris.ca/server/api/core/items/undefined/owningCollection","timestamp":"2024-12-18T16:57:28.683Z"}
+{"level":"error","message":"Erreur lors de la récupération de owningCollection: Request failed with status code 400","timestamp":"2024-12-18T16:57:28.683Z"}
+{"level":"error","message":"Url: https://umontreal-dev.scholaris.ca/server/api/core/items/undefined/owningCollection","timestamp":"2024-12-19T21:20:29.293Z"}
+{"level":"error","message":"Erreur lors de la récupération de owningCollection: Request failed with status code 400","timestamp":"2024-12-19T21:20:29.294Z"}
+{"level":"error","message":"Url: https://umontreal-dev.scholaris.ca/server/api/core/items/undefined/owningCollection","timestamp":"2025-01-07T20:41:58.284Z"}
+{"level":"error","message":"Erreur lors de la récupération de owningCollection: Request failed with status code 400","timestamp":"2025-01-07T20:41:58.284Z"}
+{"level":"error","message":"Url: https://umontreal-dev.scholaris.ca/server/api/core/items/undefined/owningCollection","timestamp":"2025-01-14T16:58:31.109Z"}
+{"level":"error","message":"Erreur lors de la récupération de owningCollection: Request failed with status code 400","timestamp":"2025-01-14T16:58:31.115Z"}
+{"level":"error","message":"Erreur lors de la récupération des items:","timestamp":"2025-01-15T17:39:06.961Z"}
+{"level":"error","message":"Erreur lors de la récupération des items:","timestamp":"2025-01-15T17:39:13.793Z"}
+{"level":"error","message":"Erreur lors de la récupération des items:","timestamp":"2025-01-15T17:39:57.426Z"}
+{"level":"error","message":"Url: https://umontreal-dev.scholaris.ca/server/api/core/items/undefined/owningCollection","timestamp":"2025-01-15T18:18:35.074Z"}
+{"level":"error","message":"Erreur lors de la récupération de owningCollection: Request failed with status code 400","timestamp":"2025-01-15T18:18:35.079Z"}
+{"level":"error","message":"Url: https://umontreal-dev.scholaris.ca/server/api/core/items/undefined/owningCollection","timestamp":"2025-01-15T18:18:37.111Z"}
+{"level":"error","message":"Erreur lors de la récupération de owningCollection: Request failed with status code 400","timestamp":"2025-01-15T18:18:37.112Z"}
+{"level":"error","message":"Url: https://umontreal-dev.scholaris.ca/server/api/core/items/undefined/owningCollection","timestamp":"2025-01-15T19:15:13.781Z"}
+{"level":"error","message":"Erreur lors de la récupération de owningCollection: Request failed with status code 400","timestamp":"2025-01-15T19:15:13.782Z"}
+{"level":"error","message":"Url: https://umontreal-dev.scholaris.ca/server/api/core/items/undefined/owningCollection","timestamp":"2025-01-15T19:21:06.741Z"}
+{"level":"error","message":"Erreur lors de la récupération de owningCollection: Request failed with status code 400","timestamp":"2025-01-15T19:21:06.742Z"}
+{"level":"error","message":"Erreur lors de la récupération des détails de l'item:","timestamp":"2025-01-15T19:21:06.745Z"}
+{"level":"error","message":"Url: https://umontreal-dev.scholaris.ca/server/api/core/items/undefined/owningCollection","timestamp":"2025-01-15T19:45:06.495Z"}
+{"level":"error","message":"Erreur lors de la récupération de owningCollection: Request failed with status code 400","timestamp":"2025-01-15T19:45:06.495Z"}
+{"level":"error","message":"Erreur lors de la récupération des collections: Request failed with status code 404","timestamp":"2025-01-16T14:30:21.958Z"}
+{"error":"Not Found","level":"error","message":"Détails de l'erreur:  An exception has occurred","path":"/server/api/core/collections/undefined","status":404,"timestamp":"2025-01-16T14:30:20.844+00:00"}
+{"level":"error","message":"Erreur lors de la récupération des collections: Request failed with status code 404","timestamp":"2025-01-16T14:30:49.916Z"}
+{"error":"Not Found","level":"error","message":"Détails de l'erreur:  An exception has occurred","path":"/server/api/core/collections/undefined","status":404,"timestamp":"2025-01-16T14:30:48.805+00:00"}
+{"level":"error","message":"Erreur lors de la récupération des collections: Request failed with status code 404","timestamp":"2025-01-16T14:36:08.799Z"}
+{"error":"Not Found","level":"error","message":"Détails de l'erreur:  An exception has occurred","path":"/server/api/core/collections/undefined","status":404,"timestamp":"2025-01-16T14:36:07.686+00:00"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 401","timestamp":"2025-01-16T15:17:59.101Z"}
+{"level":"error","message":"Erreur lors de la récupération des statistiques:","timestamp":"2025-01-16T16:04:40.367Z"}
+{"level":"error","message":"Erreur lors de la récupération des items:","timestamp":"2025-01-16T21:10:58.408Z"}
+{"level":"error","message":"Erreur lors de la récupération des items:","timestamp":"2025-01-16T21:19:16.812Z"}
+{"level":"error","message":"Erreur lors de la récupération des items:","timestamp":"2025-01-16T21:21:07.961Z"}
+{"level":"error","message":"Erreur lors de la récupération des items:","timestamp":"2025-01-16T21:22:33.773Z"}
+{"level":"error","message":"Erreur lors de la récupération des items:","timestamp":"2025-01-16T21:27:48.507Z"}
+{"level":"error","message":"Erreur lors de la récupération des utilisateurs:","timestamp":"2025-01-16T22:16:28.680Z"}
+{"level":"error","message":"Erreur lors de la récupération des utilisateurs:","timestamp":"2025-01-16T22:16:32.131Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 401","timestamp":"2025-01-21T16:02:23.438Z"}
+{"level":"error","message":"Erreur lors de la récupération des items:","timestamp":"2025-01-23T14:47:00.824Z"}
+{"level":"error","message":"Erreur lors de la récupération des items:","timestamp":"2025-01-23T14:48:13.297Z"}
+{"level":"error","message":"Erreur lors de la récupération des items:","timestamp":"2025-01-23T14:52:58.975Z"}
+{"level":"error","message":"Erreur lors de la récupération des items:","timestamp":"2025-01-23T14:54:20.869Z"}
+{"level":"error","message":"Erreur lors de la récupération des items:","timestamp":"2025-01-23T14:55:40.234Z"}
+{"level":"error","message":"Erreur lors de la récupération des items:","timestamp":"2025-01-23T14:58:04.016Z"}
+{"level":"error","message":"Erreur lors de la récupération des items:","timestamp":"2025-01-23T15:14:13.049Z"}
+{"level":"error","message":"Erreur lors de la récupération des items:","timestamp":"2025-01-23T15:15:53.922Z"}
+{"level":"error","message":"Erreur lors de la récupération des items:","timestamp":"2025-01-23T15:16:15.567Z"}
+{"level":"error","message":"Erreur lors de la récupération des items:","timestamp":"2025-01-23T15:17:06.831Z"}
+{"level":"error","message":"Erreur lors de la récupération des items:","timestamp":"2025-01-23T15:17:09.695Z"}
+{"level":"error","message":"Erreur lors de la récupération des items:","timestamp":"2025-01-23T15:51:36.229Z"}
+{"level":"error","message":"Erreur lors de la récupération des items:","timestamp":"2025-01-23T15:51:38.267Z"}
+{"level":"error","message":"Erreur lors de la récupération des items:","timestamp":"2025-01-23T15:52:56.117Z"}
+{"level":"error","message":"Erreur lors de la récupération des items:","timestamp":"2025-01-23T15:53:16.784Z"}
+{"level":"error","message":"Erreur lors de la récupération des items:","timestamp":"2025-01-23T15:55:48.841Z"}
+{"level":"error","message":"Erreur lors de la récupération des items:","timestamp":"2025-01-23T15:56:02.051Z"}
+{"level":"error","message":"Erreur lors de la récupération des items:","timestamp":"2025-01-23T15:58:39.939Z"}
+{"level":"error","message":"Erreur lors de la récupération des items:","timestamp":"2025-01-23T16:01:31.895Z"}
+{"level":"error","message":"Erreur lors de la récupération des items:","timestamp":"2025-01-23T16:02:05.011Z"}
+{"level":"error","message":"Erreur lors de la récupération des items:","timestamp":"2025-01-23T16:03:20.179Z"}
+{"level":"error","message":"Erreur lors de la récupération des items:","timestamp":"2025-01-23T16:07:01.029Z"}
+{"level":"error","message":"Erreur lors de la récupération des items:","timestamp":"2025-01-23T16:07:51.352Z"}
+{"level":"error","message":"Erreur lors de la récupération des items:","timestamp":"2025-01-23T16:09:44.667Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: item is not defined","timestamp":"2025-02-03T18:09:20.369Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: item is not defined","timestamp":"2025-02-03T18:09:28.808Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: item is not defined","timestamp":"2025-02-03T18:10:00.388Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: item is not defined","timestamp":"2025-02-03T18:10:30.483Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: item is not defined","timestamp":"2025-02-03T18:11:01.723Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: item is not defined","timestamp":"2025-02-03T18:11:31.863Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: item is not defined","timestamp":"2025-02-03T18:12:03.845Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: item is not defined","timestamp":"2025-02-03T18:12:38.160Z"}
+{"level":"error","message":"Erreur lors de la récupération des items:","timestamp":"2025-02-04T21:08:08.088Z"}
+{"level":"error","message":"Erreur lors de la récupération des items:","timestamp":"2025-02-04T21:08:09.869Z"}
+{"level":"error","message":"Erreur lors de la récupération des items:","timestamp":"2025-02-04T21:10:37.879Z"}
+{"level":"error","message":"Erreur lors de la récupération des items:","timestamp":"2025-02-04T21:10:39.189Z"}
+{"level":"error","message":"Erreur lors de la récupération des items:","timestamp":"2025-02-04T21:17:37.056Z"}
+{"level":"error","message":"Erreur lors de la récupération des items:","timestamp":"2025-02-04T21:18:34.043Z"}
+{"level":"error","message":"Erreur lors de la récupération des items:","timestamp":"2025-02-04T21:20:53.497Z"}
+{"level":"error","message":"Erreur lors de la récupération des items:","timestamp":"2025-02-04T21:22:50.219Z"}
+{"level":"error","message":"Erreur lors de la récupération des items:","timestamp":"2025-02-04T21:27:53.185Z"}
+{"level":"error","message":"Erreur lors de la récupération des items:","timestamp":"2025-02-04T21:30:01.656Z"}
+{"level":"error","message":"Erreur lors de la récupération des items:","timestamp":"2025-02-04T21:35:43.860Z"}
+{"level":"error","message":"Erreur lors de la récupération des items:","timestamp":"2025-02-04T21:36:29.950Z"}
+{"level":"error","message":"Erreur lors de la récupération des items:","timestamp":"2025-02-04T21:37:12.346Z"}
+{"level":"error","message":"Erreur lors de la récupération des items:","timestamp":"2025-02-04T21:37:15.427Z"}
+{"level":"error","message":"Erreur lors de la récupération des items:","timestamp":"2025-02-04T21:37:17.717Z"}
+{"level":"error","message":"Erreur lors de la récupération des items:","timestamp":"2025-02-04T21:37:28.328Z"}
+{"level":"error","message":"Erreur lors de la récupération des items:","timestamp":"2025-02-04T21:37:31.406Z"}
+{"level":"error","message":"Erreur lors de la récupération des items:","timestamp":"2025-02-04T21:38:58.459Z"}
+{"level":"error","message":"Erreur lors de la récupération des utilisateurs:","timestamp":"2025-02-05T19:00:21.847Z"}
+{"level":"error","message":"Erreur lors de la récupération des utilisateurs:","timestamp":"2025-02-05T19:00:24.290Z"}
+{"level":"error","message":"Erreur lors de la récupération des utilisateurs:","timestamp":"2025-02-05T19:01:00.730Z"}
+{"level":"error","message":"Erreur lors de la récupération des statistiques:","timestamp":"2025-02-06T16:56:01.768Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-14T23:57:50.158Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-14T23:57:55.491Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-14T23:58:00.764Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-14T23:58:06.053Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-14T23:58:11.318Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-14T23:58:16.578Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-14T23:58:21.853Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-14T23:58:27.143Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-14T23:58:32.419Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-14T23:58:37.697Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-14T23:58:43.028Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-14T23:58:48.303Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-14T23:58:53.577Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-14T23:58:58.854Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-14T23:59:04.134Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-14T23:59:09.839Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-14T23:59:14.036Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-14T23:59:15.842Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-14T23:59:21.851Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-14T23:59:27.849Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-14T23:59:33.848Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-14T23:59:39.836Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-14T23:59:45.868Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-14T23:59:51.848Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-14T23:59:57.843Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:00:03.840Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:00:09.846Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:00:15.843Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:00:21.857Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:00:27.834Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:00:33.851Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:00:39.845Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:00:45.981Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:00:51.846Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:00:57.850Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:01:03.840Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:01:09.851Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:01:15.834Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:01:21.842Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:01:27.832Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:01:33.845Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:01:39.850Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:01:45.913Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:01:51.827Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:01:57.833Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:02:03.843Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:02:09.852Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:02:15.836Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:02:21.850Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:02:27.843Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:02:33.827Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:02:39.836Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:02:45.860Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:02:51.851Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:02:57.825Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:03:03.836Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:03:09.837Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:03:15.850Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:03:21.817Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:03:27.841Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:03:33.833Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:03:39.831Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:03:45.869Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:03:51.851Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:03:57.850Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:04:03.833Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:04:09.843Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:04:15.844Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:04:21.844Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:04:27.832Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:04:33.827Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:04:39.836Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:04:45.936Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:04:51.843Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:04:57.829Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:05:03.857Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:05:09.840Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:05:15.831Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:05:21.851Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:05:27.849Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:05:33.842Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:05:39.833Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:05:45.849Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:05:51.839Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:05:57.831Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:06:03.829Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:06:09.836Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:06:15.840Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:06:21.848Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:06:27.837Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:06:33.825Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:06:39.850Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:06:45.872Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:06:51.856Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:06:57.914Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:07:03.845Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:07:09.855Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:07:15.836Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:07:21.839Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:07:27.828Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:07:33.836Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:07:39.842Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:07:45.865Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:07:51.851Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:07:57.840Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:08:03.840Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:08:09.851Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:08:15.837Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:08:21.845Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:08:27.858Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:08:33.842Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:08:39.845Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:08:44.325Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:08:45.851Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:08:51.844Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:08:57.837Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:09:03.854Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:09:09.841Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:09:15.837Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:09:21.849Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:09:27.828Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:09:33.852Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:09:39.840Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:09:45.855Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:09:51.848Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:09:57.933Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:10:03.852Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:10:09.847Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:10:15.839Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:10:21.849Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:10:27.841Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:10:33.835Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:10:39.834Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:10:44.729Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:10:45.946Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:10:51.841Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:10:57.846Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:11:03.844Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:11:09.845Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:11:15.849Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:11:19.923Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:11:21.851Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:11:27.821Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:11:33.837Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:11:39.841Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:11:45.895Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:11:51.846Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:11:57.844Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:12:03.844Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:12:09.828Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:12:15.851Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:12:21.817Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:12:27.827Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:12:33.849Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:12:39.832Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:12:45.897Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:12:51.834Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:12:57.846Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:13:03.322Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:13:03.836Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:13:09.850Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:13:15.841Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:13:21.845Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:13:27.842Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:13:33.844Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:13:39.849Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:13:45.970Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:13:51.844Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:13:57.826Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:14:03.838Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:14:09.850Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:14:15.852Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:14:21.845Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:14:27.841Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:14:33.835Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:14:39.832Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:14:45.868Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:14:51.833Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:14:57.841Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:15:03.845Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:15:09.836Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:15:15.855Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:15:21.837Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:15:27.850Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:15:33.852Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:15:39.835Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:15:45.854Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:15:51.838Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:15:57.839Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:16:03.849Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:16:09.846Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:16:15.843Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:16:21.840Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:16:27.836Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:16:33.837Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:16:39.845Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:16:45.857Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:16:51.848Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:16:57.879Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:17:03.856Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:17:09.845Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:17:15.841Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:17:21.844Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:17:27.847Z"}
+{"level":"error","message":"Erreur lors du streaming des workflow items: Request failed with status code 422","timestamp":"2025-02-15T00:17:33.836Z"}
+{"level":"error","message":"Erreur lors de la récupération des workflow items: filter is not defined","timestamp":"2025-02-17T13:52:18.113Z"}
+{"level":"error","message":"Erreur lors de la récupération des workflow items: filter is not defined","timestamp":"2025-02-17T16:27:53.135Z"}
+{"level":"error","message":"Erreur lors de la récupération des workflow items: filter is not defined","timestamp":"2025-02-17T16:29:50.266Z"}
+{"level":"error","message":"Erreur lors de la récupération des statistiques:","timestamp":"2025-02-18T14:44:38.445Z"}
+{"level":"error","message":"Erreur lors de la récupération des workflow items: item?.type?.includes is not a function","timestamp":"2025-02-18T17:29:56.498Z"}
+{"level":"error","message":"Erreur lors de la récupération des workflow items: type is not defined","timestamp":"2025-02-18T17:33:19.072Z"}
+{"level":"error","message":"Erreur lors de la récupération des items:","timestamp":"2025-02-19T19:44:13.862Z"}
+{"level":"error","message":"Erreur lors de la récupération des items:","timestamp":"2025-02-19T19:44:17.905Z"}
+{"level":"error","message":"Erreur lors de la récupération des items:","timestamp":"2025-02-19T19:44:53.419Z"}
+{"level":"error","message":"Erreur lors de la récupération des items:","timestamp":"2025-02-19T19:45:00.944Z"}
+{"level":"error","message":"Erreur lors de la récupération des items:","timestamp":"2025-02-19T19:45:06.577Z"}
+{"level":"error","message":"Erreur lors de la récupération des items:","timestamp":"2025-02-19T19:45:11.778Z"}
+{"level":"error","message":"Erreur lors de la récupération des items:","timestamp":"2025-02-19T19:45:12.941Z"}
+{"level":"error","message":"Erreur lors de la récupération des items:","timestamp":"2025-02-19T19:45:28.897Z"}
+{"level":"error","message":"Erreur lors de la récupération des items:","timestamp":"2025-02-19T19:45:29.448Z"}
+{"level":"error","message":"Erreur lors de la récupération des items:","timestamp":"2025-02-19T19:45:58.352Z"}
+{"level":"error","message":"Erreur lors de la récupération des items:","timestamp":"2025-02-19T19:46:13.100Z"}
+{"level":"error","message":"Erreur lors de la récupération des items:","timestamp":"2025-02-19T19:46:24.559Z"}
+{"level":"error","message":"Erreur lors de la récupération des items:","timestamp":"2025-02-19T19:46:48.433Z"}
+{"level":"error","message":"Erreur lors de la récupération des items:","timestamp":"2025-02-19T19:46:50.438Z"}
+{"level":"error","message":"Erreur lors de la récupération des items:","timestamp":"2025-02-19T19:46:51.572Z"}
+{"level":"error","message":"Erreur lors de la récupération des collections: Request failed with status code 500","timestamp":"2025-02-20T19:00:15.607Z"}
+{"level":"error","message":"Code HTTP: 500","timestamp":"2025-02-20T19:00:15.610Z"}
+{"level":"error","message":"Détails de l'erreur: ","timestamp":"2025-02-20T19:00:15.610Z"}
+{"level":"error","message":"Erreur lors de la récupération des collections: Request failed with status code 500","timestamp":"2025-02-20T19:00:55.148Z"}
+{"level":"error","message":"Code HTTP: 500","timestamp":"2025-02-20T19:00:55.148Z"}
+{"level":"error","message":"Détails de l'erreur: ","timestamp":"2025-02-20T19:00:55.149Z"}
+{"level":"error","message":"Erreur lors de la récupération des collections: Request failed with status code 500","timestamp":"2025-02-20T19:00:56.409Z"}
+{"level":"error","message":"Code HTTP: 500","timestamp":"2025-02-20T19:00:56.409Z"}
+{"level":"error","message":"Détails de l'erreur: ","timestamp":"2025-02-20T19:00:56.409Z"}
+{"level":"error","message":"Erreur lors de la récupération des collections: Request failed with status code 500","timestamp":"2025-02-20T19:01:17.264Z"}
+{"level":"error","message":"Code HTTP: 500","timestamp":"2025-02-20T19:01:17.264Z"}
+{"level":"error","message":"Détails de l'erreur: ","timestamp":"2025-02-20T19:01:17.264Z"}
+{"level":"error","message":"Erreur lors de la récupération des collections: Request failed with status code 500","timestamp":"2025-02-20T19:01:24.661Z"}
+{"level":"error","message":"Code HTTP: 500","timestamp":"2025-02-20T19:01:24.662Z"}
+{"level":"error","message":"Détails de l'erreur: ","timestamp":"2025-02-20T19:01:24.662Z"}
+{"level":"error","message":"Erreur lors de la récupération des statistiques:","timestamp":"2025-02-20T19:01:24.735Z"}
+{"level":"error","message":"Erreur lors de la récupération des utilisateurs:","timestamp":"2025-02-20T20:10:12.908Z"}
+{"level":"error","message":"Erreur lors de la récupération des utilisateurs:","timestamp":"2025-02-20T20:10:15.051Z"}
+{"level":"error","message":"Erreur lors de la récupération des utilisateurs:","timestamp":"2025-02-20T20:11:02.426Z"}
+{"level":"error","message":"Erreur lors de la récupération des utilisateurs:","timestamp":"2025-02-20T20:11:04.120Z"}
+{"level":"error","message":"Erreur lors de la récupération des utilisateurs:","timestamp":"2025-02-20T20:37:19.736Z"}
+{"level":"error","message":"Erreur lors de la récupération des utilisateurs:","timestamp":"2025-02-20T20:38:48.697Z"}
+{"level":"error","message":"Erreur lors de la récupération des utilisateurs:","timestamp":"2025-02-20T20:41:38.849Z"}
+{"level":"error","message":"Erreur lors de la récupération des utilisateurs:","timestamp":"2025-02-20T20:43:19.930Z"}
+{"level":"error","message":"Erreur lors de la récupération des utilisateurs:","timestamp":"2025-02-20T20:43:22.021Z"}
+{"level":"error","message":"Erreur lors de la récupération des utilisateurs:","timestamp":"2025-02-20T20:43:39.613Z"}
+{"level":"error","message":"Erreur lors de la récupération des utilisateurs:","timestamp":"2025-02-20T20:43:43.141Z"}
+{"level":"error","message":"Erreur lors de la récupération des utilisateurs:","timestamp":"2025-02-20T20:43:45.820Z"}
+{"level":"error","message":"Erreur lors de la récupération des utilisateurs:","timestamp":"2025-02-20T20:44:16.613Z"}
+{"level":"error","message":"Erreur lors de la récupération des utilisateurs:","timestamp":"2025-02-20T21:41:14.424Z"}
+{"level":"error","message":"Erreur lors de la récupération des utilisateurs:","timestamp":"2025-02-20T22:29:51.676Z"}
+{"level":"error","message":"Erreur lors de la récupération des utilisateurs:","timestamp":"2025-02-20T22:30:57.492Z"}
+{"level":"error","message":"Erreur lors de la récupération des workflow items: sortField is not defined","timestamp":"2025-02-24T20:58:56.043Z"}
+{"level":"error","message":"Erreur lors de la récupération des items:","timestamp":"2025-03-04T16:31:53.499Z"}
+{"level":"error","message":"Erreur lors de la récupération des items:","timestamp":"2025-03-04T16:31:55.211Z"}
+{"level":"error","message":"Erreur lors de la récupération des items:","timestamp":"2025-03-04T16:32:11.741Z"}
+{"level":"error","message":"Erreur lors de la récupération des items:","timestamp":"2025-03-04T16:32:49.342Z"}
+{"level":"error","message":"Erreur lors de la récupération des items:","timestamp":"2025-03-04T16:32:50.957Z"}
+{"level":"error","message":"Erreur lors de la récupération des workflow items: Cannot read properties of undefined (reading 'itemHref')","timestamp":"2025-03-04T18:58:55.746Z"}
+{"level":"error","message":"Erreur lors de la récupération des items:","timestamp":"2025-03-04T21:13:48.469Z"}
+{"level":"error","message":"Erreur lors de la récupération des items:","timestamp":"2025-03-04T21:14:52.655Z"}
+{"level":"error","message":"Erreur lors de la récupération des items:","timestamp":"2025-03-05T01:50:45.905Z"}
+{"level":"error","message":"Erreur lors de la récupération des items:","timestamp":"2025-03-05T01:54:49.226Z"}
+{"level":"error","message":"Erreur lors de la récupération des utilisateurs:","timestamp":"2025-08-27T18:10:41.055Z"}
+{"level":"error","message":"Erreur lors de la récupération des utilisateurs:","timestamp":"2025-08-27T18:11:08.749Z"}
+{"level":"error","message":"Erreur lors de la récupération des utilisateurs:","timestamp":"2025-09-08T19:00:12.478Z"}
+{"level":"error","message":"Erreur lors de la récupération des utilisateurs:","timestamp":"2025-09-08T19:00:23.761Z"}
+{"level":"error","message":"Erreur lors de la récupération des items:","timestamp":"2025-09-08T19:42:04.268Z"}
+{"level":"error","message":"Erreur lors de la récupération des items:","timestamp":"2025-09-08T19:43:05.280Z"}
+{"level":"error","message":"Erreur lors de la récupération des items:","timestamp":"2025-09-08T19:43:06.738Z"}
+{"level":"error","message":"Erreur lors de la récupération des utilisateurs:","timestamp":"2025-09-08T20:02:07.113Z"}
+{"level":"error","message":"Erreur lors de la récupération des utilisateurs:","timestamp":"2025-09-08T20:02:09.787Z"}
+{"level":"error","message":"Erreur lors de la récupération des utilisateurs:","timestamp":"2025-09-08T20:02:15.699Z"}

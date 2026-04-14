@@ -1,0 +1,112 @@
+<!-- Début du header -->
+<header class="top-header">
+  <nav class="navbar navbar-expand">
+    <div (click)="toggleSidebar()" class="mobile-toggle-icon d-xl-none">
+      <i class="bi bi-list"></i>
+    </div>
+    <div class="top-navbar d-none d-xl-block">
+      <ul class="navbar-nav align-items-center">
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/home">{{ 'description' | translate }}</a>
+        </li>
+      </ul>
+    </div>
+    <div class="search-toggle-icon d-xl-none ms-auto">
+      <i class="bi bi-search"></i>
+    </div>
+    <div class="top-navbar-right ms-3 ms-auto">
+      <ul class="navbar-nav align-items-center">
+        <li class="nav-item dropdown dropdown-medium">
+          <a class="nav-link dropdown-toggle dropdown-toggle-nocaret" href="#" data-bs-toggle="dropdown">
+            <div class="user-setting d-flex align-items-center gap-1">
+              <i class="bi bi-person-circle m-lg-2 font-20"></i>
+              <div class="user-name d-none d-sm-block">
+                {{ name }}
+              </div>
+            </div>
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end">
+            <li>
+              <a class="dropdown-item" >
+                <div class="d-flex align-items-center">
+                  <div class="setting-text ms-3">
+                    <a class="nav-link" (click)="logout()"><i class="bi bi-lock-fill "></i> {{ 'logout' | translate }}</a>
+                  </div>
+                </div>
+              </a>
+            </li>
+          </ul>
+        </li>
+        <!-- Ajout du switch de langue avec un style similaire à la section profil -->
+        <!--<li class="nav-item dropdown dropdown-medium">
+          <a class="nav-link dropdown-toggle dropdown-toggle-nocaret" href="#" data-bs-toggle="dropdown">
+            <div class="user-setting d-flex align-items-center gap-1">
+              <i class="bi bi-translate m-lg-2 font-20"></i>
+              <div class="user-name d-none d-sm-block">
+                {{ translate.currentLang === 'fr' ? 'Français' : 'English' | translate }}
+              </div>
+            </div>
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end">
+            <li>
+              <a class="dropdown-item" (click)="changeLanguage('en')">
+                <div class="d-flex align-items-center">
+                  <div class="setting-text ms-3"><span>{{ 'english' | translate }}</span></div>
+                </div>
+              </a>
+            </li>
+            <li>
+              <a class="dropdown-item" (click)="changeLanguage('fr')">
+                <div class="d-flex align-items-center">
+                  <div class="setting-text ms-3"><span>{{ 'french' | translate }}</span></div>
+                </div>
+              </a>
+            </li>
+          </ul>
+        </li>-->
+        <li class="nav-item dropdown dropdown-large">
+          <a class="nav-link dropdown-toggle dropdown-toggle-nocaret" href="#" data-bs-toggle="dropdown">
+            <div class="projects">
+              <i class="bi bi-grid-3x3-gap-fill"></i>
+            </div>
+          </a>
+          <div class="dropdown-menu dropdown-menu-end">
+            <div class="row row-cols-3 gx-2">
+              <div class="col">
+                <a href="https://bib.umontreal.ca/gerer-diffuser/deposer-these-memoire" target="_blank" rel="noopener noreferrer">
+                  <div class="apps p-2 radius-10 text-center">
+                    <div class="apps-icon-box mb-1 text-white bg-primary bg-gradient">
+                      <i class="bi bi-folder-symlink"></i>
+                    </div>
+                    <p class="mb-0 apps-name">{{ 'sectionTME' | translate }}</p>
+                  </div>
+                </a>
+              </div>
+              <div class="col">
+                <a href="https://bib.umontreal.ca/gerer-diffuser/deposer-these-memoire/procedure-depot/soutien-tgde" target="_blank" rel="noopener noreferrer">
+                  <div class="apps p-2 radius-10 text-center">
+                    <div class="apps-icon-box mb-1 text-white bg-warning bg-gradient">
+                      <i class="bi bi-exclamation-octagon"></i>
+                    </div>
+                    <p class="mb-0 apps-name">{{ 'help' | translate }}</p>
+                  </div>
+                </a>
+              </div>
+              <div class="col">
+                <a href="https://bib.umontreal.ca/" target="_blank" rel="noopener noreferrer">
+                  <div class="apps p-2 radius-10 text-center">
+                    <div class="apps-icon-box mb-1 text-white bg-success bg-gradient">
+                      <i class="bi bi-columns-gap"></i>
+                    </div>
+                    <p class="mb-0 apps-name">{{ 'bibWebsite' | translate }}</p>
+                  </div>
+                </a>
+              </div>
+            </div>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </nav>
+</header>
+<!-- Fin du header -->

@@ -1,0 +1,98 @@
+<div class="row">
+  <div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
+    <div class="ps-3">
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb mb-0 p-0">
+          <li class="breadcrumb-item">
+            <a href="#"><i class="bi bi-house-door"></i></a>
+          </li>
+          <li aria-current="page" class="breadcrumb-item active">
+            {{ 'home' | translate }}
+          </li>
+        </ol>
+      </nav>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col">
+    <div class="card radius-10">
+      <div class="card-body">
+        <div class="d-flex align-items-center">
+          <div>
+            <p class="mb-0 text-secondary">{{ 'statisticsCommunities' | translate }}</p>
+            <h3 class="my-1">{{this.statistics.communities}}</h3>
+          </div>
+          <div class="widget-icon-large bg-gradient-warning text-white ms-auto"><i class="bi bi-files"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col">
+    <div class="card radius-10">
+      <div class="card-body">
+        <div class="d-flex align-items-center">
+          <div>
+            <p class="mb-0 text-secondary">{{ 'statisticsCollections' | translate }}</p>
+            <h3 class="my-1">{{this.statistics.collections}}</h3>
+          </div>
+          <div class="widget-icon-large bg-gradient-success text-white ms-auto"><i class="bi bi-collection"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col">
+    <div class="card radius-10">
+      <div class="card-body">
+        <div class="d-flex align-items-center">
+          <div>
+            <p class="mb-0 text-secondary">{{ 'statisticsItems' | translate }}</p>
+            <h3 class="my-1">{{this.statistics.items}}</h3>
+          </div>
+          <div class="widget-icon-large bg-gradient-info text-white ms-auto"><i class="bi bi-bookmark-plus"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col">
+    <div class="card radius-10">
+      <div class="card-body">
+        <div class="d-flex align-items-center">
+          <div>
+            <p class="mb-0 text-secondary">{{ 'statisticsUsers' | translate }}</p>
+            <h3 class="my-1">{{this.statistics.users}}</h3>
+          </div>
+          <div class="widget-icon-large bg-gradient-danger text-white ms-auto"><i class="bi bi-people-fill"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-12">
+    <div class="card radius-10 d-flex flex-row align-items-center p-4">
+      <div class="col-md-6">
+        <h2 class="fw-bold mb-4">{{ 'tool_title' | translate }}</h2>
+        <p>{{ 'tool_description' | translate }}</p>
+        <div class="d-flex align-items-center gap-3 mt-3">
+          <a [routerLink]="'/eperson'" class="btn btn-primary b-darkBlue d-flex align-items-center">
+            {{ 'search_button' | translate }}
+            <i class="bi bi-arrow-right ms-2"></i>
+          </a>
+          <a [routerLink]="'/discover'" class="btn btn-b-transparent-bib d-flex align-items-center">
+            <i class="bi bi-search me-2"></i>
+            {{ 'index_button' | translate }}
+          </a>
+        </div>
+      </div>
+      <div class="col-md-6 p-0">
+        <img src="assets/images/gallery/generated-image-2.png" alt="Bibliothèque" class="img-fluid rounded">
+      </div>
+    </div>
+  </div>
+</div>
+

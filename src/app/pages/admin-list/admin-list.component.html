@@ -1,0 +1,94 @@
+<div class="row">
+  <div class="col-12">
+    <div class="card radius-10 mh-500">
+      <div class="card-header py-3 mt-2">
+        <h3 class="product-title mb-2">{{ 'validationUsers' | translate }}</h3>
+      </div>
+      <div class="card-body">
+        <!-- Formulaire de filtre -->
+        <form class="row gy-3 gx-4 align-items-end">
+          <div class="col-md-4">
+            <label for="searchQuery" class="form-label fw-bold">
+              <i class="bi bi-search"></i> {{ 'search' | translate }} {{ 'collection' | translate }}
+            </label>
+            <input id="searchQuery" type="text" class="form-control"
+                   [(ngModel)]="searchQuery" name="searchQuery" (input)="filterCollections()"
+                   [placeholder]="'enterCollectionName' | translate">
+          </div>
+
+          <div class="col-md-4">
+            <label for="roleFilter" class="form-label fw-bold">
+              <i class="bi bi-person-badge"></i> {{ 'filterByRole' | translate }}
+            </label>
+            <select id="roleFilter" class="form-select" [(ngModel)]="selectedRole" name="roleFilter" (change)="filterCollections()">
+              <option value="all">{{ 'allRoles' | translate }}</option>
+              <option value="reviewer">REVIEWER</option>
+              <option value="editor">EDITOR</option>
+              <option value="finaleditor">FINALEDITOR</option>
+            </select>
+          </div>
+        </form>
+
+        <!-- Indicateur de chargement -->
+        <div *ngIf="isLoading" class="text-center my-3">
+          <div class="spinner-border text-primary" role="status"></div>
+        </div>
+
+        <div *ngIf="errorMessage" class="alert alert-danger mt-3">{{ errorMessage }}</div>
+
+        <!-- Tableau des administrateurs -->
+        <div *ngIf="filteredCollections.length > 0" class="table-responsive mt-2">
+          <table class="table table-hover">
+            <thead class="table-light">
+            <tr>
+              <th class="col-4">{{ 'collection' | translate }}</th>
+              <th class="col-8">{{ 'administrators' | translate }}</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let collection of filteredCollections.slice((page - 1) * pageSize, page * pageSize)">
+              <td><strong>{{ collection.name }}</strong></td>
+              <td>
+                <div *ngIf="collectionAdmins[collection.id]">
+                  <div *ngFor="let role of ['reviewer', 'editor', 'finaleditor']" class="mt-2">
+                    <div *ngIf="selectedRole === 'all' || selectedRole === role">
+                      <strong>{{ role | uppercase }}:</strong>
+                      <ul *ngIf="collectionAdmins[collection.id][role]?.length > 0; else noAdmins" class="list-group-flush">
+                        <li *ngFor="let admin of collectionAdmins[collection.id][role]" class="list-group-item">
+                            {{ admin.metadata['eperson.firstname'][0].value }} {{ admin.metadata['eperson.lastname'][0].value }} <br>
+                            {{ admin.email }}
+                            <span (click)="utils.copyToClipboard(admin.name, adminCopied)" class="copy-icon">
+                              <i class="bi bi-clipboard"></i>
+                            </span>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Pagination -->
+        <div class="d-flex justify-content-between align-items-center mt-3" *ngIf="filteredCollections.length > 10">
+          <button class="btn btn-secondary" (click)="page = page - 1" [disabled]="page === 1">
+            <i class="bi bi-arrow-left"></i> {{ 'previous' | translate }}
+          </button>
+          <span>{{ 'page' | translate }} {{ page }} / {{ totalPages }}</span>
+          <button class="btn btn-secondary" (click)="page = page + 1"
+                  [disabled]="page * pageSize >= filteredCollections.length">
+            {{ 'next' | translate }} <i class="bi bi-arrow-right"></i>
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Template pour aucun administrateur trouvé -->
+<ng-template #noAdmins>
+  <p class="text-muted">{{ 'noAdminsFound' | translate }}</p>
+</ng-template>

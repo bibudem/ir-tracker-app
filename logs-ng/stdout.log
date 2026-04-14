@@ -1,0 +1,368 @@
+
+Initial chunk files              | Names              |  Raw size
+runtime.js                       | runtime            |  12.94 kB | 
+
+Lazy chunk files                 | Names              |  Raw size
+src_app_pages_pages_module_ts.js | pages-pages-module | 199.48 kB | 
+
+5 unchanged chunks
+
+Build at: 2025-09-09T02:23:56.707Z - Hash: 5fb98dfcb8178251 - Time: 1891ms
+
+✔ Compiled successfully.
+
+
+
+7 unchanged chunks
+
+Build at: 2025-09-09T02:23:58.108Z - Hash: 5fb98dfcb8178251 - Time: 1175ms
+
+✔ Compiled successfully.
+
+Initial chunk files              | Names              |  Raw size
+runtime.js                       | runtime            |  12.94 kB | 
+
+Lazy chunk files                 | Names              |  Raw size
+src_app_pages_pages_module_ts.js | pages-pages-module | 199.68 kB | 
+
+5 unchanged chunks
+
+Build at: 2025-09-09T13:28:34.640Z - Hash: 91f3ef309b5cd75c - Time: 1986ms
+
+✔ Compiled successfully.
+
+Initial chunk files              | Names              |  Raw size
+runtime.js                       | runtime            |  12.94 kB | 
+
+Lazy chunk files                 | Names              |  Raw size
+src_app_pages_pages_module_ts.js | pages-pages-module | 200.03 kB | 
+
+5 unchanged chunks
+
+Build at: 2025-09-09T13:31:52.223Z - Hash: 1498dce1fa9971ff - Time: 1965ms
+
+✔ Compiled successfully.
+
+Initial chunk files              | Names              |  Raw size
+runtime.js                       | runtime            |  12.94 kB | 
+
+Lazy chunk files                 | Names              |  Raw size
+src_app_pages_pages_module_ts.js | pages-pages-module | 200.03 kB | 
+
+5 unchanged chunks
+
+Build at: 2025-09-09T13:31:53.742Z - Hash: 5a2314a504b80093 - Time: 1360ms
+
+✔ Compiled successfully.
+
+Initial chunk files              | Names              |  Raw size
+runtime.js                       | runtime            |  12.94 kB | 
+
+Lazy chunk files                 | Names              |  Raw size
+src_app_pages_pages_module_ts.js | pages-pages-module | 200.38 kB | 
+
+5 unchanged chunks
+
+Build at: 2025-09-09T13:32:44.124Z - Hash: a8c2fd7aec494c25 - Time: 2048ms
+
+✔ Compiled successfully.
+
+Initial chunk files              | Names              |  Raw size
+runtime.js                       | runtime            |  12.94 kB | 
+
+Lazy chunk files                 | Names              |  Raw size
+src_app_pages_pages_module_ts.js | pages-pages-module | 200.38 kB | 
+
+5 unchanged chunks
+
+Build at: 2025-09-09T13:37:12.768Z - Hash: 9e5bf3cd6e320d78 - Time: 1561ms
+
+✔ Compiled successfully.
+
+
+
+7 unchanged chunks
+
+Build at: 2025-09-09T13:37:40.596Z - Hash: 9e5bf3cd6e320d78 - Time: 3462ms
+
+✔ Compiled successfully.
+
+Initial chunk files              | Names              |  Raw size
+runtime.js                       | runtime            |  12.94 kB | 
+
+Lazy chunk files                 | Names              |  Raw size
+src_app_pages_pages_module_ts.js | pages-pages-module | 200.41 kB | 
+
+5 unchanged chunks
+
+Build at: 2025-09-09T13:41:17.061Z - Hash: 1841c68d8bbb2cb1 - Time: 2095ms
+
+✔ Compiled successfully.
+
+Initial chunk files              | Names              |  Raw size
+runtime.js                       | runtime            |  12.94 kB | 
+
+Lazy chunk files                 | Names              |  Raw size
+src_app_pages_pages_module_ts.js | pages-pages-module | 200.48 kB | 
+
+5 unchanged chunks
+
+Build at: 2025-09-09T13:42:36.350Z - Hash: 1c68743df303fc70 - Time: 2116ms
+
+✔ Compiled successfully.
+
+Initial chunk files              | Names              |  Raw size
+runtime.js                       | runtime            |  12.94 kB | 
+
+Lazy chunk files                 | Names              |  Raw size
+src_app_pages_pages_module_ts.js | pages-pages-module | 201.96 kB | 
+
+5 unchanged chunks
+
+Build at: 2025-09-09T13:46:48.366Z - Hash: 38b25da33b3f7767 - Time: 1707ms
+
+✔ Compiled successfully.
+
+Initial chunk files              | Names              |  Raw size
+runtime.js                       | runtime            |  12.94 kB | 
+
+Lazy chunk files                 | Names              |  Raw size
+src_app_pages_pages_module_ts.js | pages-pages-module | 202.24 kB | 
+
+5 unchanged chunks
+
+Build at: 2025-09-09T13:47:02.996Z - Hash: 5a9b57108f7fe1f5 - Time: 1622ms
+
+✔ Compiled successfully.
+
+Initial chunk files              | Names              |  Raw size
+runtime.js                       | runtime            |  12.94 kB | 
+
+Lazy chunk files                 | Names              |  Raw size
+src_app_pages_pages_module_ts.js | pages-pages-module | 202.24 kB | 
+
+5 unchanged chunks
+
+Build at: 2025-09-09T13:47:59.513Z - Hash: 62fab0e6736db77a - Time: 1698ms
+
+✔ Compiled successfully.
+
+Initial chunk files              | Names              |  Raw size
+runtime.js                       | runtime            |  12.94 kB | 
+
+Lazy chunk files                 | Names              |  Raw size
+src_app_pages_pages_module_ts.js | pages-pages-module | 202.24 kB | 
+
+5 unchanged chunks
+
+Build at: 2025-09-09T13:48:39.505Z - Hash: 22799c36b4c38ca9 - Time: 1618ms
+
+✔ Compiled successfully.
+
+Initial chunk files              | Names              |  Raw size
+runtime.js                       | runtime            |  12.94 kB | 
+
+Lazy chunk files                 | Names              |  Raw size
+src_app_pages_pages_module_ts.js | pages-pages-module | 201.68 kB | 
+
+5 unchanged chunks
+
+Build at: 2025-09-09T13:49:07.200Z - Hash: 4492280f846bac0a - Time: 1585ms
+
+✔ Compiled successfully.
+
+Initial chunk files              | Names              |  Raw size
+runtime.js                       | runtime            |  12.94 kB | 
+
+Lazy chunk files                 | Names              |  Raw size
+src_app_pages_pages_module_ts.js | pages-pages-module | 200.76 kB | 
+
+5 unchanged chunks
+
+Build at: 2025-09-09T13:49:47.114Z - Hash: 06efa675a6231859 - Time: 1456ms
+
+✔ Compiled successfully.
+
+Initial chunk files              | Names              |  Raw size
+runtime.js                       | runtime            |  12.94 kB | 
+
+Lazy chunk files                 | Names              |  Raw size
+src_app_pages_pages_module_ts.js | pages-pages-module | 200.76 kB | 
+
+5 unchanged chunks
+
+Build at: 2025-09-09T13:51:48.671Z - Hash: 352e607dfe3de920 - Time: 2103ms
+
+✔ Compiled successfully.
+
+Initial chunk files              | Names              |  Raw size
+runtime.js                       | runtime            |  12.94 kB | 
+
+Lazy chunk files                 | Names              |  Raw size
+src_app_pages_pages_module_ts.js | pages-pages-module | 200.76 kB | 
+
+5 unchanged chunks
+
+Build at: 2025-09-09T13:51:52.674Z - Hash: a91e396323895a3d - Time: 1353ms
+
+✔ Compiled successfully.
+
+Initial chunk files              | Names              |  Raw size
+runtime.js                       | runtime            |  12.94 kB | 
+
+Lazy chunk files                 | Names              |  Raw size
+src_app_pages_pages_module_ts.js | pages-pages-module | 200.76 kB | 
+
+5 unchanged chunks
+
+Build at: 2025-09-09T13:52:28.149Z - Hash: 101f2793ed3c1e85 - Time: 1439ms
+
+✔ Compiled successfully.
+
+Initial chunk files              | Names              |  Raw size
+runtime.js                       | runtime            |  12.94 kB | 
+
+Lazy chunk files                 | Names              |  Raw size
+src_app_pages_pages_module_ts.js | pages-pages-module | 202.41 kB | 
+
+5 unchanged chunks
+
+Build at: 2025-09-09T13:54:48.031Z - Hash: 176d07f9d53e7d9d - Time: 2068ms
+
+✔ Compiled successfully.
+
+Initial chunk files              | Names              |  Raw size
+runtime.js                       | runtime            |  12.94 kB | 
+
+Lazy chunk files                 | Names              |  Raw size
+src_app_pages_pages_module_ts.js | pages-pages-module | 202.41 kB | 
+
+5 unchanged chunks
+
+Build at: 2025-09-09T13:55:26.335Z - Hash: 8f60faf2760ce621 - Time: 1943ms
+
+✔ Compiled successfully.
+
+Initial chunk files              | Names              |  Raw size
+runtime.js                       | runtime            |  12.94 kB | 
+
+Lazy chunk files                 | Names              |  Raw size
+src_app_pages_pages_module_ts.js | pages-pages-module | 202.28 kB | 
+
+5 unchanged chunks
+
+Build at: 2025-09-09T13:56:01.825Z - Hash: b564cd000e5b1b77 - Time: 1581ms
+
+✔ Compiled successfully.
+
+Initial chunk files              | Names              |  Raw size
+runtime.js                       | runtime            |  12.94 kB | 
+
+Lazy chunk files                 | Names              |  Raw size
+src_app_pages_pages_module_ts.js | pages-pages-module | 202.28 kB | 
+
+5 unchanged chunks
+
+Build at: 2025-09-10T02:22:16.496Z - Hash: 601a47858ec5b690 - Time: 2285ms
+
+✔ Compiled successfully.
+
+Initial chunk files              | Names              |  Raw size
+vendor.js                        | vendor             |   4.70 MB | 
+scripts.js                       | scripts            |   3.17 MB | 
+styles.css, styles.js            | styles             | 667.35 kB | 
+polyfills.js                     | polyfills          | 383.98 kB | 
+main.js                          | main               |  88.70 kB | 
+runtime.js                       | runtime            |  12.94 kB | 
+
+                                 | Initial total      |   9.02 MB
+
+Lazy chunk files                 | Names              |  Raw size
+src_app_pages_pages_module_ts.js | pages-pages-module | 202.28 kB | 
+
+Build at: 2025-11-14T11:12:23.067Z - Hash: 601a47858ec5b690 - Time: 23868ms
+
+** Angular Live Development Server is listening on localhost:8089, open your browser on http://localhost:8089/ **
+
+
+✔ Compiled successfully.
+
+Initial chunk files              | Names              |  Raw size
+vendor.js                        | vendor             |   4.70 MB | 
+scripts.js                       | scripts            |   3.17 MB | 
+styles.css, styles.js            | styles             | 667.35 kB | 
+polyfills.js                     | polyfills          | 383.98 kB | 
+main.js                          | main               |  88.70 kB | 
+runtime.js                       | runtime            |  12.94 kB | 
+
+                                 | Initial total      |   9.02 MB
+
+Lazy chunk files                 | Names              |  Raw size
+src_app_pages_pages_module_ts.js | pages-pages-module | 202.28 kB | 
+
+Build at: 2026-01-27T18:02:23.754Z - Hash: 601a47858ec5b690 - Time: 31837ms
+
+** Angular Live Development Server is listening on localhost:8089, open your browser on http://localhost:8089/ **
+
+
+✔ Compiled successfully.
+
+Initial chunk files              | Names              |  Raw size
+runtime.js                       | runtime            |  12.94 kB | 
+
+Lazy chunk files                 | Names              |  Raw size
+src_app_pages_pages_module_ts.js | pages-pages-module | 202.46 kB | 
+
+5 unchanged chunks
+
+Build at: 2026-04-14T17:46:00.313Z - Hash: e42b9d21de033677 - Time: 5600ms
+
+✔ Compiled successfully.
+
+Initial chunk files              | Names              |  Raw size
+runtime.js                       | runtime            |  12.94 kB | 
+
+Lazy chunk files                 | Names              |  Raw size
+src_app_pages_pages_module_ts.js | pages-pages-module | 202.70 kB | 
+
+5 unchanged chunks
+
+Build at: 2026-04-14T17:46:02.472Z - Hash: 11f8b5195a7664cf - Time: 1807ms
+
+✔ Compiled successfully.
+
+Initial chunk files              | Names              |  Raw size
+runtime.js                       | runtime            |  12.94 kB | 
+
+Lazy chunk files                 | Names              |  Raw size
+src_app_pages_pages_module_ts.js | pages-pages-module | 202.70 kB | 
+
+5 unchanged chunks
+
+Build at: 2026-04-14T17:46:03.980Z - Hash: 530a6c5b48d4e227 - Time: 995ms
+
+✔ Compiled successfully.
+
+Initial chunk files              | Names              |  Raw size
+runtime.js                       | runtime            |  12.94 kB | 
+
+Lazy chunk files                 | Names              |  Raw size
+src_app_pages_pages_module_ts.js | pages-pages-module | 202.75 kB | 
+
+5 unchanged chunks
+
+Build at: 2026-04-14T17:46:09.059Z - Hash: 776235fde23325aa - Time: 1127ms
+
+✔ Compiled successfully.
+
+Initial chunk files              | Names              |  Raw size
+runtime.js                       | runtime            |  12.94 kB | 
+
+Lazy chunk files                 | Names              |  Raw size
+src_app_pages_pages_module_ts.js | pages-pages-module | 202.75 kB | 
+
+5 unchanged chunks
+
+Build at: 2026-04-14T17:46:14.517Z - Hash: 9d4b2e5c6de23f83 - Time: 769ms
+
+✔ Compiled successfully.

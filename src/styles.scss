@@ -1,0 +1,50 @@
+/* You can add global styles to this file, and also import other style files */
+.logo-header {
+  width: 70%;
+}
+.radius-60 {
+  border-radius: 60px;
+}
+
+
+.mh-500 {
+  min-height: 75vh;
+}
+
+.mh-50 {
+  min-height: 75px;
+}
+
+h1, h2 {
+  color: var(--darkBlue);
+  font-variant-numeric: lining-nums tabular-nums;
+  font-feature-settings: 'liga' off, 'clig' off;
+  font-family: 'Lora', sans-serif;
+  font-style: normal;
+  line-height: 120%;
+  color: #0B113A;
+}
+
+.b-darkBlue {
+  background: #0B113A;
+}
+
+.b-darkBlue:hover {
+  transition: all 0.3s ease-in-out;
+  background: #0057AC;
+}
+
+/* Utiliser la police Figtree pour les paragraphes et autres textes */
+p, span, small, h3, h4, h5, h6 {
+  font-family: 'Figtree', sans-serif;
+  line-height: 120%;
+}
+
+.btn {
+  border-radius: 60px;
+  padding: 5px 20px!important;
+  align-items: center;
+}
+
+
+
