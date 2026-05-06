@@ -63,7 +63,7 @@
                     [(ngModel)]="searchQuery"
                     name="searchQuery"
                     placeholder="{{ 'search_author' | translate }}"
-                    (input)="applyFilters()"
+                    (input)="searchChange$.next()"
                   />
                 </div>
               </th>
@@ -77,7 +77,7 @@
                     [(ngModel)]="searchDetailsQuery"
                     name="searchQuery"
                     placeholder="{{ 'enter_submission_details' | translate }}"
-                    (input)="applyFilters()"
+                    (input)="searchChange$.next()"
                   />
                 </div>
               </th>
@@ -89,8 +89,8 @@
               <tr>
                 <td>{{ i+1 }}</td>
                 <td class="text-center">
-                  <div [ngClass]="'py-1 px-3 radius-30 ms-auto bg-light-' + getItemStyle(item.lastModified) + ' text-' + getItemStyle(item.lastModified)">
-                    {{ getTimeElapsed(item.lastModified) }}
+                  <div [ngClass]="'py-1 px-3 radius-30 ms-auto bg-light-' + item.style + ' text-' + item.style">
+                    {{ item.timeElapsed }}
                   </div>
                 </td>
                 <td>
@@ -112,7 +112,7 @@
                 <td>
                   <ng-container *ngIf="item.metadata.provenance">
                     <ul class="list-group list-group-flush">
-                      <li *ngFor="let provenance of methodesUtils.cleanAndTranslateData(item.metadata.provenance); let i = index" class="list-group-item">
+                      <li *ngFor="let provenance of item.cleanedProvenance; let i = index" class="list-group-item">
                         <h6 class="card-title">{{ 'process_step' | translate: { step: i + 1 } }}</h6>
                         <p [innerHTML]="provenance"></p>
                       </li>
