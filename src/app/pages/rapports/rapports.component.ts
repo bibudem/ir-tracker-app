@@ -114,7 +114,7 @@ export class RapportsComponent implements OnInit, OnDestroy {
     const diff = (now.getTime() - date.getTime()) / (1000 * 60 * 60 * 24);
 
     if (diff < 30) return 'success';
-    if (diff < 180) return 'warning';
+    if (diff < 60) return 'warning';
     return 'danger';
   }
 

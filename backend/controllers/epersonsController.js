@@ -3,14 +3,12 @@ const config = require('../config/config');
 const logger = require('../utils/logger');
 
 const removeAccents = (str) => {
-  return str.normalize("NFD").replace(/[\u0300-\u036f]/g, ""); // Normalise les accents
+  return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 };
-
 
 // Fonction de récupération des utilisateurs
 const getUsers = async (req, res) => {
   const queryParams = req.query;
-  //console.log("Paramètres reçus:", queryParams);
 
   if (!queryParams || Object.keys(queryParams).length === 0) {
     return res.status(400).send({ error: 'Le paramètre query est requis' });
@@ -20,22 +18,19 @@ const getUsers = async (req, res) => {
     let utilisateurs = [];
     let errorsMetadata = [];
 
-    // Utiliser directement les paramètres reçus pour la recherche par metadata
     const { nom, prenom, email } = queryParams;
     let searchQueries = [];
 
     if (nom) {
-      searchQueries.push(`${nom}`);
+      searchQueries.push(`${removeAccents(nom)}`);
     }
     if (prenom) {
-      searchQueries.push(`${prenom}`);
+      searchQueries.push(`${removeAccents(prenom)}`);
     }
     if (email) {
       searchQueries.push(`${email}`);
     }
     const querySaisi = searchQueries.join('&').toString();
-
-    //console.log(`Query String utilisée : ${querySaisi}`);
 
     const fetchUsers = async (query) => {
       let allUsers = [];
@@ -57,10 +52,8 @@ const getUsers = async (req, res) => {
       return allUsers;
     };
 
-    // Effectuer la première recherche
     let epersons = await fetchUsers(querySaisi);
 
-    // Structurer les résultats
     utilisateurs = epersons.map(user => {
       const firstname = user.metadata?.['eperson.firstname']?.[0]?.value || 'N/A';
       const lastname = user.metadata?.['eperson.lastname']?.[0]?.value || 'N/A';
@@ -72,22 +65,16 @@ const getUsers = async (req, res) => {
       };
     });
 
-  
-    // Vérification supplémentaire : comparer le nom et prénom avec les métadonnées
     utilisateurs = utilisateurs.filter(user => {
       const nomLower = nom ? removeAccents(nom.toLowerCase()) : null;
       const prenomLower = prenom ? removeAccents(prenom.toLowerCase()) : null;
       const fullNameLower = removeAccents(user.fullName.toLowerCase());
 
-      // Vérification du nom (simple contains)
       const nomMatch = !nomLower || fullNameLower.includes(nomLower);
 
-      // Vérification du prénom avec support des prénoms composés
       let prenomMatch = !prenomLower;
       if (prenomLower) {
         const prenomParts = prenomLower.split(/\s+/);
-        
-        // Pour les prénoms composés, au moins une partie doit correspondre
         prenomMatch = prenomParts.some(part => {
           return part.length > 1 && fullNameLower.includes(part);
         });
@@ -99,9 +86,8 @@ const getUsers = async (req, res) => {
       return nomMatch && prenomMatch;
     });
 
-    // Si aucun utilisateur trouvé, effectuer une recherche dans /discover/browses/author
     if (utilisateurs.length === 0) {
-      const browseResponse = await axios.get(`${config.DSPACE_API_URL}/discover/browses/author/items?filterValue=${encodeURIComponent(querySaisi)}`, {
+      const browseResponse = await axios.get(`${config.DSPACE_API_URL}/discover/browses/author/items?filterValue=${encodeURIComponent(removeAccents(querySaisi))}`, {
         headers: {
           'Authorization': req.dspaceAuthToken,
           'Cookie': req.dspaceCookies,
@@ -123,39 +109,175 @@ const getUsers = async (req, res) => {
       utilisateurs.push(...browseUsers);
     }
 
-    // Si aucun utilisateur trouvé, effectuer une recherche dans /discover/search/objects
+    // AMÉLIORATION: Recherche par mots individuels dans discover/search/objects
     if (utilisateurs.length === 0) {
-      const discoverResponse = await axios.get(`${config.DSPACE_API_URL}/discover/search/objects?f.author=${encodeURIComponent(querySaisi)},contains`, {
-        headers: {
-          'Authorization': req.dspaceAuthToken,
-          'Cookie': req.dspaceCookies,
-        },
-      });
-      const objects = discoverResponse.data._embedded?.searchResult?._embedded?.objects || [];
-
-      const uniqueUsers = new Set();
-      const additionalUsers = objects.map((obj) => {
-        const item = obj._embedded?.indexableObject;
-        const metadata = item?.metadata || {};
-        const author = metadata['dc.contributor.author']?.[0]?.value || 'N/A';
-        const [lastname, firstname] = author.split(',').map(part => part.trim());
-        const userId = `N/A${author}`;
-
-        if (!uniqueUsers.has(userId)) {
-          uniqueUsers.add(userId);
-          return {
-            id: userId,
-            email: 'N/A', // L'email n'est pas disponible ici
-            fullName: `${firstname}, ${lastname}`,
-            errorsMetadata:errorsMetadata
-          };
+      // IMPORTANT: Décoder l'URL d'abord pour gérer les %20 (espaces encodés)
+      const decodedQuery = decodeURIComponent(querySaisi);
+      const normalizedQuery = removeAccents(decodedQuery);
+      logger.info(`Recherche par mots séparés pour: ${normalizedQuery}`);
+      
+      // Séparer les mots de la recherche (supporte & et espaces)
+      const searchWords = normalizedQuery.replace(/&/g, ' ').split(/\s+/).filter(w => w.length > 0);
+      logger.info(`Mots de recherche: ${JSON.stringify(searchWords)}`);
+      
+      const allFoundUsers = new Map();
+      
+      // STRATÉGIE 1: Rechercher la chaîne complète d'abord (pour noms composés exacts)
+      const fullSearchString = searchWords.join(' ');
+      logger.info(`  Recherche avec chaîne complète: "${fullSearchString}"`);
+      try {
+        const fullSearchResponse = await axios.get(
+          `${config.DSPACE_API_URL}/discover/search/objects?f.author=${encodeURIComponent(fullSearchString)},contains`, {
+          headers: {
+            'Authorization': req.dspaceAuthToken,
+            'Cookie': req.dspaceCookies,
+          },
+        });
+        const fullSearchObjects = fullSearchResponse.data._embedded?.searchResult?._embedded?.objects || [];
+        logger.info(`    Trouvé ${fullSearchObjects.length} résultats avec chaîne complète`);
+        
+        fullSearchObjects.forEach((obj) => {
+          const item = obj._embedded?.indexableObject;
+          const metadata = item?.metadata || {};
+          const authors = metadata['dc.contributor.author'] || [];
+          
+          authors.forEach(authorObj => {
+            const author = authorObj.value;
+              const authorNormalized = removeAccents(author.toLowerCase()).replace(/,/g, '').replace(/\s+/g, ' ');
+              const searchNormalized = removeAccents(fullSearchString.toLowerCase()).replace(/\s+/g, ' ');
+              
+              // Vérifier si la chaîne complète est présente (accents normalisés)
+            if (authorNormalized.includes(searchNormalized)) {
+              if (!allFoundUsers.has(author)) {
+                allFoundUsers.set(author, { author, matchedWords: new Set(searchWords.map(w => w.toLowerCase())) });
+                logger.info(`    ✓ Match complet trouvé: "${author}"`);
+              }
+            }
+          });
+        });
+      } catch (err) {
+        logger.warn(`Erreur recherche chaîne complète:`, err.message);
+      }
+      
+      // STRATÉGIE 2: Rechercher chaque mot individuellement (PERMISSIF: au moins UN mot)
+      logger.info(`  Recherche par mots individuels (mode permissif)`);
+      
+      for (const word of searchWords) {
+        logger.info(`    Recherche du mot: "${word}"`);
+        try {
+          const discoverResponse = await axios.get(
+            `${config.DSPACE_API_URL}/discover/search/objects?f.author=${encodeURIComponent(word)},contains`, {
+            headers: {
+              'Authorization': req.dspaceAuthToken,
+              'Cookie': req.dspaceCookies,
+            },
+          });
+          const objects = discoverResponse.data._embedded?.searchResult?._embedded?.objects || [];
+          logger.info(`      Trouvé ${objects.length} résultats pour "${word}"`);
+          
+          objects.forEach((obj) => {
+            const item = obj._embedded?.indexableObject;
+            const metadata = item?.metadata || {};
+            const authors = metadata['dc.contributor.author'] || [];
+            
+            // DEBUG: Afficher tous les auteurs trouvés
+            if (authors.length > 0 && word === searchWords[0]) {
+              logger.info(`      Auteurs trouvés pour "${word}": ${JSON.stringify(authors.map(a => a.value))}`);
+            }
+            
+            authors.forEach(authorObj => {
+              const author = authorObj.value;
+              const authorNormalized = removeAccents(author.toLowerCase()).replace(/,/g, '').replace(/\s+/g, ' ');
+              const wordNormalized = removeAccents(word.toLowerCase());
+              
+              // Vérifier si le mot est vraiment présent dans l'auteur (accents normalisés)
+              if (authorNormalized.includes(wordNormalized)) {
+                if (!allFoundUsers.has(author)) {
+                  allFoundUsers.set(author, { author, matchedWords: new Set() });
+                }
+                allFoundUsers.get(author).matchedWords.add(wordNormalized);
+              }
+            });
+          });
+        } catch (err) {
+          logger.warn(`Erreur recherche pour "${word}":`, err.message);
         }
-        return null;
-      }).filter(user => user !== null);
+      }
+      
+      // STRATÉGIE 3: Recherche générale avec query= si toujours rien
+      if (allFoundUsers.size === 0) {
+        logger.info(`  Tentative avec recherche générale query=`);
+        try {
+          const querySearchResponse = await axios.get(
+            `${config.DSPACE_API_URL}/discover/search/objects?query=${encodeURIComponent(fullSearchString)}`, {
+            headers: {
+              'Authorization': req.dspaceAuthToken,
+              'Cookie': req.dspaceCookies,
+            },
+          });
+          
+          const queryObjects = querySearchResponse.data._embedded?.searchResult?._embedded?.objects || 
+                              querySearchResponse.data._embedded?.objects || [];
+          logger.info(`    Trouvé ${queryObjects.length} résultats avec query=`);
+          
+          queryObjects.forEach((obj) => {
+            const item = obj._embedded?.indexableObject;
+            const metadata = item?.metadata || {};
+            const authors = metadata['dc.contributor.author'] || [];
+            
+            authors.forEach(authorObj => {
+              const author = authorObj.value;
+              const authorNormalized = removeAccents(author.toLowerCase()).replace(/,/g, '').replace(/\s+/g, ' ');
+              
+              // MODE PERMISSIF: Au moins UN mot doit être présent (accents normalisés)
+              const hasAtLeastOneWord = searchWords.some(word => 
+                authorNormalized.includes(removeAccents(word.toLowerCase()))
+              );
+              
+              if (hasAtLeastOneWord) {
+                if (!allFoundUsers.has(author)) {
+                  // Compter combien de mots sont présents
+                  const matchedWords = new Set();
+                  searchWords.forEach(word => {
+                    if (authorNormalized.includes(removeAccents(word.toLowerCase()))) {
+                      matchedWords.add(removeAccents(word.toLowerCase()));
+                    }
+                  });
+                  
+                  allFoundUsers.set(author, { author, matchedWords });
+                  logger.info(`    ✓ Match trouvé avec query=: "${author}" (mots: ${Array.from(matchedWords).join(', ')})`);
+                }
+              }
+            });
+          });
+        } catch (err) {
+          logger.warn(`Erreur recherche query=:`, err.message);
+        }
+      }
+      
+      // VALIDATION PERMISSIVE: Au moins UN mot doit correspondre (au lieu de TOUS)
+      const validAuthors = Array.from(allFoundUsers.values())
+        .filter(entry => entry.matchedWords.size >= 1);  // Au moins 1 mot au lieu de tous
+      
+      logger.info(`Auteurs validés (contenant au moins un mot): ${validAuthors.length}`);
+      validAuthors.forEach(entry => {
+        logger.info(`  ✓ ${entry.author} - Mots trouvés: ${Array.from(entry.matchedWords).join(', ')}`);
+      });
+      
+      const additionalUsers = validAuthors.map(entry => {
+        const author = entry.author;
+        const [lastname, firstname] = author.split(',').map(part => part.trim());
+        return {
+          id: `N/A-${author}`,
+          email: 'N/A',
+          fullName: `${firstname || 'N/A'}, ${lastname || 'N/A'}`,
+          errorsMetadata: errorsMetadata
+        };
+      });
+      
       utilisateurs.push(...additionalUsers);
     }
 
-    // Recherche avec les accents retirés
     if (utilisateurs.length === 0) {
       const stringSansAccent = removeAccents(querySaisi);
       const epersonsSansAccent = await fetchUsers(stringSansAccent);
@@ -189,7 +311,6 @@ const fetchItems = async (url, headers) => {
   }
 };
 
-
 const enrichItems = async (items, headers) => {
   return Promise.all(
     items.map(async (item) => {
@@ -202,7 +323,7 @@ const enrichItems = async (items, headers) => {
           const itemResponse = await axios.get(itemLink, { headers });
           itemDetails = itemResponse.data;
         } catch (err) {
-          logger.warn(`Erreur lors de la récupération des détails pour l'item ${item.id}: ${err.message}`);  // Correction de la syntaxe des backticks
+          logger.warn(`Erreur lors de la récupération des détails pour l'item ${item.id}: ${err.message}`);
         }
       }
 
@@ -257,6 +378,7 @@ const getUserItems = async (req, res) => {
 
     let objects = userItemsResponse.searchResult?._embedded?.objects || [];
 
+    // TENTATIVE 1: Si aucun résultat, inverser le format du nom
     if (objects.length === 0) {
       const decodedAuthor = decodeURIComponent(filtreAuthor);
       const nameParts = decodedAuthor.split(',');
@@ -268,113 +390,220 @@ const getUserItems = async (req, res) => {
       );
       objects = userItemsResponse.searchResult?._embedded?.objects || [];
 
-      // Si toujours aucun résultat, essayer avec seulement la première partie du prénom
-        if (objects.length === 0) {
-          // Décoder d'abord le filtreAuthor
-          const decodedAuthor = decodeURIComponent(reversedAuthor);
-          //console.log('filtreAuthor décodé:', decodedAuthor);
-          
-          let namePrenomPart1 = '';
-          
-          if (decodedAuthor.includes(',')) {
-            // Format "Nom, Prénom Composé"
-            const parts = decodedAuthor.split(',');
-            const nomComplet = parts[0]?.trim() || '';
-            const prenomComplet = parts[1]?.trim() || '';
-            
-            // Prendre seulement la première partie du prénom
-            const prenomPart1 = prenomComplet.split(/\s+/)[0]?.trim() || '';
-            
-            // Construire "Nom, PremièrePartiePrénom"
-            namePrenomPart1 = nomComplet + ',' + prenomPart1;
-            //console.log('Format "Nom, Prénom" détecté - première partie du prénom:', prenomPart1);
-          } else {
-            // Format "Prénom Composé Nom" - on garde le format original
-            namePrenomPart1 = decodedAuthor;
-            //console.log('Format "Prénom Nom" détecté - garde le format original');
-          }
-          
-          // Vérifier qu'on a une valeur valide
-          if (namePrenomPart1) {
-            //console.log('Recherche avec nom et première partie du prénom:', namePrenomPart1);
-            
-            const encodedSearch = encodeURIComponent(namePrenomPart1);
-            const searchUrl = `${config.DSPACE_API_URL}/discover/search/objects?f.author=${encodedSearch},contains`;
-            //console.log('URL de recherche créée:', searchUrl);
-            
-            userItemsResponse = await fetchItems(searchUrl, headers);
-            objects = userItemsResponse.searchResult?._embedded?.objects || [];
-            
-            //console.log('Nombre de résultats trouvés:', objects.length);
-          }
-        }
-    }
-    // NOUVELLE RECHERCHE : Recherche admin DSpace similaire à /admin/search?spc.page=1&query=Marguirault
-      let adminSearchItems = [];
+      // TENTATIVE 2: Recherche avec première partie du prénom
       if (objects.length === 0) {
-        try {
-          const decodedAuthor = decodeURIComponent(filtreAuthor);
+        const decodedAuthor = decodeURIComponent(reversedAuthor);
+        
+        let namePrenomPart1 = '';
+        
+        if (decodedAuthor.includes(',')) {
+          const parts = decodedAuthor.split(',');
+          const nomComplet = parts[0]?.trim() || '';
+          const prenomComplet = parts[1]?.trim() || '';
           
-          // Extraire le nom de famille pour la recherche admin (ex: "Marguirault" depuis "Marguirault, Jean")
-          let searchQuery = decodedAuthor;
-          if (decodedAuthor.includes(',')) {
-            searchQuery = decodedAuthor.split(',')[0]?.trim() || decodedAuthor;
-          }
+          const prenomPart1 = prenomComplet.split(/\s+/)[0]?.trim() || '';
           
-          // Validation du nom - s'assurer que c'est un nom valide (pas vide, pas trop court)
-          if (!searchQuery || searchQuery.trim().length < 2) {
-            logger.warn('Nom de recherche trop court ou invalide:', searchQuery);
-            // Ne pas exécuter la recherche avec un nom invalide
-            searchQuery = null;
-          }
+          namePrenomPart1 = nomComplet + ',' + prenomPart1;
+        } else {
+          namePrenomPart1 = decodedAuthor;
+        }
+        
+        if (namePrenomPart1) {
+          const encodedSearch = encodeURIComponent(namePrenomPart1);
+          const searchUrl = `${config.DSPACE_API_URL}/discover/search/objects?f.author=${encodedSearch},contains`;
           
-          if (searchQuery) {
-            // Recherche admin DSpace avec pagination (page 1)
-            const adminSearchResponse = await fetchItems(
-              `${config.DSPACE_API_URL}/discover/search/objects?query=${encodeURIComponent(searchQuery)}&spc.page=1`,
-              headers
-            );
-            
-            adminSearchItems = adminSearchResponse.searchResult?._embedded?.objects || [];
-            
-            // Fonction de validation pour vérifier que l'item correspond au nom recherché
-            const validateItemAuthor = (item, authorName) => {
-              try {
-                const metadata = item?._embedded?.items?.metadata || {};
-                console.log(metadata)
-                const authors = metadata['dc.contributor'] || metadata['dc.creator'] || [];
-                
-                const searchName = authorName.toLowerCase().trim();
-                
-                // Vérifier si au moins un auteur contient le nom recherché
-                return authors.some(author => {
-                  const authorValue = author.value.toLowerCase().trim();
-                  return authorValue.includes(searchName);
-                });
-              } catch (error) {
-                logger.warn('Erreur lors de la validation de l\'auteur:', error.message);
-                return false;
-              }
-            };
-            
-            // Filtrer les résultats pour ne garder que ceux qui correspondent au nom
-            const validatedAdminItems = adminSearchItems.filter(item => 
-              validateItemAuthor(item, decodedAuthor)
-            );
-            
-            // Si on trouve des résultats validés avec la recherche admin, on les ajoute aux objets
-            if (validatedAdminItems.length > 0) {
-              objects = validatedAdminItems;
-              logger.info(`Recherche admin: ${validatedAdminItems.length} items validés sur ${adminSearchItems.length} résultats`);
-            } else if (adminSearchItems.length > 0) {
-              logger.warn(`Recherche admin: Aucun des ${adminSearchItems.length} résultats ne correspond au nom "${decodedAuthor}"`);
-            }
-          }
-        } catch (adminError) {
-          logger.warn('Recherche admin DSpace a échoué:', adminError.message);
-          // On continue sans échouer la requête principale
+          userItemsResponse = await fetchItems(searchUrl, headers);
+          objects = userItemsResponse.searchResult?._embedded?.objects || [];
         }
       }
+    }
+
+    // TENTATIVE 3: Recherche par mots individuels avec validation stricte
+    if (objects.length === 0) {
+      try {
+        const decodedAuthor = decodeURIComponent(filtreAuthor);
+        logger.info(`Recherche par mots individuels pour: "${decodedAuthor}"`);
+        
+        // Séparer tous les mots (enlever virgules et espaces multiples)
+        const nameParts = decodedAuthor.replace(/,/g, ' ').split(/\s+/).filter(p => p.length > 1);
+        logger.info(`Mots à rechercher: ${JSON.stringify(nameParts)}`);
+        
+        const allResults = new Map();
+        
+        // Rechercher chaque mot individuellement
+        for (const part of nameParts) {
+          logger.info(`  Recherche avec mot: "${part}"`);
+          const partResponse = await fetchItems(
+            `${config.DSPACE_API_URL}/discover/search/objects?f.author=${encodeURIComponent(part)},contains`,
+            headers
+          );
+          const partResults = partResponse.searchResult?._embedded?.objects || [];
+          logger.info(`    Trouvé: ${partResults.length} résultats`);
+          
+          partResults.forEach(item => {
+            const itemId = item?._embedded?.indexableObject?.id;
+            if (itemId && !allResults.has(itemId)) {
+              allResults.set(itemId, item);
+            }
+          });
+        }
+        
+        const candidateObjects = Array.from(allResults.values());
+        logger.info(`Total candidats combinés: ${candidateObjects.length}`);
+        
+        // Validation stricte: TOUS les mots doivent être présents
+        objects = candidateObjects.filter(obj => {
+          const item = obj._embedded?.indexableObject;
+          const metadata = item?.metadata || {};
+          const authors = metadata['dc.contributor.author'] || [];
+          
+          return authors.some(author => {
+            const authorValue = author.value.toLowerCase().trim();
+            const searchNormalized = decodedAuthor.toLowerCase().replace(/,/g, '').replace(/\s+/g, ' ');
+            const searchWords = searchNormalized.split(/\s+/);
+            
+            // Vérifier que TOUS les mots sont présents
+            const allMatch = searchWords.every(searchWord => 
+              authorValue.includes(searchWord)
+            );
+            
+            if (allMatch) {
+              logger.info(`✓ Validation réussie: "${author.value}" contient tous les mots de "${decodedAuthor}"`);
+            }
+            
+            return allMatch;
+          });
+        });
+        
+        logger.info(`Après validation: ${objects.length} résultats`);
+        
+      } catch (searchError) {
+        logger.warn('Recherche par mots échouée:', searchError.message);
+      }
+    }
+
+    // RECHERCHE ADMIN DYNAMIQUE avec plusieurs stratégies
+    let adminSearchItems = [];
+    if (objects.length === 0) {
+      try {
+        const decodedAuthor = decodeURIComponent(filtreAuthor);
+        logger.info(`Début recherche admin pour: "${decodedAuthor}"`);
+        
+        // Fonction pour effectuer une recherche admin
+        const performAdminSearch = async (query) => {
+          const searchUrl = `${config.DSPACE_API_URL}/discover/search/objects?query=${encodeURIComponent(query)}`;
+          logger.info(`Recherche URL: ${searchUrl}`);
+          const response = await fetchItems(searchUrl, headers);
+          const results = response?._embedded?.searchResult?._embedded?.objects ||
+                         response?._embedded?.objects ||
+                         response?.searchResult?._embedded?.objects ||
+                         response?.objects ||
+                         [];
+          logger.info(`Résultats trouvés: ${results.length}`);
+          return results;
+        };
+        
+        // Validation flexible de l'auteur
+        const validateItemAuthor = (item, authorName) => {
+          try {
+            const metadata = item?._embedded?.indexableObject?.metadata || {};
+            const authors = metadata['dc.contributor.author'] || [];
+            const searchName = authorName.toLowerCase().trim();
+            
+            return authors.some(author => {
+              const authorValue = author.value.toLowerCase().trim();
+              
+              // Normalisation : enlever virgules et espaces multiples
+              const authorNormalized = authorValue.replace(/,/g, '').replace(/\s+/g, ' ');
+              const searchNormalized = searchName.replace(/,/g, '').replace(/\s+/g, ' ');
+              
+              const authorWords = authorNormalized.split(/\s+/);
+              const searchWords = searchNormalized.split(/\s+/);
+              
+              // TOUS les mots de recherche doivent être présents
+              const allWordsMatch = searchWords.every(searchWord => 
+                authorWords.some(authorWord => 
+                  authorWord.includes(searchWord) || searchWord.includes(authorWord)
+                )
+              );
+              
+              if (allWordsMatch) {
+                logger.info(`✓ Match trouvé: "${authorValue}" correspond à "${authorName}"`);
+              }
+              
+              return allWordsMatch;
+            });
+          } catch (error) {
+            logger.warn('Erreur validation auteur:', error.message);
+            return false;
+          }
+        };
+        
+        let validatedAdminItems = [];
+        const nameParts = decodedAuthor.replace(/,/g, ' ').split(/\s+/).filter(p => p.length > 0);
+        
+        // STRATÉGIE 1: Recherche avec chaque mot individuellement, puis validation stricte
+        logger.info(`Stratégie 1: Recherche par mots individuels (${nameParts.length} mots)`);
+        const allResults = new Map();
+        
+        for (const part of nameParts) {
+          logger.info(`  Recherche du mot: "${part}"`);
+          const partResults = await performAdminSearch(part);
+          partResults.forEach(item => {
+            const itemId = item?._embedded?.indexableObject?.id;
+            if (itemId && !allResults.has(itemId)) {
+              allResults.set(itemId, item);
+            }
+          });
+        }
+        
+        adminSearchItems = Array.from(allResults.values());
+        logger.info(`Total résultats combinés: ${adminSearchItems.length}`);
+        
+        // Validation stricte: TOUS les mots doivent être présents
+        validatedAdminItems = adminSearchItems.filter(item => 
+          validateItemAuthor(item, decodedAuthor)
+        );
+        
+        logger.info(`Après validation stricte: ${validatedAdminItems.length} items`);
+        
+        // STRATÉGIE 2: Si échec, essayer avec le nom complet
+        if (validatedAdminItems.length === 0) {
+          logger.info(`Stratégie 2: Recherche avec nom complet`);
+          adminSearchItems = await performAdminSearch(decodedAuthor);
+          validatedAdminItems = adminSearchItems.filter(item => 
+            validateItemAuthor(item, decodedAuthor)
+          );
+          logger.info(`Résultats stratégie 2: ${validatedAdminItems.length} items`);
+        }
+        
+        // STRATÉGIE 3: Si échec et format "Nom, Prénom", inverser
+        if (validatedAdminItems.length === 0 && decodedAuthor.includes(',')) {
+          logger.info(`Stratégie 3: Inversion du nom`);
+          const parts = decodedAuthor.split(',').map(p => p.trim());
+          if (parts.length === 2) {
+            const reversedName = `${parts[1]} ${parts[0]}`;
+            logger.info(`  Nom inversé: "${reversedName}"`);
+            adminSearchItems = await performAdminSearch(reversedName);
+            validatedAdminItems = adminSearchItems.filter(item => 
+              validateItemAuthor(item, decodedAuthor)
+            );
+            logger.info(`Résultats stratégie 3: ${validatedAdminItems.length} items`);
+          }
+        }
+        
+        if (validatedAdminItems.length > 0) {
+          objects = validatedAdminItems;
+          logger.info(`✓ Recherche admin réussie: ${validatedAdminItems.length} items validés pour "${decodedAuthor}"`);
+        } else {
+          logger.warn(`✗ Aucun résultat trouvé pour "${decodedAuthor}"`);
+        }
+        
+      } catch (adminError) {
+        logger.error('Recherche admin échouée:', adminError.message);
+        logger.error('Stack:', adminError.stack);
+      }
+    }
 
     const userItems = objects.map((obj) => {
       const item = obj._embedded?.indexableObject;
@@ -455,7 +684,6 @@ const getItemDetails = async (req, res) => {
 
     const data = response.data;
 
-    // Construire l'objet de sortie
     const formattedItem = {
       id: data.id,
       name: data.name,
