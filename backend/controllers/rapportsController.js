@@ -3,7 +3,7 @@ const config = require('../config/config');
 const logger = require('../utils/logger');
 
 const SIZE = 30;
-const FETCH_BATCH_SIZE = 10;
+const FETCH_BATCH_SIZE = 30;
 
 const getWorkflowitems = async (req, res) => {
   try {
@@ -13,13 +13,19 @@ const getWorkflowitems = async (req, res) => {
     let allItems = firstResult.items;
     const totalPages = Math.ceil(firstResult.totalElements / SIZE);
 
-    const pageRequests = [];
-    for (let i = 1; i < totalPages; i++) {
-      pageRequests.push(fetchPage(i, req));
+    if (totalPages > 1) {
+      const pageRequests = Array.from({ length: totalPages - 1 }, (_, i) => fetchPage(i + 1, req));
+      const results = await Promise.all(pageRequests);
+      allItems = allItems.concat(results.flatMap(r => r.items));
     }
 
-    const results = await Promise.all(pageRequests);
-    allItems = allItems.concat(results.flatMap(r => r.items));
+    // Fetch des noms de collections en une seule fois (dédupliqué sur tous les items)
+    const allCollectionIds = allItems.map(item => item.collectionId).filter(Boolean);
+    const collectionNamesMap = await fetchCollectionNames(allCollectionIds, req);
+    allItems = allItems.map(item => ({
+      ...item,
+      collection: collectionNamesMap.get(item.collectionId) || null,
+    }));
 
     let detailedItems = await fetchItemDetails(allItems, req);
 
@@ -55,15 +61,12 @@ const fetchPage = async (page, req) => {
       items = items.filter(item => item.sections?.collection === collectionFilter);
     }
 
-    const collectionIds = items.map(item => item.sections?.collection).filter(Boolean);
-    const collectionNamesMap = await fetchCollectionNames(collectionIds, req);
-
     return {
       totalElements,
       items: items.map(item => ({
         workflowId: item.id,
         itemHref: item._links?.item?.href || null,
-        collection: collectionNamesMap.get(item.sections?.collection) || null,
+        collectionId: item.sections?.collection || null,
       })),
     };
   } catch (error) {

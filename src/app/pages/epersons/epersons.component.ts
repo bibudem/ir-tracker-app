@@ -10,6 +10,8 @@ import {CollectionData} from "../../core/collection.data";
   templateUrl: './epersons.component.html',
   styleUrls: ['./epersons.component.scss'],
 })
+
+
 export class EpersonsComponent implements OnInit {
   query = { email: '', nom: '', prenom: '' };
   result: any[] = [];
@@ -34,6 +36,13 @@ export class EpersonsComponent implements OnInit {
   //importer les fonctions global
   methodesUtils: Utils = new Utils();
 
+  /**
+   * Normalise une chaîne en supprimant les accents (é -> e, è -> e, etc)
+   */
+  private removeAccents(str: string): string {
+    return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  }
+
   constructor(
     private dspaceService: DSpaceService,
     private collectionData: CollectionData,
@@ -49,9 +58,16 @@ export class EpersonsComponent implements OnInit {
   rechercher(): void {
     this.result = [];
     this.resultItemsCombined = [];
-    this.query.email=this.methodesUtils.nettoyerQueryEspace(this.query.email);
-    this.query.nom=this.methodesUtils.nettoyerQueryEspace(this.query.nom);
-    this.query.prenom=this.methodesUtils.nettoyerQueryEspace(this.query.prenom);
+    this.query.email = this.methodesUtils.nettoyerQueryEspace(this.query.email);
+    this.query.nom = this.methodesUtils.nettoyerQueryEspace(this.query.nom);
+    this.query.prenom = this.methodesUtils.nettoyerQueryEspace(this.query.prenom);
+
+    // CORRECTION: Normaliser les accents avant envoi au backend
+    const queryNormalized = {
+      email: this.query.email,
+      nom: this.removeAccents(this.query.nom),
+      prenom: this.removeAccents(this.query.prenom)
+    };
 
     const queryStr = [
       this.query.email,
@@ -65,10 +81,10 @@ export class EpersonsComponent implements OnInit {
 
     this.isLoading = true;
 
-    this.dspaceService.getPersonnes(this.query).subscribe(
+    this.dspaceService.getPersonnes(queryNormalized).subscribe(
       (data) => {
         this.isLoading = false;
-        //console.log(data);
+        console.log(data);
 
         let utilisateurs = data.utilisateurs || [];
 
@@ -78,34 +94,57 @@ export class EpersonsComponent implements OnInit {
             this.alertMessage = res;
           });
         } else {
-          // Validation pour vérifier prénom et nom, y compris les inversions
-          if (this.query.nom && this.query.prenom) {
-            const normalize = (str: string) =>
-              str
-                .toLowerCase()
-                .trim()
-                .normalize("NFD")
-                .replace(/[\u0300-\u036f]/g, ""); // Supprime les accents
+          // Validation pour vérifier prénom et nom - utiliser removeAccents cohérent
+          if ((this.query.nom || this.query.prenom)) {
+            const nom = this.removeAccents(this.query.nom).toLowerCase().trim();
+            const prenom = this.removeAccents(this.query.prenom).toLowerCase().trim();
 
-            const nom = normalize(this.query.nom);
-            const prenom = normalize(this.query.prenom);
+            // Retourne vrai si searchTerm correspond à namePart, en tenant compte
+            // du cas où une personne a plusieurs prénoms mais n'en utilise qu'un.
+            const partMatch = (searchTerm: string, namePart: string): boolean => {
+              if (!searchTerm) return true;
+              const tokens = searchTerm.split(/\s+/).filter(t => t.length > 1);
+              return namePart.includes(searchTerm)       // le champ contient la recherche exacte
+                || searchTerm.includes(namePart)         // la recherche contient le champ (ex: "Giovanna Florence Dias" contient "Giovanna")
+                || tokens.some(t => namePart.includes(t)); // au moins un token de la recherche est présent
+            };
 
-            utilisateurs = utilisateurs.filter((user) => {
-              const [userPrenom, userNom] = user.fullName
-                .toLowerCase()
-                .normalize("NFD")
-                .replace(/[\u0300-\u036f]/g, "")
+            const scoreUser = (user: any): number => {
+              const fn = this.removeAccents(user.fullName).toLowerCase();
+              const [p1, p2] = fn.split(',').map((p: string) => p.trim());
+              let s = 0;
+              // Correspondance nom (userPart2 = nom de famille dans notre format)
+              if (nom) {
+                if (p2 === nom)              s += 10;
+                else if (p2.startsWith(nom)) s += 7;
+                else if (p2.includes(nom))   s += 5;
+                if (p1.includes(nom))        s += 2; // ordre inverse
+              }
+              // Correspondance prénom (userPart1 = prénom)
+              if (prenom) {
+                if (p1 === prenom)                s += 10;
+                else if (p1.startsWith(prenom))   s += 7;
+                else if (p1.includes(prenom))     s += 5;
+                else if (prenom.startsWith(p1))   s += 4; // ex: "Giovanna" ⊂ "Giovanna Florence Dias"
+                if (p2.includes(prenom))          s += 2; // ordre inverse
+              }
+              return s;
+            };
+
+            utilisateurs = utilisateurs.filter((user: any) => {
+              const fullNameNormalized = this.removeAccents(user.fullName).toLowerCase();
+              const [userPart1, userPart2] = fullNameNormalized
                 .split(',')
                 .map((part) => part.trim());
 
-              // Vérifier les correspondances dans les deux ordres possibles
-              return (
-                (userPrenom === prenom && userNom === nom) ||
-                (userPrenom === nom && userNom === prenom)
-              );
+              const normalMatch = partMatch(prenom, userPart1) && partMatch(nom, userPart2);
+              const inverseMatch = partMatch(nom, userPart1) && partMatch(prenom, userPart2);
+
+              return normalMatch || inverseMatch;
             });
+
+            utilisateurs.sort((a: any, b: any) => scoreUser(b) - scoreUser(a));
           }
-          //console.log(utilisateurs);
           this.result = utilisateurs;
           this.showAlert = this.result.length === 0;
 
@@ -122,7 +161,6 @@ export class EpersonsComponent implements OnInit {
       }
     );
   }
-
   /**
    * Charger les items associés à un utilisateur spécifique.
    * Met à jour les items affichés en fonction de l'utilisateur sélectionné.
@@ -135,14 +173,24 @@ export class EpersonsComponent implements OnInit {
     this.isLoading = true;
     this.expandedRows = {};
 
+    //console.log('Appel à getUserItems avec:', { userId, fullName });
 
     this.dspaceService.getUserItems(userId, fullName).subscribe(
       (data) => {
+        console.log('Réponse de getUserItems:', data);
+        
         if (data.workflowItems.length === 0 && data.userItems.length === 0 && data.workspaceItems.length === 0) {
+          //console.log('Aucun élément trouvé pour cet utilisateur');
           this.alertMessage = 'Aucun élément n\'est associé à ce compte.';
           this.showAlert = true;
           this.isLoading = false;
         } else {
+          console.log('Éléments trouvés:', {
+            workflow: data.workflowItems.length,
+            workspace: data.workspaceItems.length,
+            userItems: data.userItems.length
+          });
+          
           this.showAlert = false;
           this.alertMessage = '';
           this.resultItemsWorkflow = data.workflowItems || [];
@@ -155,12 +203,16 @@ export class EpersonsComponent implements OnInit {
             ...this.resultItemsWorkspace,
             ...this.resultItems,
           ];
+          
+          //console.log('Items combinés:', this.resultItemsCombined);
           this.isLoading = false;
+          // Déclencher le défilement une fois les données chargées
+          this.scrollToUserSubmissions(userId);
         }
       },
       (error) => {
-        this.isLoading = false;
         console.error('Erreur lors de la récupération des items:', error);
+        this.isLoading = false;
       }
     );
   }
@@ -233,4 +285,29 @@ export class EpersonsComponent implements OnInit {
       }
     }
   }
+
+// Modifiez la fonction scrollToUserSubmissions
+scrollToUserSubmissions(userId: string) {
+  // Attendre que le DOM soit mis à jour avec les nouvelles données
+  setTimeout(() => {
+    const element = document.getElementById(`user-submissions-${userId}`);
+    if (element) {
+      // Calculer la position de l'élément
+      const elementPosition = element.getBoundingClientRect().top;
+      const offsetPosition = elementPosition + window.pageYOffset - 100; // 100px d'offset pour l'en-tête
+      
+      // Faire défiler vers la position
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth'
+      });
+      
+      // Ajouter un effet visuel
+      element.classList.add('highlight-section');
+      setTimeout(() => {
+        element.classList.remove('highlight-section');
+      }, 1500);
+    }
+  }, 300); // Augmenter le délai pour s'assurer que le DOM est mis à jour
+}
 }

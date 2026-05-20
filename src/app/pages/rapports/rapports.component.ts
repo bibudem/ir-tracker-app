@@ -134,9 +134,20 @@ export class RapportsComponent implements OnInit, OnDestroy {
   applyFilters(): void {
     this.filteredItems = this.items.filter(item => {
       const authorMatch = this.searchQuery
-        ? item.metadata.author?.some(author =>
-            author.value.toLowerCase().includes(this.searchQuery.toLowerCase())
-          )
+        ? item.metadata.author?.some(author => {
+            const authorValue = author.value.toLowerCase();
+            const query = this.searchQuery.toLowerCase();
+            const queryTokens = query.split(/[\s,]+/).filter(t => t.length > 0);
+            const authorTokens = authorValue.split(/[\s,]+/).filter(t => t.length > 0);
+
+            // Règle 1 : tous les mots de la recherche sont présents dans le nom d'auteur
+            const querySubsetOfAuthor = queryTokens.every(qt => authorValue.includes(qt));
+            // Règle 2 : tous les mots du nom d'auteur sont dans la recherche
+            // (gère le cas où la personne a plusieurs prénoms mais n'utilise qu'un seul)
+            const authorSubsetOfQuery = authorTokens.every(at => query.includes(at));
+
+            return querySubsetOfAuthor || authorSubsetOfQuery;
+          })
         : true;
 
       const detailsMatch = this.searchDetailsQuery
