@@ -99,26 +99,52 @@ export class EpersonsComponent implements OnInit {
             const nom = this.removeAccents(this.query.nom).toLowerCase().trim();
             const prenom = this.removeAccents(this.query.prenom).toLowerCase().trim();
 
-            utilisateurs = utilisateurs.filter((user) => {
+            // Retourne vrai si searchTerm correspond à namePart, en tenant compte
+            // du cas où une personne a plusieurs prénoms mais n'en utilise qu'un.
+            const partMatch = (searchTerm: string, namePart: string): boolean => {
+              if (!searchTerm) return true;
+              const tokens = searchTerm.split(/\s+/).filter(t => t.length > 1);
+              return namePart.includes(searchTerm)       // le champ contient la recherche exacte
+                || searchTerm.includes(namePart)         // la recherche contient le champ (ex: "Giovanna Florence Dias" contient "Giovanna")
+                || tokens.some(t => namePart.includes(t)); // au moins un token de la recherche est présent
+            };
+
+            const scoreUser = (user: any): number => {
+              const fn = this.removeAccents(user.fullName).toLowerCase();
+              const [p1, p2] = fn.split(',').map((p: string) => p.trim());
+              let s = 0;
+              // Correspondance nom (userPart2 = nom de famille dans notre format)
+              if (nom) {
+                if (p2 === nom)              s += 10;
+                else if (p2.startsWith(nom)) s += 7;
+                else if (p2.includes(nom))   s += 5;
+                if (p1.includes(nom))        s += 2; // ordre inverse
+              }
+              // Correspondance prénom (userPart1 = prénom)
+              if (prenom) {
+                if (p1 === prenom)                s += 10;
+                else if (p1.startsWith(prenom))   s += 7;
+                else if (p1.includes(prenom))     s += 5;
+                else if (prenom.startsWith(p1))   s += 4; // ex: "Giovanna" ⊂ "Giovanna Florence Dias"
+                if (p2.includes(prenom))          s += 2; // ordre inverse
+              }
+              return s;
+            };
+
+            utilisateurs = utilisateurs.filter((user: any) => {
               const fullNameNormalized = this.removeAccents(user.fullName).toLowerCase();
-              const [userNom, userPrenom] = fullNameNormalized
+              const [userPart1, userPart2] = fullNameNormalized
                 .split(',')
                 .map((part) => part.trim());
 
-              // Vérifier si le nom recherché est contenu dans le nom utilisateur
-              const nomMatch = !nom || userNom.includes(nom);
-              
-              // Vérifier si le prénom recherché est contenu dans le prénom utilisateur
-              const prenomMatch = !prenom || userPrenom.includes(prenom);
+              const normalMatch = partMatch(prenom, userPart1) && partMatch(nom, userPart2);
+              const inverseMatch = partMatch(nom, userPart1) && partMatch(prenom, userPart2);
 
-              // Vérifier aussi l'ordre inverse au cas où
-              const nomMatchInverse = !nom || userNom.includes(prenom);
-              const prenomMatchInverse = !prenom || userPrenom.includes(nom);
-
-              return (nomMatch && prenomMatch) || (nomMatchInverse && prenomMatchInverse);
+              return normalMatch || inverseMatch;
             });
+
+            utilisateurs.sort((a: any, b: any) => scoreUser(b) - scoreUser(a));
           }
-          //console.log('Résultats filtrés:', utilisateurs);
           this.result = utilisateurs;
           this.showAlert = this.result.length === 0;
 

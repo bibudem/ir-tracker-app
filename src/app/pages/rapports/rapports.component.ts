@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { DSpaceService } from '../../services/dspace.service';
-import { Subscription } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
+import { debounceTime } from 'rxjs/operators';
 import {Utils} from "../../utils/utils";
 
 @Component({
@@ -17,9 +18,9 @@ export class RapportsComponent implements OnInit, OnDestroy {
   loadingCollection = true;
   expandedRows: { [key: string]: boolean } = {};
   filters: any = { type: '', collection: '' };
-  sortField = 'lastModified';  // Par défaut, on trie par 'lastModified'
-  sortOrder = 'desc';  // Ordre de tri par défaut
-  searchDetailsQuery = ''; // Pour filtrer les détails de soumission
+  sortField = 'lastModified';
+  sortOrder = 'desc';
+  searchDetailsQuery = '';
 
   filterOptions: any = {
     types: [
@@ -32,24 +33,27 @@ export class RapportsComponent implements OnInit, OnDestroy {
     ],
   };
 
+  readonly searchChange$ = new Subject<void>();
+
   private subscriptions: Subscription[] = [];
 
-  //importer les fonctions global
   methodesUtils: Utils = new Utils();
 
   constructor(private dspaceService: DSpaceService) {}
 
   ngOnInit(): void {
     this.listCollections();
+    this.subscriptions.push(
+      this.searchChange$.pipe(debounceTime(300)).subscribe(() => this.applyFilters())
+    );
   }
 
   ngOnDestroy(): void {
-    // Désabonnement propre lors de la destruction du composant
     this.subscriptions.forEach(sub => sub.unsubscribe());
   }
 
   loadItems(): void {
-    this.items= [];
+    this.items = [];
     const params = {
       collection: this.filters.collection || '',
       type: this.filters.type || '',
@@ -59,13 +63,14 @@ export class RapportsComponent implements OnInit, OnDestroy {
     this.loading = true;
     const sub = this.dspaceService.getFilteredItems(params).subscribe(
       (data: any) => {
-        //console.log(data.items.length);
         this.items = data.items.map(item => ({
-          ...item
+          ...item,
+          style: this.getItemStyle(item.lastModified),
+          timeElapsed: new Date(item.lastModified).toLocaleDateString(),
+          cleanedProvenance: item.metadata.provenance
+            ? this.methodesUtils.cleanAndTranslateData(item.metadata.provenance)
+            : []
         }));
-        this.filteredItems = [...this.items]; // Copie les items dans filteredItems
-        this.sortItems();
-        this.filteredItems = [...this.items];
         this.applyFilters();
         this.loading = false;
       },
@@ -91,30 +96,29 @@ export class RapportsComponent implements OnInit, OnDestroy {
   }
 
   sortItems(): void {
-    this.filteredItems = [...this.items]; // Réinitialisation avant de trier
+    this.filteredItems = [...this.items];
     this.filteredItems.sort((a, b) => {
       const fieldA = a[this.sortField] || '';
       const fieldB = b[this.sortField] || '';
 
-      // Trier par date (lastModified)
       if (this.sortField === 'lastModified') {
         const dateA = new Date(fieldA).getTime();
         const dateB = new Date(fieldB).getTime();
         return this.sortOrder === 'desc' ? dateB - dateA : dateA - dateB;
       }
 
-      // Pour d'autres champs (si nécessaire)
       return this.sortOrder === 'desc' ? fieldB.localeCompare(fieldA) : fieldA.localeCompare(fieldB);
     });
   }
 
-  getItemStyle(lastModified: string): string {
-    const date = new Date(lastModified);
-    const now = new Date();
-    const diff = (now.getTime() - date.getTime()) / (1000 * 60 * 60 * 24);
+  private getDaysDiff(lastModified: string): number {
+    return (new Date().getTime() - new Date(lastModified).getTime()) / (1000 * 60 * 60 * 24);
+  }
 
+  getItemStyle(lastModified: string): string {
+    const diff = this.getDaysDiff(lastModified);
     if (diff < 30) return 'success';
-    if (diff < 180) return 'warning';
+    if (diff < 60) return 'warning';
     return 'danger';
   }
 
@@ -122,7 +126,6 @@ export class RapportsComponent implements OnInit, OnDestroy {
     return new Date(lastModified).toLocaleDateString();
   }
 
-  // Fonction de tri sur la colonne 'lastModified'
   toggleSortOrder(): void {
     this.sortOrder = this.sortOrder === 'asc' ? 'desc' : 'asc';
     this.sortItems();
@@ -131,15 +134,26 @@ export class RapportsComponent implements OnInit, OnDestroy {
   applyFilters(): void {
     this.filteredItems = this.items.filter(item => {
       const authorMatch = this.searchQuery
-        ? item.metadata.author?.some(author =>
-          author.value.toLowerCase().includes(this.searchQuery.toLowerCase())
-        )
+        ? item.metadata.author?.some(author => {
+            const authorValue = author.value.toLowerCase();
+            const query = this.searchQuery.toLowerCase();
+            const queryTokens = query.split(/[\s,]+/).filter(t => t.length > 0);
+            const authorTokens = authorValue.split(/[\s,]+/).filter(t => t.length > 0);
+
+            // Règle 1 : tous les mots de la recherche sont présents dans le nom d'auteur
+            const querySubsetOfAuthor = queryTokens.every(qt => authorValue.includes(qt));
+            // Règle 2 : tous les mots du nom d'auteur sont dans la recherche
+            // (gère le cas où la personne a plusieurs prénoms mais n'utilise qu'un seul)
+            const authorSubsetOfQuery = authorTokens.every(at => query.includes(at));
+
+            return querySubsetOfAuthor || authorSubsetOfQuery;
+          })
         : true;
 
       const detailsMatch = this.searchDetailsQuery
         ? item.name.toLowerCase().includes(this.searchDetailsQuery.toLowerCase()) ||
-        item.collection.toLowerCase().includes(this.searchDetailsQuery.toLowerCase()) ||
-        item.type.toLowerCase().includes(this.searchDetailsQuery.toLowerCase())
+          item.collection.toLowerCase().includes(this.searchDetailsQuery.toLowerCase()) ||
+          item.type.toLowerCase().includes(this.searchDetailsQuery.toLowerCase())
         : true;
 
       return authorMatch && detailsMatch;
@@ -147,21 +161,16 @@ export class RapportsComponent implements OnInit, OnDestroy {
   }
 
   filterByDateRange(range: string): void {
-    const now = new Date();
     this.filteredItems = this.items.filter(item => {
-      const itemDate = new Date(item.lastModified);
-      const diffDays = (now.getTime() - itemDate.getTime()) / (1000 * 3600 * 24);
-
-      if (range === 'danger') {
-        return diffDays > 60; // Plus de 2 mois
-      } else if (range === 'warning') {
-        return diffDays >= 30 && diffDays <= 60; // Entre 30 et 60 jours
-      } else if (range === 'success') {
-        return diffDays <= 29; // Moins d'un mois
-      }
+      const diffDays = this.getDaysDiff(item.lastModified);
+      if (range === 'danger') return diffDays > 60;
+      if (range === 'warning') return diffDays >= 30 && diffDays <= 60;
+      if (range === 'success') return diffDays < 30;
       return true;
     });
   }
 
-
+  trackByFn(_index: number, item: any): string {
+    return item.uuid;
+  }
 }

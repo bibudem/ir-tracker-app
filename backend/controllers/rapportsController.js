@@ -3,29 +3,23 @@ const config = require('../config/config');
 const logger = require('../utils/logger');
 
 const SIZE = 30;
+const FETCH_BATCH_SIZE = 10;
 
 const getWorkflowitems = async (req, res) => {
   try {
     const typeFiltre = req.query.type;
-    let allItems = [];
-    let page = 0;
-    let hasMore = true;
-    let totalElements = 0;
 
-    // Fetch the first page to get totalElements
-    const firstPage = await fetchPage(page, req);
-    allItems = allItems.concat(firstPage);
-    totalElements = firstPage[0]?.totalElements || 0;
-    const totalPages = Math.ceil(totalElements / SIZE);
+    const firstResult = await fetchPage(0, req);
+    let allItems = firstResult.items;
+    const totalPages = Math.ceil(firstResult.totalElements / SIZE);
 
     const pageRequests = [];
-    for (let i = 1; i < totalPages && hasMore; i++) {
+    for (let i = 1; i < totalPages; i++) {
       pageRequests.push(fetchPage(i, req));
     }
 
     const results = await Promise.all(pageRequests);
-    const filteredResults = results.flat();
-    allItems = allItems.concat(filteredResults);
+    allItems = allItems.concat(results.flatMap(r => r.items));
 
     let detailedItems = await fetchItemDetails(allItems, req);
 
@@ -55,22 +49,26 @@ const fetchPage = async (page, req) => {
     });
 
     let items = response.data._embedded?.workflowitems || [];
+    const totalElements = response.data.page?.totalElements || 0;
 
     if (collectionFilter?.trim()) {
       items = items.filter(item => item.sections?.collection === collectionFilter);
     }
 
-    const collectionNames = await fetchCollectionNames(items.map(item => item.sections?.collection).filter(Boolean), req);
+    const collectionIds = items.map(item => item.sections?.collection).filter(Boolean);
+    const collectionNamesMap = await fetchCollectionNames(collectionIds, req);
 
-    return items.map((item, index) => ({
-      totalElements: response.data.page.totalElements,
-      workflowId: item.id,
-      itemHref: item._links?.item?.href || null,
-      collection: collectionNames[index] || null,
-    }));
+    return {
+      totalElements,
+      items: items.map(item => ({
+        workflowId: item.id,
+        itemHref: item._links?.item?.href || null,
+        collection: collectionNamesMap.get(item.sections?.collection) || null,
+      })),
+    };
   } catch (error) {
     logger.warn(`Erreur sur la page ${page}: ${error.message}`);
-    return [];
+    return { totalElements: 0, items: [] };
   }
 };
 
@@ -85,64 +83,72 @@ const fetchCollectionNames = async (collectionIds, req) => {
     })
   );
 
-  try {
-    const responses = await Promise.all(requests);
-    const collectionNamesMap = new Map(responses.map(response => [response.data.uuid, response.data.name]));
-    return collectionIds.map(id => collectionNamesMap.get(id));
-  } catch (error) {
-    logger.warn(`Erreur lors de la récupération des collections: ${error.message}`);
-    return Array(collectionIds.length).fill(null);
-  }
+  const responses = await Promise.allSettled(requests);
+  const collectionNamesMap = new Map();
+  responses.forEach((result, i) => {
+    if (result.status === 'fulfilled') {
+      collectionNamesMap.set(result.value.data.uuid, result.value.data.name);
+    } else {
+      logger.warn(`Erreur collection ${uniqueIds[i]}: ${result.reason?.message}`);
+    }
+  });
+
+  return collectionNamesMap;
 };
 
 const fetchItemDetails = async (items, req) => {
   let countExcludedName = 0;
+  const results = [];
 
-  const requests = items.map(async (item) => {
-    if (!item.itemHref) return null;
+  for (let i = 0; i < items.length; i += FETCH_BATCH_SIZE) {
+    const batch = items.slice(i, i + FETCH_BATCH_SIZE);
+    const batchResults = await Promise.all(
+      batch.map(async (item) => {
+        if (!item.itemHref) return null;
 
-    try {
-      const response = await axios.get(item.itemHref, {
-        headers: {
-          Authorization: req.dspaceAuthToken,
-          Cookie: req.dspaceCookies,
-        },
-      });
+        try {
+          const response = await axios.get(item.itemHref, {
+            headers: {
+              Authorization: req.dspaceAuthToken,
+              Cookie: req.dspaceCookies,
+            },
+          });
 
-      const data = response.data;
+          const data = response.data;
 
-      if (!data.name?.trim()) {
-        countExcludedName++;
-        return null;
-      }
+          if (!data.name?.trim()) {
+            countExcludedName++;
+            return null;
+          }
 
-      return {
-        workflowId: item.workflowId,
-        id: data.id,
-        lastModified: data.lastModified,
-        uuid: data.uuid,
-        name: data.name,
-        handle: data.handle,
-        collection: item.collection || null,
-        type: data.metadata["dc.type"]?.[0]?.value || "",
-        metadata: {
-          "author": data.metadata["dc.contributor.author"] || [],
-          "date.available": data.metadata["dc.date.available"] || [],
-          "date.submitted": data.metadata["dc.date.submitted"] || [],
-          "provenance": data.metadata["dc.description.provenance"] || [],
-          "degree.level": data.metadata["etd.degree.level"] || [],
-          "degree.name": data.metadata["etd.degree.name"] || [],
-          "affiliation": data.metadata["dc.contributor.affiliation"] || [],
-        },
-      };
+          return {
+            workflowId: item.workflowId,
+            id: data.id,
+            lastModified: data.lastModified,
+            uuid: data.uuid,
+            name: data.name,
+            handle: data.handle,
+            collection: item.collection || null,
+            type: data.metadata['dc.type']?.[0]?.value || '',
+            metadata: {
+              author:         data.metadata['dc.contributor.author']     || [],
+              'date.available': data.metadata['dc.date.available']       || [],
+              'date.submitted': data.metadata['dc.date.submitted']       || [],
+              provenance:     data.metadata['dc.description.provenance'] || [],
+              'degree.level': data.metadata['etd.degree.level']         || [],
+              'degree.name':  data.metadata['etd.degree.name']          || [],
+              affiliation:    data.metadata['dc.contributor.affiliation']|| [],
+            },
+          };
+        } catch (error) {
+          logger.warn(`Erreur lors de la récupération de l'item ${item.workflowId}: ${error.message}`);
+          return null;
+        }
+      })
+    );
+    results.push(...batchResults);
+  }
 
-    } catch (error) {
-      logger.warn(`Erreur lors de la récupération de l'item ${item.id}: ${error.message}`);
-      return null;
-    }
-  });
-
-  const results = await Promise.all(requests);
   const filteredResults = results.filter(item => item !== null);
 
   logger.info(`Total items initial: ${items.length}`);

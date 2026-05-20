@@ -371,18 +371,37 @@ const getUserItems = async (req, res) => {
       enrichedWorkspaceItems = await enrichItems(workspaceitems, headers);
     }
 
-    let userItemsResponse = await fetchItems(
-      `${config.DSPACE_API_URL}/discover/search/objects?f.author=${filtreAuthor},contains`,
-      headers
-    );
+    // RECHERCHE PAR SOUMETTEUR: si on a un vrai UUID, chercher directement par submitter
+    let objects = [];
+    if (!userId.includes('N/A')) {
+      const submitterResponse = await fetchItems(
+        `${config.DSPACE_API_URL}/discover/search/objects?f.submitter=${userId},authority&size=100`,
+        headers
+      );
+      objects = submitterResponse.searchResult?._embedded?.objects || [];
+      if (objects.length > 0) {
+        logger.info(`Recherche par submitter UUID ${userId}: ${objects.length} items trouvés`);
+      }
+    }
 
-    let objects = userItemsResponse.searchResult?._embedded?.objects || [];
+    // Fallback par nom d'auteur si la recherche par submitter n'a rien donné
+    let userItemsResponse = {};
+    if (objects.length === 0) {
+      userItemsResponse = await fetchItems(
+        `${config.DSPACE_API_URL}/discover/search/objects?f.author=${filtreAuthor},contains`,
+        headers
+      );
+    }
+
+    if (objects.length === 0) {
+      objects = userItemsResponse.searchResult?._embedded?.objects || [];
+    }
 
     // TENTATIVE 1: Si aucun résultat, inverser le format du nom
     if (objects.length === 0) {
       const decodedAuthor = decodeURIComponent(filtreAuthor);
       const nameParts = decodedAuthor.split(',');
-      const reversedAuthor = nameParts.length === 2 ? `${nameParts[1]}, ${nameParts[0]}` : decodedAuthor;
+      const reversedAuthor = nameParts.length === 2 ? `${nameParts[1].trim()}, ${nameParts[0].trim()}` : decodedAuthor;
 
       userItemsResponse = await fetchItems(
         `${config.DSPACE_API_URL}/discover/search/objects?f.author=${encodeURIComponent(reversedAuthor)},contains`,
@@ -403,7 +422,7 @@ const getUserItems = async (req, res) => {
           
           const prenomPart1 = prenomComplet.split(/\s+/)[0]?.trim() || '';
           
-          namePrenomPart1 = nomComplet + ',' + prenomPart1;
+          namePrenomPart1 = nomComplet + ', ' + prenomPart1;
         } else {
           namePrenomPart1 = decodedAuthor;
         }
@@ -451,27 +470,30 @@ const getUserItems = async (req, res) => {
         const candidateObjects = Array.from(allResults.values());
         logger.info(`Total candidats combinés: ${candidateObjects.length}`);
         
-        // Validation stricte: TOUS les mots doivent être présents
+        // Validation: correspondance classique OU auteur partiel contenant au moins le nom de famille
+        const nameParts3 = decodedAuthor.split(',').map(p => p.trim());
+        const lastnameWords3 = (nameParts3.length >= 2 ? nameParts3[nameParts3.length - 1] : nameParts3[0])
+          .toLowerCase().split(/\s+/).filter(w => w.length > 0);
+        const searchWords3 = decodedAuthor.toLowerCase().replace(/,/g, ' ').replace(/\s+/g, ' ').trim().split(/\s+/).filter(w => w.length > 0);
+
         objects = candidateObjects.filter(obj => {
           const item = obj._embedded?.indexableObject;
           const metadata = item?.metadata || {};
           const authors = metadata['dc.contributor.author'] || [];
-          
+
           return authors.some(author => {
             const authorValue = author.value.toLowerCase().trim();
-            const searchNormalized = decodedAuthor.toLowerCase().replace(/,/g, '').replace(/\s+/g, ' ');
-            const searchWords = searchNormalized.split(/\s+/);
-            
-            // Vérifier que TOUS les mots sont présents
-            const allMatch = searchWords.every(searchWord => 
-              authorValue.includes(searchWord)
-            );
-            
-            if (allMatch) {
-              logger.info(`✓ Validation réussie: "${author.value}" contient tous les mots de "${decodedAuthor}"`);
-            }
-            
-            return allMatch;
+            const authorWords = authorValue.replace(/,/g, ' ').replace(/\s+/g, ' ').trim().split(/\s+/).filter(w => w.length > 0);
+
+            // Match classique: tous les mots de recherche présents dans l'auteur
+            const searchSubsetOfAuthor = searchWords3.every(sw => authorValue.includes(sw));
+            // Match partiel: auteur contient au moins un mot du nom de famille ET tous ses mots sont dans la recherche
+            const authorContainsLastname = lastnameWords3.some(lw => authorWords.some(aw => aw === lw));
+            const authorSubsetOfSearch = authorContainsLastname && authorWords.every(aw => searchWords3.includes(aw));
+
+            const isMatch = searchSubsetOfAuthor || authorSubsetOfSearch;
+            if (isMatch) logger.info(`✓ Validation réussie: "${author.value}" correspond à "${decodedAuthor}"`);
+            return isMatch;
           });
         });
         
@@ -503,35 +525,32 @@ const getUserItems = async (req, res) => {
           return results;
         };
         
-        // Validation flexible de l'auteur
+        // Validation: correspondance classique OU auteur partiel contenant au moins le nom de famille
         const validateItemAuthor = (item, authorName) => {
           try {
             const metadata = item?._embedded?.indexableObject?.metadata || {};
             const authors = metadata['dc.contributor.author'] || [];
             const searchName = authorName.toLowerCase().trim();
-            
+            const nameParts = authorName.split(',').map(p => p.trim());
+            const lastnameWords = (nameParts.length >= 2 ? nameParts[nameParts.length - 1] : nameParts[0])
+              .toLowerCase().split(/\s+/).filter(w => w.length > 0);
+            const searchWords = searchName.replace(/,/g, ' ').replace(/\s+/g, ' ').trim().split(/\s+/).filter(w => w.length > 0);
+
             return authors.some(author => {
               const authorValue = author.value.toLowerCase().trim();
-              
-              // Normalisation : enlever virgules et espaces multiples
-              const authorNormalized = authorValue.replace(/,/g, '').replace(/\s+/g, ' ');
-              const searchNormalized = searchName.replace(/,/g, '').replace(/\s+/g, ' ');
-              
-              const authorWords = authorNormalized.split(/\s+/);
-              const searchWords = searchNormalized.split(/\s+/);
-              
-              // TOUS les mots de recherche doivent être présents
-              const allWordsMatch = searchWords.every(searchWord => 
-                authorWords.some(authorWord => 
-                  authorWord.includes(searchWord) || searchWord.includes(authorWord)
-                )
+              const authorWords = authorValue.replace(/,/g, ' ').replace(/\s+/g, ' ').trim().split(/\s+/).filter(w => w.length > 0);
+
+              // Match classique: tous les mots de recherche présents dans l'auteur
+              const searchSubsetOfAuthor = searchWords.every(sw =>
+                authorWords.some(aw => aw.includes(sw) || sw.includes(aw))
               );
-              
-              if (allWordsMatch) {
-                logger.info(`✓ Match trouvé: "${authorValue}" correspond à "${authorName}"`);
-              }
-              
-              return allWordsMatch;
+              // Match partiel: auteur contient au moins un mot du nom de famille ET tous ses mots sont dans la recherche
+              const authorContainsLastname = lastnameWords.some(lw => authorWords.some(aw => aw === lw));
+              const authorSubsetOfSearch = authorContainsLastname && authorWords.every(aw => searchWords.includes(aw));
+
+              const isMatch = searchSubsetOfAuthor || authorSubsetOfSearch;
+              if (isMatch) logger.info(`✓ Match trouvé: "${authorValue}" correspond à "${authorName}"`);
+              return isMatch;
             });
           } catch (error) {
             logger.warn('Erreur validation auteur:', error.message);

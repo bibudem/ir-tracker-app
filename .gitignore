@@ -50,3 +50,5 @@ testem.log
 Thumbs.db
 /backend/logs/error.log
 /backend/config/config.js
+
+/logs-ng/*
