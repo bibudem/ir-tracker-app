@@ -150,10 +150,12 @@ export class RapportsComponent implements OnInit, OnDestroy {
           })
         : true;
 
+      // Recherche sur tous les champs affichés dans la colonne "Détails de la soumission"
+      // (ID, titre, collection, type).
       const detailsMatch = this.searchDetailsQuery
-        ? item.name.toLowerCase().includes(this.searchDetailsQuery.toLowerCase()) ||
-          item.collection.toLowerCase().includes(this.searchDetailsQuery.toLowerCase()) ||
-          item.type.toLowerCase().includes(this.searchDetailsQuery.toLowerCase())
+        ? [item.uuid, item.name, item.collection, item.type].some(field =>
+            (field || '').toLowerCase().includes(this.searchDetailsQuery.toLowerCase())
+          )
         : true;
 
       return authorMatch && detailsMatch;

@@ -11,7 +11,11 @@ export const ROUTES: RouteInfo[] = [
   },*/
   {     path: '/discover', title: 'Recherche dans l\'index', icon: 'bi bi-view-list', class: '', badge: '', badgeClass: '', isExternalLink: false, submenu: []
   },
-  {     path: '/rapports', title: 'Rapports', icon: 'bi bi-bar-chart', class: '', badge: '', badgeClass: '', isExternalLink: false, submenu: []
+  // Sous-menu "Rapports" (ajouté le 2026-09-08) : ancien rapport de workflow + nouveau rapport TME
+  {     path: '/rapports', title: 'Rapports', icon: 'bi bi-bar-chart', class: 'sub', badge: '', badgeClass: '', isExternalLink: false, submenu: [
+        { path: '/rapports', title: 'Suivi des soumissions', icon: '', class: '', badge: '', badgeClass: '', isExternalLink: false, submenu: [] },
+        { path: '/rapports/theses-en-attente', title: 'TME en attente', icon: '', class: '', badge: '', badgeClass: '', isExternalLink: false, submenu: [] },
+      ]
   },
   {     path: '/gestionnaires', title: 'Groupes de validation', icon: 'bi bi-gear-wide-connected', class: '', badge: '', badgeClass: '', isExternalLink: false, submenu: []
   },

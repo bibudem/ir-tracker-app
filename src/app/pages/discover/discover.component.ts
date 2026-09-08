@@ -35,6 +35,21 @@ export class DiscoverComponent implements OnInit {
    * Recherche des items à partir de la chaîne saisie dans `indexQuery`,
    * filtre les résultats selon les auteurs/directeurs correspondant.
    */
+  private toTokens(text: string): string[] {
+    return text
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[̀-ͯ]/g, '')
+      .split(/[\s,]+/)
+      .map(t => t.replace(/[^a-z0-9]/g, ''))
+      .filter(t => t.length > 1);
+  }
+
+  private nameMatchesTokens(name: string, tokens: string[]): boolean {
+    const norm = this.utils.normalize(name);
+    return tokens.every(token => norm.includes(token));
+  }
+
   rechercher(): void {
     if (!this.indexQuery.trim()) return;
 
@@ -43,7 +58,7 @@ export class DiscoverComponent implements OnInit {
     this.filteredItemsList = [];
     this.personFilter = '';
 
-    const query = this.utils.normalize(this.indexQuery);
+    const tokens = this.toTokens(this.indexQuery);
 
     this.dspaceService.getItemsByIndex(this.indexQuery).subscribe(
       (data) => {
@@ -53,12 +68,12 @@ export class DiscoverComponent implements OnInit {
           const allItems = data.objects.map(obj => obj._embedded.indexableObject);
 
           this.resultItems = allItems.filter(item => {
-            const authors = item.metadata['dc.contributor.author']?.map(a => this.utils.normalize(a.value)) || [];
-            const advisors = item.metadata['dc.contributor.advisor']?.map(a => this.utils.normalize(a.value)) || [];
-            return authors.some(a => a.includes(query)) || advisors.some(b => b.includes(query));
+            const authors = item.metadata['dc.contributor.author']?.map(a => a.value) || [];
+            const advisors = item.metadata['dc.contributor.advisor']?.map(a => a.value) || [];
+            return [...authors, ...advisors].some(name => this.nameMatchesTokens(name, tokens));
           });
 
-          this.filteredItemsList = this.groupItemsByPerson(this.resultItems, query);
+          this.filteredItemsList = this.groupItemsByPerson(this.resultItems, tokens);
         }
 
         this.showAlert = this.resultItems.length === 0;
@@ -86,29 +101,24 @@ export class DiscoverComponent implements OnInit {
  * et regroupe les résultats filtrés.
  */
   applyFilters(): void {
-    const query = this.utils.normalize(this.personFilter);
+    const tokens = this.personFilter.trim()
+      ? this.toTokens(this.personFilter)
+      : this.toTokens(this.indexQuery);
 
-    if (query) {
-      const filtered = this.resultItems.filter(item => {
-        const names = [
-          ...(item.metadata['dc.contributor.author']?.map(a => a.value) || []),
-          ...(item.metadata['dc.contributor.advisor']?.map(a => a.value) || [])
-        ];
-        return names.some(name => this.utils.normalize(name).includes(query));
-      });
+    const filtered = tokens.length > 0
+      ? this.resultItems.filter(item => {
+          const names = [
+            ...(item.metadata['dc.contributor.author']?.map(a => a.value) || []),
+            ...(item.metadata['dc.contributor.advisor']?.map(a => a.value) || [])
+          ];
+          return names.some(name => this.nameMatchesTokens(name, tokens));
+        })
+      : this.resultItems;
 
-      this.filteredItemsList = this.groupItemsByPerson(filtered, query);
-    } else {
-      const query = this.utils.normalize(this.indexQuery);
-      this.filteredItemsList = this.groupItemsByPerson(this.resultItems,query);
-    }
+    this.filteredItemsList = this.groupItemsByPerson(filtered, tokens);
   }
 
-
-  /**
- * Regroupe les items par personne (auteur/directeur) correspondant à la requête.
- */
-  groupItemsByPerson(items: any[], query: string): any[] {
+  groupItemsByPerson(items: any[], tokens: string[]): any[] {
     const groups: { [key: string]: { displayName: string, items: any[] } } = {};
 
     for (const item of items) {
@@ -118,13 +128,10 @@ export class DiscoverComponent implements OnInit {
       ];
 
       for (const person of people) {
-        const normName = this.utils.normalize(person.value);
-        if (normName.includes(query)) {
+        if (this.nameMatchesTokens(person.value, tokens)) {
+          const normName = this.utils.normalize(person.value);
           if (!groups[normName]) {
-            groups[normName] = {
-              displayName: person.value,
-              items: []
-            };
+            groups[normName] = { displayName: person.value, items: [] };
           }
           groups[normName].items.push(item);
         }

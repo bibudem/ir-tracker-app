@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import {HomeComponent} from "./home/home.component";
 import {EpersonsComponent} from "./epersons/epersons.component";
 import {RapportsComponent} from "./rapports/rapports.component";
+import {RapportsWorkspaceThesesComponent} from "./rapports-workspace-theses/rapports-workspace-theses.component";
 import {DiscoverComponent} from "./discover/discover.component";
 import {AdminListComponent} from "./admin-list/admin-list.component";
 
@@ -38,6 +39,13 @@ const routes: Routes = [
         component: RapportsComponent,
         data: {
           title: 'Rapports'
+        }
+      },
+      {
+        path: 'rapports/theses-en-attente',
+        component: RapportsWorkspaceThesesComponent,
+        data: {
+          title: 'Thèses et mémoires en attente'
         }
       },
       {

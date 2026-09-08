@@ -8,6 +8,7 @@ import {TranslateModule} from "@ngx-translate/core";
 import {CollectionComponent} from "./collection/collection.component";
 import {EpersonsComponent} from "./epersons/epersons.component";
 import {RapportsComponent} from "./rapports/rapports.component";
+import {RapportsWorkspaceThesesComponent} from "./rapports-workspace-theses/rapports-workspace-theses.component";
 import { LoginComponent } from './login/login.component';
 import {DiscoverComponent} from "./discover/discover.component";
 import {AdminListComponent} from "./admin-list/admin-list.component";
@@ -18,6 +19,7 @@ import {AdminListComponent} from "./admin-list/admin-list.component";
     CollectionComponent,
     EpersonsComponent,
     RapportsComponent,
+    RapportsWorkspaceThesesComponent,
     DiscoverComponent,
     AdminListComponent,
     LoginComponent

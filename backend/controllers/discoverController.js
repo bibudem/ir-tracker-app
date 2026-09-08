@@ -3,6 +3,21 @@ const axios = require('axios');
 const config = require('../config/config');
 const logger = require('../utils/logger');
 
+const fetchAllPages = async (url, headers) => {
+  let page = 0;
+  let totalPages = 1;
+  const allObjects = [];
+
+  while (page < totalPages) {
+    const response = await axios.get(`${url}&page=${page}&size=100`, { headers });
+    const searchResult = response.data?._embedded?.searchResult;
+    allObjects.push(...(searchResult?._embedded?.objects || []));
+    totalPages = searchResult?.page?.totalPages || 1;
+    page++;
+  }
+  return allObjects;
+};
+
 const getDiscover = async (req, res) => {
   const query = req.query.query;
 
@@ -10,33 +25,43 @@ const getDiscover = async (req, res) => {
     return res.status(400).send('Le paramètre query est requis');
   }
 
+  const headers = {
+    'Authorization': req.dspaceAuthToken,
+    'Cookie': req.dspaceCookies,
+  };
+
   try {
-    let page = 0;
-    const size = 100; // Tu peux ajuster cette valeur selon la limite max du backend
-    let totalPages = 1;
-    let allObjects = [];
+    // Recherche principale avec la requête complète
+    let allObjects = await fetchAllPages(
+      `${config.DSPACE_API_URL}/discover/search/objects?query=${encodeURIComponent(query)}`,
+      headers
+    );
 
-    while (page < totalPages) {
-      const response = await axios.get(`${config.DSPACE_API_URL}/discover/search/objects?query=${encodeURIComponent(query)}&page=${page}&size=${size}`, {
-        headers: {
-          'Authorization': req.dspaceAuthToken,
-          'Cookie': req.dspaceCookies,
-        }
-      });
+    // Fallback: si DSpace ne retourne rien, chercher chaque token via f.author en parallèle
+    if (allObjects.length === 0) {
+      const tokens = query.split(/[\s,]+/).map(t => t.trim()).filter(t => t.length > 1);
 
-      const searchResult = response.data?._embedded?.searchResult;
-      const objects = searchResult?._embedded?.objects || [];
-      console.log(objects);
-      allObjects.push(...objects);
+      if (tokens.length > 1) {
+        const tokenResults = await Promise.all(
+          tokens.map(token =>
+            fetchAllPages(
+              `${config.DSPACE_API_URL}/discover/search/objects?f.author=${encodeURIComponent(token)},contains`,
+              headers
+            ).catch(() => [])
+          )
+        );
 
-      totalPages = searchResult?.page?.totalPages || 1;
-      page++;
+        // Union dédupliquée des résultats de chaque token
+        const objectMap = new Map();
+        tokenResults.flat().forEach(obj => {
+          const id = obj._embedded?.indexableObject?.id;
+          if (id) objectMap.set(id, obj);
+        });
+        allObjects = Array.from(objectMap.values());
+      }
     }
 
-    res.json({
-      total: allObjects.length,
-      objects: allObjects
-    });
+    res.json({ total: allObjects.length, objects: allObjects });
 
   } catch (error) {
     logger.error('Erreur lors de la récupération des objets :', error.message);

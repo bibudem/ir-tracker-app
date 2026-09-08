@@ -126,5 +126,12 @@
   "between_30_and_60_days": "Entre 30 et 60 jours",
   "more_than_60_days": "Plus de 60 jours",
   "author_advisor": "Nom(s) des auteurs ou directeurs",
-  "resultsFound": "Total résultats "
+  "resultsFound": "Total résultats ",
+  "workspace_theses_report_title": "Thèses et mémoires en attente",
+  "workspace_theses_report_description": "Thèses et mémoires laissés dans l'espace de travail de l'étudiante ou l'étudiant, jamais transmis pour validation, sans aucune modification depuis {{ minDays }} jours ou plus, pour les dépôts publiés à partir de {{ minYear }}.",
+  "workspace_id": "[workspace_id = {{ id }}]",
+  "all_theses_collections": "Toutes les collections (thèses et mémoires)",
+  "collections_selected_count": "{{ count }} collections sélectionnées",
+  "clear_selection": "Effacer la sélection",
+  "no_results": "Aucun résultat"
 }

@@ -91,5 +91,14 @@
   "no_provenance": "-",
   "workflow_id": "[workflow_id = {{ id }}]",
   "process_step": "Process {{ step }}",
-  "loading_message": "Loading in progress, please wait..."
+  "loading_message": "Loading in progress, please wait...",
+  "between_30_and_60_days": "Between 30 and 60 days",
+  "more_than_60_days": "More than 60 days",
+  "workspace_theses_report_title": "Theses and dissertations pending",
+  "workspace_theses_report_description": "Theses and dissertations left in the student's workspace, never submitted for review, with no changes for {{ minDays }} days or more, for deposits published from {{ minYear }} onward.",
+  "workspace_id": "[workspace_id = {{ id }}]",
+  "all_theses_collections": "All theses and dissertations collections",
+  "collections_selected_count": "{{ count }} collections selected",
+  "clear_selection": "Clear selection",
+  "no_results": "No results"
 }

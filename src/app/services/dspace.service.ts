@@ -125,6 +125,15 @@ export class DSpaceService {
   }
 
   /**
+   * Rapport "TME en attente" (ajouté le 2026-09-08) : thèses et mémoires laissées dans
+   * le workspace des étudiants (jamais soumises au workflow), inactives depuis un
+   * certain nombre de jours et dont le dc.date.issued est assez récent.
+   */
+  getWorkspaceThesesReport(params: any): Observable<any> {
+    return this.http.get<any>(`${environment.apiUrl}/rapports/theses-en-attente`, { params });
+  }
+
+  /**
    * Récupère la liste des administrateurs d'une collection spécifique
    * @param collectionId ID de la collection
    * @returns Liste des groupes administrateurs

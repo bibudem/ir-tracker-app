@@ -1,0 +1,173 @@
+<div class="row">
+  <div class="col-12">
+    <div class="card radius-10 mh-500">
+      <div class="card-header py-3 mt-2">
+        <h3 class="product-title mb-2">{{ 'workspace_theses_report_title' | translate }}</h3>
+        <p>{{ 'workspace_theses_report_description' | translate: { minDays: minDays, minYear: minYear } }}</p>
+      </div>
+      <div class="card-body">
+        <form (ngSubmit)="loadItems();" class="row gy-3 gx-4 align-items-end">
+          <div class="col-md-8">
+            <label for="collectionFilter" class="form-label fw-bold">
+              <i class="bi bi-bricks"></i> {{ 'collections' | translate }}
+            </label>
+            <p *ngIf="loadingCollection" class="text-danger mb-0">{{ 'loading_message' | translate }}</p>
+
+            <div ngbDropdown autoClose="outside" class="collection-multiselect" *ngIf="!loadingCollection">
+              <button type="button" id="collectionFilter" class="collection-multiselect-toggle" ngbDropdownToggle>
+                <span class="collection-multiselect-summary">
+                  <ng-container [ngSwitch]="true">
+                    <ng-container *ngSwitchCase="selectedCollectionObjects().length === 0">{{ 'all_theses_collections' | translate }}</ng-container>
+                    <ng-container *ngSwitchCase="selectedCollectionObjects().length === 1">{{ selectedCollectionObjects()[0].name }}</ng-container>
+                    <ng-container *ngSwitchDefault>{{ 'collections_selected_count' | translate: { count: selectedCollectionObjects().length } }}</ng-container>
+                  </ng-container>
+                </span>
+              </button>
+
+              <div ngbDropdownMenu class="collection-multiselect-menu">
+                <div class="input-with-icon px-2 pt-2 pb-1">
+                  <i class="bi bi-search icon"></i>
+                  <input
+                    type="text"
+                    class="form-control form-control-sm"
+                    [(ngModel)]="collectionSearchQuery"
+                    name="collectionSearchQuery"
+                    placeholder="{{ 'search' | translate }}"
+                  />
+                </div>
+
+                <div class="collection-multiselect-quick-actions px-2 py-1" *ngIf="filters.collection.length">
+                  <button type="button" class="btn btn-link btn-sm p-0" (click)="clearCollectionSelection()">
+                    {{ 'clear_selection' | translate }}
+                  </button>
+                </div>
+
+                <div class="collection-multiselect-options">
+                  <label class="collection-multiselect-option" *ngFor="let collection of filteredCollectionOptions()">
+                    <input
+                      type="checkbox"
+                      [checked]="isCollectionSelected(collection.id)"
+                      (change)="toggleCollection(collection.id)"
+                    />
+                    <span>{{ collection.name }}</span>
+                  </label>
+                  <p class="text-muted small px-2 py-1 mb-0" *ngIf="filteredCollectionOptions().length === 0">
+                    {{ 'no_results' | translate }}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-4 text-start">
+            <button type="submit" class="btn btn-dark px-4">
+              <i class="bi bi-gear"></i> {{ 'create_report' | translate }}
+            </button>
+          </div>
+
+          <div class="col-12">
+            <div class="d-flex flex-wrap gap-1" *ngIf="selectedCollectionObjects().length">
+              <span class="badge collection-tag" *ngFor="let collection of selectedCollectionObjects()">
+                {{ collection.name }}
+                <i class="bi bi-x-circle-fill" (click)="toggleCollection(collection.id)"></i>
+              </span>
+            </div>
+          </div>
+        </form>
+        <div *ngIf="loading" class="spinner-border text-primary mt-2" role="status"></div>
+        <p class="text-muted mt-5" *ngIf="!loading">{{ 'displaying_items' | translate: { count: items.length } }}</p>
+        <div class="d-flex align-items-center gap-3 pt-3 pb-3" *ngIf="items.length != 0">
+          <button class="btn btn-warning btn-sm" (click)="filterByDateRange('warning')" data-toggle="tooltip" data-placement="bottom"></button>
+          <span>{{ 'between_30_and_60_days' | translate }}</span>
+
+          <button class="btn btn-danger btn-sm" (click)="filterByDateRange('danger')" data-toggle="tooltip" data-placement="bottom"></button>
+          <span>{{ 'more_than_60_days' | translate }}</span>
+        </div>
+
+        <table class="table col-md-12" *ngIf="items.length!=0">
+          <thead class="table-light">
+          <tr>
+            <th class="col-md-1 text-left align-top">{{ 'Nr.' | translate }}</th>
+            <th class="col-md-1 text-left align-top" (click)="toggleSortOrder()">
+              <i *ngIf="sortField === 'lastModified'" class="bi" [ngClass]="sortOrder === 'asc' ? 'bi-sort-up' : 'bi-sort-down'"></i>
+              {{ 'last_modified' | translate }}
+            </th>
+            <th class="col-md-3 text-left align-top">{{ 'authors' | translate }}
+              <div class="input-with-icon">
+                <i class="bi bi-search icon"></i>
+                <input
+                  id="searchAuthor"
+                  type="text"
+                  class="form-control"
+                  [(ngModel)]="searchQuery"
+                  name="searchQuery"
+                  placeholder="{{ 'search_author' | translate }}"
+                  (input)="searchChange$.next()"
+                />
+              </div>
+            </th>
+            <th class="col-md-3 text-left align-top">{{ 'itemDetails' | translate }}
+              <div class="input-with-icon">
+                <i class="bi bi-search icon"></i>
+                <input
+                  id="searchDetails"
+                  type="text"
+                  class="form-control"
+                  [(ngModel)]="searchDetailsQuery"
+                  name="searchDetailsQuery"
+                  placeholder="{{ 'enter_submission_details' | translate }}"
+                  (input)="searchChange$.next()"
+                />
+              </div>
+            </th>
+            <th class="col-md-4 text-left align-top">{{ 'validation_process_tracking' | translate }}</th>
+          </tr>
+          </thead>
+          <tbody>
+          <ng-container *ngFor="let item of filteredItems;let i = index; trackBy: trackByFn">
+            <tr>
+              <td>{{ i+1 }}</td>
+              <td class="text-center">
+                <div [ngClass]="'py-1 px-3 radius-30 ms-auto bg-light-' + item.style + ' text-' + item.style">
+                  {{ item.timeElapsed }}
+                </div>
+              </td>
+              <td>
+                <ng-container *ngIf="item.metadata.author">
+                  <ul class="list-group list-group-flush">
+                    <li *ngFor="let author of item.metadata.author" class="list-group-item">
+                      <p [innerHTML]="author.value"></p>
+                    </li>
+                  </ul>
+                </ng-container>
+                <ng-container *ngIf="!item.metadata.author">{{ 'no_author' | translate }}</ng-container>
+              </td>
+              <td>
+                <p><strong>{{ 'id' | translate }}</strong>: {{item.uuid }}</p>
+                <p><strong>{{ 'titre' | translate }}</strong>: {{ item.name }}</p>
+                <p><strong>{{ 'collection' | translate }}</strong>:{{ item.collection }}</p>
+                <p><strong>{{ 'type' | translate }}</strong>: {{ item.type }}</p>
+                <p><strong>{{ 'date_issued' | translate }}</strong>: {{ item.dateIssued || '-' }}</p>
+              </td>
+              <td>
+                <ng-container *ngIf="item.metadata.provenance">
+                  <ul class="list-group list-group-flush">
+                    <li *ngFor="let provenance of item.cleanedProvenance; let i = index" class="list-group-item">
+                      <h6 class="card-title">{{ 'process_step' | translate: { step: i + 1 } }}</h6>
+                      <p [innerHTML]="provenance"></p>
+                    </li>
+                  </ul>
+                </ng-container>
+                <strong class="text-info ml-2">{{ 'workspace_id' | translate: { id: item.workflowId } }}</strong>
+                <ng-container *ngIf="!item.metadata.provenance">{{ 'no_provenance' | translate }}</ng-container>
+              </td>
+
+            </tr>
+          </ng-container>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </div>
+</div>

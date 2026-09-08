@@ -38,6 +38,7 @@
         <ul class="menu-content" *ngIf="menuItem.submenu.length > 0">
           <li *ngFor="let menuSubItem of menuItem.submenu"
               [routerLinkActive]="menuSubItem.submenu.length > 0 ? '' : 'active'"
+              [routerLinkActiveOptions]="{exact: true}"
               [ngClass]="[menuSubItem.class]">
 
             <!-- Lien interne ou gestion des sous-liens externes -->
